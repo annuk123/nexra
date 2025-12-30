@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Help shape Nexra",
+    url: "https://nexra.pixelui.studio/feedback", 
     description:
       "Your feedback helps us avoid building the wrong thing.",
     images: [

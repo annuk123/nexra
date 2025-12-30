@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "Nexra AI — Clarity before commitment",
     description:
       "A thoughtful way to evaluate startup ideas before you commit.",
-    url: "https://nexra.ai", // change after deploy
+    url: "https://nexra.pixelui.studio/", // change after deploy
     siteName: "Nexra AI",
     images: [
       {

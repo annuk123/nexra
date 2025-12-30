@@ -29,7 +29,7 @@ export default function Waitlist() {
   };
 
   return (
-    <div>
+    <div id="join-waitlist">
       <span className="text-xs tracking-widest text-neutral-400">
         WAITLIST
       </span>
@@ -73,7 +73,7 @@ export default function Waitlist() {
             type="submit"
             className="px-6 py-3 text-sm text-neutral-300 border border-neutral-800 rounded-lg hover:border-neutral-600 hover:text-neutral-100 transition"
           >
-            Join waitlist
+            Request access
           </button>
         </form>
       )}

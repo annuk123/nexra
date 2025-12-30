@@ -31,6 +31,14 @@ export default function Home() {
           Built for solo founders and indie hackers who prefer signal over
           noise.
         </p>
+        <div className="mt-8">
+        <Link
+          href="#join-waitlist"
+          className="inline-flex items-center text-sm text-neutral-300 hover:text-neutral-100 transition"
+        >
+          Join waitlist →
+        </Link>
+      </div>
       </Section>
 
       {/* How Nexra Thinks */}

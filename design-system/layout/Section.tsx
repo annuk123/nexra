@@ -13,7 +13,7 @@ export function Section({
   };
 
   return (
-    <section className={`${sizes[size]} mx-auto px-6 py-29`}>
+    <section className={`${sizes[size]} mx-auto px-6 py-32`}>
       {children}
     </section>
   );
