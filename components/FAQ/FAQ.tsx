@@ -9,7 +9,7 @@ const faqs = [
   },
   {
     q: "Who is Nexra for?",
-    a: "Nexra is built for solo founders and indie hackers who are deciding what to build — before investing significant time, money, or energy.",
+    a: "Nexra is built for solo founders and indie hackers who are deciding what to build before investing significant time, money, or energy.",
   },
   {
     q: "What happens to my idea?",
