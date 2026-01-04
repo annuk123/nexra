@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexra AI — Clarity before commitment",
+  title: "Nexra AI - Clarity before commitment",
   description:
     "Evaluate startup ideas, uncover blind spots, and make confident decisions before you invest time, money, or energy.",
 
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Nexra AI — Clarity before commitment",
+    title: "Nexra AI - Clarity before commitment",
     description:
       "A thoughtful way to evaluate startup ideas before you commit.",
     url: "https://nexra.pixelui.studio/", // change after deploy
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Nexra AI — Clarity before commitment",
+    title: "Nexra AI - Clarity before commitment",
     description:
       "Evaluate startup ideas with structured thinking, not hype.",
     images: ["/og.png"],
