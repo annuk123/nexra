@@ -51,7 +51,7 @@ export default function Home() {
 
         <p className="text-lg text-neutral-300 max-w-2xl leading-relaxed">
           Evaluate startup ideas, uncover blind spots, and make confident
-          decisions — before you invest time, money, or energy.
+          decisions before you invest time, money, or energy.
         </p>
 
         <p className="mt-2 text-sm text-neutral-500 max-w-xl">
