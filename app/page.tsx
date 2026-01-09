@@ -59,12 +59,6 @@ export default function Home() {
           noise.
         </p>
         <div className="mt-8">
-        {/* <Link
-          href="#join-waitlist"
-          className="inline-flex items-center text-sm text-neutral-300 hover:text-neutral-100 transition"
-        >
-          Join waitlist →
-        </Link> */}
          {/* FORM */}
       {status === "idle" && (
         <form
@@ -95,6 +89,18 @@ export default function Home() {
             Early access for solo founders. No spam. No noise.
 
           </p>
+
+      <p className="mt-2 text-xs text-neutral-500">
+        By joining, you agree to our{" "}
+        <Link href="/privacy" className="underline">
+          Privacy Policy {" "}
+        </Link>
+         <span>& {" "}</span>
+        <Link href="/terms" className="underline">
+          Terms of Service
+        </Link>
+        .
+      </p>
       {/* ERROR (rare, but polite) */}
       {status === "error" && (
         <p className="mt-6 text-sm text-neutral-500">
@@ -120,23 +126,7 @@ export default function Home() {
         <StaticDemo />
       </Section>
 
-{/* <section className="max-w-3xl mx-auto px-6 py-32">
-  <span className="text-xs tracking-widest text-neutral-500">
-    WHEN NEXRA IS USEFUL
-  </span>
-
-  <h2 className="mt-4 text-2xl sm:text-3xl font-semibold max-w-xl">
-    Use Nexra when clarity matters more than speed.
-  </h2>
-
-  <div className="mt-10 space-y-4 text-neutral-400 max-w-xl">
-    <p>— You’re deciding <span className="text-neutral-300">what to build</span>, not how to build it</p>
-    <p>— You want to surface assumptions before committing time or money</p>
-    <p>— You feel momentum pushing you forward, but certainty hasn’t caught up</p>
-    <p>— You prefer structured thinking over open-ended advice</p>
-    <p>— You’d rather pause and think than ship the wrong thing</p>
-  </div>
-</section> */}
+      {/* Feedback */}
           <section className="max-w-3xl mx-auto px-6 py-32">
       <span className="text-xs tracking-widest text-neutral-500">
         FEEDBACK
@@ -168,30 +158,6 @@ export default function Home() {
 <FAQ />
 
 
-
-          {/* <section className="max-w-3xl mx-auto px-6 py-32">
-      <span className="text-xs tracking-widest text-neutral-500">
-        FEEDBACK
-      </span>
-
-      <h2 className="mt-4 text-2xl sm:text-3xl font-semibold max-w-xl">
-        Help us think better.
-      </h2>
-
-      <p className="mt-4 text-neutral-400 max-w-xl">
-        If something resonated — or didn’t — we’d appreciate your perspective.
-        Your feedback helps us avoid building the wrong thing.
-      </p>
-
-      <div className="mt-8">
-        <Link
-          href="/feedback"
-          className="inline-flex items-center text-sm text-neutral-300 hover:text-neutral-100 transition"
-        >
-          Share feedback →
-        </Link>
-      </div>
-    </section> */}
     </main>
   );
 }
