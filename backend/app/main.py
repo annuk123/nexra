@@ -9,7 +9,8 @@ app = FastAPI()
 # 👇 ADD THIS BLOCK
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # later you can restrict this
+    allow_origins=["*"],  # OK for MVP
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
