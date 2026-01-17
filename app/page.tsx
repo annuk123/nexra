@@ -58,7 +58,36 @@ export default function Home() {
           Built for solo founders and indie hackers who prefer signal over
           noise.
         </p>
+        
+<div className="mt-8 flex flex-col sm:flex-row gap-4 items-start">
+  <Link
+    href="/demo"
+    className="inline-flex items-center justify-center px-6 py-3 text-sm rounded-lg
+               bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition"
+  >
+    Try Nexra →
+  </Link>
+
+  <span className="text-sm text-neutral-500 self-center">
+    or request early access
+  </span>
+</div>
         <div className="mt-8">
+          
+
+
+
+{/* SUCCESS STATE */}
+      {status === "success" && (
+        <div className="mt-10 max-w-md">
+          <p className="text-neutral-300">
+            Thanks for joining.
+          </p>
+          <p className="mt-2 text-sm text-neutral-500">
+            We’ll share updates only when there’s something meaningful.
+          </p>
+        </div>
+      )}
          {/* FORM */}
       {status === "idle" && (
         <form
@@ -161,3 +190,4 @@ export default function Home() {
     </main>
   );
 }
+
