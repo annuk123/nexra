@@ -69,16 +69,7 @@ export default function Demo() {
   const [error, setError] = useState("");
 const [ideas, setIdeas] = useState<IdeaResponse[]>([]);
 
-useEffect(() => {
-  getIdeas()
-    .then((data) => setIdeas(data.items))
-    .catch(() => {});
-}, []);
 
-
-useEffect(() => {
-  setUsageCount(getUsageState().count);
-}, []);
 
   async function handleSubmit() {
     if (!text.trim()) return;
@@ -102,7 +93,16 @@ setText("");
     setLoading(false);
   }
   }
+useEffect(() => {
+  getIdeas()
+    .then((data) => setIdeas(data.items))
+    .catch(() => {});
+}, []);
 
+
+useEffect(() => {
+  setUsageCount(getUsageState().count);
+}, []);
 
 
   return (
