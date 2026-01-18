@@ -104,11 +104,6 @@ async function handleSubmit() {
 }
 
 
-useEffect(() => {
-  getIdeas()
-    .then((data) => setIdeas(data.items))
-    .catch(() => {});
-}, []);
 
 
 useEffect(() => {
