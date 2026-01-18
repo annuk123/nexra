@@ -138,12 +138,16 @@ useEffect(() => {
       : "bg-gray-800 text-white"
   }`}
 >
-  {loading
-    ? "Analyzing..."
-    : usageCount >= USAGE_LIMIT
+   {usageCount >= USAGE_LIMIT
     ? "Usage limit reached"
+    : loading
+    ? "Analyzing..."
     : "Analyze Idea"}
 </button>
+<p className="text-xs text-neutral-500">
+  {USAGE_LIMIT - usageCount} free analyses left today
+</p>
+
 
 {usageCount >= USAGE_LIMIT && (
   <p className="text-sm text-gray-400">
