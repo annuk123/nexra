@@ -71,28 +71,39 @@ const [ideas, setIdeas] = useState<IdeaResponse[]>([]);
 
 
 
-  async function handleSubmit() {
-    if (!text.trim()) return;
+async function handleSubmit() {
+  if (!text.trim()) return;
 
-    setLoading(true);
-    setError("");
-    setResult(null);
-    try {
+  const usage = getUsageState();
+
+  if (usage.count >= USAGE_LIMIT) {
+    setError("Usage limit reached. Come back tomorrow.");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setResult(null);
+
+  try {
     const data = await analyzeIdea(text);
-setResult(data);
-setIdeas((prev) => [data, ...prev]);
 
-incrementUsage();
-setUsageCount(getUsageState().count);
+    setResult(data);
+    setIdeas((prev) => [data, ...prev]);
 
-setText("");
+    incrementUsage();
+    setUsageCount(getUsageState().count);
 
+    setText("");
   } catch (err) {
     console.error(err);
+    setError("Failed to analyze idea");
   } finally {
     setLoading(false);
   }
-  }
+}
+
+
 useEffect(() => {
   getIdeas()
     .then((data) => setIdeas(data.items))
