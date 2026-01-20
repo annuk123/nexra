@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer/footer";
 import { ConvexAppProvider } from "@/components/ConvexProvider/ConvexProvider";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -65,6 +67,7 @@ export default function RootLayout({
         <ConvexAppProvider>
           {children}
           <Analytics />
+          <SpeedInsights />
           <Footer />
         </ConvexAppProvider>
       </body>
