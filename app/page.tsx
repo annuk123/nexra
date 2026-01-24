@@ -49,43 +49,47 @@ export default function Home() {
     NEXRA AI
   </span>
 
-  <h1 className="mt-6 text-6xl sm:text-7xl font-semibold leading-[1.05] max-w-5xl">
+  {/* Headline */}
+  <h1 className="mt-6 text-4xl sm:text-6xl lg:text-7xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
     Structured thinking for startup decisions.
     <br />
-    <span className="text-neutral-400">
-      Build the right startup.
-Or waste months on the wrong one.
-
+    <span className="text-neutral-400 block mt-2 sm:mt-0">
+      Build the right startup.  
+      Or waste months on the wrong one.
     </span>
   </h1>
 
+  <div className="w-12 h-px bg-neutral-700 my-6 sm:my-8" />
 
-  <div className="w-12 h-px bg-neutral-700 my-8" />
- <p className="mt-3 text-xs text-neutral-500">Trusted by founders to kill bad ideas fast.</p>
-  <p className="text-lg text-neutral-300 max-w-2xl leading-relaxed">
-   Nexra analyzes your idea, surfaces blind spots, and maps what to build—before you waste time, money, and momentum.
+  <p className="mt-2 text-xs text-neutral-500">
+    Trusted by founders to kill bad ideas fast.
+  </p>
+
+  <p className="text-base sm:text-lg text-neutral-300 max-w-2xl leading-relaxed mt-3">
+    Nexra analyzes your idea, surfaces blind spots, and maps what to build — before you waste time, money, and momentum.
   </p>
 
   <p className="mt-3 text-sm text-neutral-500 max-w-xl">
     Structured reasoning for founders who want signal, not vibes.
   </p>
+
   <p className="mt-2 text-sm text-neutral-400 max-w-xl">
     Most founders realize their idea is bad after shipping. Nexra tells you before.
   </p>
 
-  {/* CTA */}
-  <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center">
+  {/* CTA Buttons */}
+  <div className="mt-8 flex flex-row gap-3 sm:gap-4 w-full max-w-md">
     <button
       onClick={() => setOpen(true)}
-      className="inline-flex items-center justify-center px-6 py-3 text-sm rounded-lg
+      className="flex-1 inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm rounded-lg
                  bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition font-medium"
     >
-      Request early access →
+      Request access →
     </button>
 
     <Link
       href="/demo"
-      className="inline-flex items-center justify-center px-6 py-3 text-sm rounded-lg
+      className="flex-1 inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm rounded-lg
                  border border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-neutral-100 transition"
     >
       View demo →
@@ -95,8 +99,6 @@ Or waste months on the wrong one.
   <p className="mt-3 text-xs text-neutral-500">
     Join builders validating ideas before building.
   </p>
-   
-
 </Section>
 
 {open && (
