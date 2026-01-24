@@ -5,6 +5,7 @@ import Footer from "@/components/Footer/footer";
 import { ConvexAppProvider } from "@/components/ConvexProvider/ConvexProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Navbar from "@/components/Navbar/nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-950 `}
       >
         <ConvexAppProvider>
+          <Navbar />
           {children}
           <Analytics />
           <SpeedInsights />

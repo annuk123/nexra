@@ -12,14 +12,11 @@ export default defineSchema({
     // prevent duplicate emails
     .index("by_email", ["email"]),
 
-     feedback: defineTable({
-    reasonForJoining: v.string(), // Q1
-    hardestPart: v.optional(v.string()), // Q2
-    decisionProcess: v.optional(v.string()), // Q3
-    usefulness: v.optional(v.string()), // Q4
-    confusion: v.optional(v.string()), // Q5
+    feedback: defineTable({
+  message: v.string(),
+  email: v.optional(v.string()),
+  source: v.optional(v.string()),
+  createdAt: v.number(),
 
-    createdAt: v.number(),
-    source: v.optional(v.string()), // "feedback-page", "post-decision"
   }),
 });

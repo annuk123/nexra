@@ -30,10 +30,12 @@ export default function Footer() {
 
   return (
 <footer className="border-t border-neutral-900 bg-neutral-950">
-  <div className="max-w-6xl mx-auto px-6 py-24">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+  <div className="max-w-6xl mx-auto px-6 py-20">
 
-      {/* LEFT: Statement */}
+    {/* Main Footer Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+      {/* LEFT */}
       <div>
         <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-neutral-100">
           Better decisions.
@@ -43,11 +45,7 @@ export default function Footer() {
 
         <p className="mt-6 text-neutral-400 max-w-md leading-relaxed">
           Nexra helps founders evaluate ideas, surface blind spots,
-          and decide what’s worth building, before commitment.
-        </p>
-
-        <p className="mt-10 text-xs text-neutral-600">
-          © {new Date().getFullYear()} Nexra AI. All rights reserved.
+          and decide what’s worth building before commitment.
         </p>
       </div>
 
@@ -56,9 +54,7 @@ export default function Footer() {
         {status === "idle" && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-neutral-400">
-                Work email
-              </label>
+              <label className="text-xs text-neutral-400">Work email</label>
               <input
                 type="email"
                 required
@@ -87,44 +83,35 @@ export default function Footer() {
         <p className="mt-4 text-xs text-neutral-600">
           Early access for serious builders. No spam.
         </p>
+      </div>
+    </div>
 
-        <div className="mt-12 flex items-center justify-between text-xs text-neutral-600">
-  <div className="flex items-center gap-4">
-    <Link
-      href="https://x.com/Nexra_Ai"
-      className="hover:text-neutral-400 transition"
-    >
-      X
-    </Link>
+    {/* Bottom Bar */}
+    <div className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-neutral-600">
 
-    <Link
-      href="/feedback"
-      className="hover:text-neutral-400 transition"
-    >
-      Feedback
-    </Link>
-
-    <Link
-      href="/privacy"
-      className="hover:text-neutral-400 transition"
-    >
-      Privacy
-    </Link>
-
-    <Link
-      href="/terms"
-      className="hover:text-neutral-400 transition"
-    >
-      Terms
-    </Link>
-  </div>
-</div>
+      {/* Social + Links */}
+      <div className="flex items-center gap-6">
+        <Link href="https://x.com/Nexra_Ai" className="hover:text-neutral-400 transition">
+          X
+        </Link>
+        <Link href="/feedback" className="hover:text-neutral-400 transition">
+          Feedback
+        </Link>
+        <Link href="/privacy" className="hover:text-neutral-400 transition">
+          Privacy
+        </Link>
+        <Link href="/terms" className="hover:text-neutral-400 transition">
+          Terms
+        </Link>
       </div>
 
-
+      {/* Copyright */}
+      <p>© {new Date().getFullYear()} Nexra AI</p>
     </div>
+
   </div>
 </footer>
+
 
   );
 }

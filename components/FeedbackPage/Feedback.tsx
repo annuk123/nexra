@@ -6,146 +6,97 @@ import { api } from "@/convex/_generated/api";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-
-export default function Feedback() {
+export default function FeedbackModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const submitFeedback = useMutation(api.feedback.submitFeedback);
 
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const [form, setForm] = useState({
-    reasonForJoining: "",
-    hardestPart: "",
-    decisionProcess: "",
-    usefulness: "",
-    confusion: "",
-  });
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       await submitFeedback({
-        ...form,
-        source: "post-decision",
+        message,
+        email,
+        source: "homepage-modal",
       });
 
       setStatus("success");
+      setMessage("");
+      setEmail("");
     } catch {
       setStatus("error");
     }
   };
 
-  if (status === "success") {
-    return (
-      <div className="max-w-xl">
-        <p className="text-neutral-300">
-          Thank you for sharing your thoughts.
-        </p>
-        <p className="mt-2 text-sm text-neutral-500">
-          We read every response carefully.
-        </p>
-      </div>
-    );
-  }
+  if (!open) return null;
 
   return (
-    <div >
-      <span className="text-xs tracking-widest text-neutral-400">FEEDBACK</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 w-full max-w-md">
 
-      <h2 className="mt-4 text-neutral-200 text-3xl sm:text-4xl font-semibold max-w-xl">
-        Help us build Nexra the right way.
-      </h2>
-
-      <p className="mt-4 text-neutral-400 max-w-xl">
-        We’re building Nexra carefully. Your answers help us avoid building the
-        wrong thing. This is optional and takes 2–3 minutes.
-      </p>
-
-      <form onSubmit={handleSubmit} className="mt-16 space-y-14 max-w-xl">
-        {/* Q1 */}
-        <div>
-          <label className="block text-sm font-medium mb-2 text-neutral-500">
-            What made you join the Nexra waitlist today?
-          </label>
-          <Textarea
-            required
-            value={form.reasonForJoining}
-            onChange={(e) =>
-            setForm({ ...form, reasonForJoining: e.target.value })
-          }
-            placeholder="One or two sentences is enough."
-            className="h-32 text-neutral-400"
-          />
-        </div>
-
-        {/* Q2 */}
-        <div>
-          <label className="block text-sm font-medium mb-2 text-neutral-500">
-            What part of evaluating startup ideas feels hardest for you right
-            now?
-          </label>
-          <Textarea value={form.hardestPart}
-          onChange={(e) =>
-            setForm({ ...form, hardestPart: e.target.value })
-          } className="h-32 text-neutral-400" />
-        </div>
-
-        {/* Q3 */}
-        <div>
-          <label className="block text-sm font-medium mb-2 text-neutral-500">
-            How do you currently decide whether to pursue an idea or drop it?
-          </label>
-          <Textarea 
-          value={form.decisionProcess}
-          onChange={(e) =>
-          setForm({ ...form, decisionProcess: e.target.value })
-          }
-          className="h-32 text-neutral-400" />
-        </div>
-
-        {/* Q4 */}
-        <div>
-          <label className="block text-sm font-medium mb-2 text-neutral-500">
-            What would make a tool like Nexra genuinely useful for you?
-          </label>
-          <Textarea 
-          value={form.usefulness}
-          onChange={(e) =>
-            setForm({ ...form, usefulness: e.target.value })
-          } 
-          className="h-32 text-neutral-400" />
-        </div>
-
-        {/* Q5 */}
-        <div>
-          <label className="block text-sm font-medium mb-2 text-neutral-500">
-            Anything that felt unclear, missing, or confusing?
-          </label>
-          <Textarea 
-          value={form.confusion}
-          onChange={(e) =>
-            setForm({ ...form, confusion: e.target.value })
-          } 
-          className="h-32 text-neutral-400" />
-        </div>
-
-        <Button
-        type="submit"
-          variant="ghost"
-          className="p-3 text-neutral-300 "
-        >
-          Submit feedback →
-        </Button>
-        
-        {status === "error" && (
-        <p className="text-sm text-neutral-500">
-          Something went wrong. Please try again.
+        {/* Header */}
+        <h3 className="text-lg font-medium text-neutral-100">
+          Help us improve Nexra
+        </h3>
+        <p className="mt-1 text-sm text-neutral-400">
+          What should we build, fix, or change?
         </p>
-      )}
-      </form>
 
-      <p className="mt-10 text-xs text-neutral-500 max-w-md">
-        We read every response carefully. No automated replies. No spam.
-      </p>
+        {status === "success" ? (
+          <div className="mt-6 flex flex-col gap-4 items-start">
+          <p className="mt-6 text-sm text-neutral-300">
+            Thanks. We read every message.
+          </p>
+          <button
+                type="button"
+                onClick={onClose}
+                className="text-xs text-neutral-500 hover:text-neutral-300"
+              >
+                Close
+              </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+
+            <Textarea
+              required
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Your thoughts, criticism, or ideas..."
+              className="h-32 text-neutral-200 bg-neutral-900 border-neutral-800"
+            />
+
+            <input
+              type="email"
+              placeholder="Optional email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-md px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-xs text-neutral-500 hover:text-neutral-300"
+              >
+                Cancel
+              </button>
+
+              <Button type="submit" variant="ghost" className="text-stone-400">
+                Send feedback →
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {status === "error" && (
+          <p className="mt-2 text-xs text-red-500">Something went wrong.</p>
+        )}
+      </div>
     </div>
   );
 }

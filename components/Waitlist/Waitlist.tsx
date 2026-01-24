@@ -29,7 +29,7 @@ export default function Waitlist() {
   };
 
   return (
-    <div id="join-waitlist">
+    <div >
       <span className="text-xs tracking-widest text-neutral-400">
         WAITLIST
       </span>

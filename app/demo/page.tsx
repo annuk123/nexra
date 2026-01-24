@@ -112,99 +112,121 @@ useEffect(() => {
 
 
   return (
-    <main className="max-w-2xl mx-auto p-6 space-y-6 py-28">
-      <h1 className="text-2xl font-bold text-gray-200">Nexra — Validate Your Idea</h1>
+<main className="max-w-3xl mx-auto p-6 space-y-10 py-24 text-neutral-100">
 
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Describe your startup idea in 1–2 sentences (problem + solution)"
-
-        className="w-full border text-white rounded p-3"
-        rows={4}
-      />
-
-     <button
-  onClick={handleSubmit}
-  disabled={loading || !text.trim() || usageCount >= USAGE_LIMIT}
-  className={`px-4 py-2 rounded ${
-    loading || !text.trim() || usageCount >= USAGE_LIMIT
-      ? "opacity-50 cursor-not-allowed bg-gray-700 text-white"
-      : "bg-gray-800 text-white"
-  }`}
->
-   {usageCount >= USAGE_LIMIT
-    ? "Usage limit reached"
-    : loading
-    ? "Analyzing..."
-    : "Analyze Idea"}
-</button>
-<p className="text-xs text-neutral-500">
-  {USAGE_LIMIT - usageCount} free analyses left today
-</p>
-
-
-{usageCount >= USAGE_LIMIT && (
-  <p className="text-sm text-gray-400">
-    You’ve reached the free limit for now.  
-    This helps me understand real usage.
-  </p>
-)}
-
-
-
-      {error && <p className="text-red-500">{error}</p>}
-
-      {result && (
-        <div className="border rounded p-4 space-y-2">
-  <div className="flex items-center justify-between">
-    <span className="text-md text-gray-400">AI Score</span>
-    
-    <span className="text-lg text-gray-400 font-semibold">{result.score}/100</span>
-  </div>
-
+  {/* Header */}
   <div>
-    <span className="text-sm text-gray-300">Verdict</span>
-    <p className={`font-medium ${verdictColor(result.score)}`}>
-  {getVerdict(result.score)}
-</p>
-
+    <h1 className="text-2xl font-semibold">
+      Nexra — Startup Decision Engine
+    </h1>
+    <p className="text-sm text-neutral-500 mt-1">
+      Describe your idea. Nexra will analyze assumptions, market, risks, and give a decision.
+    </p>
   </div>
 
-  <div>
-    <span className="text-sm text-gray-400">Why?</span>
-    <p className="text-sm text-gray-300">{result.reasoning}</p>
+  {/* Idea Input Panel */}
+  <div className="bg-neutral-900/60 border border-neutral-800 rounded-xl p-6 space-y-4">
+    <p className="text-xs text-neutral-500 tracking-wide">IDEA INPUT</p>
+
+    <textarea
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      placeholder="AI tool that validates startup ideas for founders..."
+      className="w-full h-28 bg-neutral-950 border border-neutral-800 rounded-lg p-4 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
+    />
+
+    <div className="flex items-center justify-between">
+      <button
+        onClick={handleSubmit}
+        disabled={loading || !text.trim() || usageCount >= USAGE_LIMIT}
+        className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+          loading || !text.trim() || usageCount >= USAGE_LIMIT
+            ? "bg-neutral-800 text-neutral-500 cursor-not-allowed"
+            : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200"
+        }`}
+      >
+        {usageCount >= USAGE_LIMIT
+          ? "Usage limit reached"
+          : loading
+          ? "Analyzing..."
+          : "Analyze idea →"}
+      </button>
+
+      <p className="text-xs text-neutral-500">
+        {USAGE_LIMIT - usageCount} free analyses left today
+      </p>
+    </div>
+
+    {usageCount >= USAGE_LIMIT && (
+      <p className="text-xs text-neutral-600">
+        Free limit reached. This helps measure real demand.
+      </p>
+    )}
   </div>
-</div>
 
-      )}
+  {/* Error */}
+  {error && <p className="text-sm text-red-400">{error}</p>}
 
-     <div className="border rounded p-4 space-y-3">
-  <h2 className="text-lg font-semibold text-white">Previous Ideas</h2>
+  {/* AI RESULT PANEL */}
+  {result && (
+    <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 space-y-6 text-sm">
+      <p className="text-xs text-neutral-500 tracking-wide">
+        STRUCTURED ANALYSIS
+      </p>
 
-  {ideas.length === 0 && (
-    <p className="text-sm text-gray-400">No ideas yet</p>
+      {/* Score + Verdict */}
+      <div className="flex items-center justify-between">
+        <p className="text-neutral-500">Decision Score</p>
+        <p className="text-lg font-semibold text-neutral-200">
+          {result.score}/100
+        </p>
+      </div>
+
+      <div>
+        <p className="text-neutral-500">Verdict</p>
+        <p className={`font-medium ${verdictColor(result.score)}`}>
+          {getVerdict(result.score)}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-neutral-500">Reasoning</p>
+        <p className="text-neutral-300">{result.reasoning}</p>
+      </div>
+    </div>
   )}
 
-  {ideas.map((idea) => (
-    <div
-      key={idea.id}
-      className="border rounded p-3 space-y-1 text-sm"
-    >
-      <p className="text-gray-400 text-md">Score</p>
-      <p className="font-medium text-gray-300 ">{idea.score}/100</p>
+  {/* Previous Ideas Panel */}
+  <div className="bg-neutral-900/40 border border-neutral-800 rounded-xl p-6 space-y-4">
+    <p className="text-sm font-medium">Previous Analyses</p>
 
-      {idea.reasoning && (
-        <>
-          <p className="text-gray-400">Why?</p>
-          <p className="text-gray-300">{idea.reasoning}</p>
-        </>
-      )}
-    </div>
-  ))}
-</div>
+    {ideas.length === 0 && (
+      <p className="text-sm text-neutral-500">
+        Your analyzed ideas will appear here.
+      </p>
+    )}
 
+    {ideas.map((idea) => (
+      <div
+        key={idea.id}
+        className="bg-neutral-950 border border-neutral-800 rounded-lg p-4 space-y-2 text-sm"
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-neutral-500">Score</p>
+          <p className="font-medium text-neutral-300">{idea.score}/100</p>
+        </div>
 
-    </main>
+        {idea.reasoning && (
+          <>
+            <p className="text-neutral-500">Why?</p>
+            <p className="text-neutral-300">{idea.reasoning}</p>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+
+</main>
+
   );
 }
