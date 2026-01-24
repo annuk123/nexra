@@ -45,12 +45,12 @@ export default function Home() {
     <main className="min-h-screen bg-neutral-950 text-neutral-100">
       {/* Hero */}
 <Section size="md">
-  <span className="text-xs tracking-widest text-neutral-500">
+  {/* <span className="text-xs tracking-widest text-neutral-500">
     NEXRA AI
-  </span>
+  </span> */}
 
   {/* Headline */}
-  <h1 className="mt-6 text-3xl sm:text-6xl lg:text-5xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
+  <h1 className="text-3xl sm:text-6xl lg:text-5xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
     AI for startup idea validation and clarity before Commitment.
     <br />
     <span className="text-neutral-400 block mt-2 sm:mt-0">
