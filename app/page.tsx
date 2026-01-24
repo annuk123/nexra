@@ -14,6 +14,7 @@ import { TimeComparison } from "@/components/TimeComparison/TimeComparison";
 import StructureReasoning from "@/components/StructureReasoning/StructureReasoning";
 import Testimonials from "@/components/testimonial/testimonial";
 import HowAnalyze from "@/components/how-analyzes/how-analyze";
+import TimeSavedCalculator from "@/components/TimeSavedCalculater/TimeSavedCaluclater";
 
 export default function Home() {
     const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -188,6 +189,11 @@ Or waste months on the wrong one.
       <Section size="md">
         <TimeComparison />
       </Section>
+
+<Section size="md">
+  <TimeSavedCalculator />
+</Section>
+      {/* Key Questions */}
 
 <Section size="md">
   <h2 className="text-3xl sm:text-4xl font-semibold max-w-3xl">
