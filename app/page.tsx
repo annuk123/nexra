@@ -50,8 +50,8 @@ export default function Home() {
   </span>
 
   {/* Headline */}
-  <h1 className="mt-6 text-4xl sm:text-6xl lg:text-7xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
-    Structured thinking for startup decisions.
+  <h1 className="mt-6 text-3xl sm:text-6xl lg:text-5xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
+    AI for startup idea validation and clarity before Commitment.
     <br />
     <span className="text-neutral-400 block mt-2 sm:mt-0">
       Build the right startup.  
