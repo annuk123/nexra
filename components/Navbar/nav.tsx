@@ -32,70 +32,72 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur border-b border-neutral-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+<header className="fixed top-0 w-full z-50 bg-neutral-950/50 backdrop-blur border-b border-neutral-900">
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 text-sm font-medium text-neutral-100">
-            <Image src="/nexra.png" alt="Nexra AI Logo" width={32} height={32} className="h-6 w-6 object-contain" />
-            Nexra AI
-          </Link>
+    {/* Logo */}
+    <Link href="/" className="flex items-center gap-2 text-sm font-medium text-white">
+      <Image src="/nexra.png" alt="Nexra AI" width={28} height={28} className="h-6 w-6" />
+      <span className="tracking-tight">Nexra</span>
+    </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
-            <Link href="/demo" className="hover:text-neutral-100 transition">Demo</Link>
+    {/* Desktop Nav */}
+    <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
+      <Link href="/demo" className="hover:text-white transition">Product</Link>
 
-            <button
-              onClick={() => setFeedbackOpen(true)}
-              className="hover:text-neutral-100 transition"
-            >
-              Share feedback
-            </button>
+      <button
+        onClick={() => setFeedbackOpen(true)}
+        className="hover:text-white transition"
+      >
+        Feedback
+      </button>
 
-            <button
-              onClick={() => setOpen(true)}
-              className="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 rounded transition font-medium"
-            >
-              Request early access →
-            </button>
-          </nav>
+      <button
+        onClick={() => setOpen(true)}
+       className="px-4 py-2 bg-white text-black rounded-md text-xs font-medium hover:bg-neutral-200"
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-neutral-300 hover:text-white"
-          >
-            {mobileOpen ? <X size={20} /> : <MenuIcon />}
-          </button>
-        </div>
+      >
+       Request access →
+      </button>
+    </nav>
 
-        {/* Mobile Dropdown */}
-        {mobileOpen && (
-          <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
-            <Link href="/demo" className="block text-neutral-400 hover:text-white">Demo</Link>
+    {/* Mobile Menu */}
+    <button
+      onClick={() => setMobileOpen(!mobileOpen)}
+      className="md:hidden text-neutral-400 hover:text-white"
+    >
+      {mobileOpen ? <X size={20} /> : <MenuIcon />}
+    </button>
+  </div>
 
-            <button
-              onClick={() => {
-                setFeedbackOpen(true);
-                setMobileOpen(false);
-              }}
-              className="block text-neutral-400 hover:text-white"
-            >
-              Share feedback
-            </button>
+  {/* Mobile Dropdown */}
+  {mobileOpen && (
+    <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
+      <Link href="/demo" className="block text-neutral-400 hover:text-white">Product</Link>
 
-            <button
-              onClick={() => {
-                setOpen(true);
-                setMobileOpen(false);
-              }}
-              className="w-full px-3 py-2 bg-neutral-100 text-neutral-900 rounded font-medium"
-            >
-              Request early access →
-            </button>
-          </div>
-        )}
-      </header>
+      <button
+        onClick={() => {
+          setFeedbackOpen(true);
+          setMobileOpen(false);
+        }}
+        className="block text-neutral-400 hover:text-white"
+      >
+        Feedback
+      </button>
+
+      <button
+        onClick={() => {
+          setOpen(true);
+          setMobileOpen(false);
+        }}
+        className="w-full px-4 py-2 bg-white/10 border border-white/15 text-white rounded-md"
+      >
+        Start session →
+      </button>
+    </div>
+  )}
+</header>
+
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 

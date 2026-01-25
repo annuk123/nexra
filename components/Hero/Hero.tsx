@@ -6,6 +6,7 @@ import { useMutation } from "convex/react";
 import Link from "next/link";
 import GridSparks from "./GridSparks";
 import FeedbackModal from "../FeedbackPage/Feedback";
+import { ArrowRight, Play } from "lucide-react";
 
 export default function Hero() {
     const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -62,50 +63,72 @@ export default function Hero() {
       {/* ===== Content ===== */}
       <div className="relative max-w-5xl mx-auto px-6 pt-40 text-center">
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight 
-          bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
 
-          Validate startup ideas  
-          <br className="hidden sm:block" />
-          before you waste months
-        </h1>
 
-        <p className="mt-6 text-neutral-400 text-lg max-w-xl mx-auto">
-          Nexra analyzes blind spots, risks, and what to build — so you don’t build the wrong startup.
-        </p>
+<h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight 
+  bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
 
-        <div className="mt-8 flex justify-center gap-4">
-          <button 
-          onClick={() => {
-                setOpen(true);
-                // setMobileOpen(false);
-              }}
-          className="bg-white text-black px-8 py-3.5 rounded-lg font-medium text-sm
-            shadow-[0_0_0_0_rgba(124,58,237,0.4)]
-            hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
-            transition">
-            Validate my idea
-          </button>
+  Clarity Before Commitment  
+  <br className="hidden sm:block" />
+  for Startup Founders
+</h1>
 
-          <Link
-            href="/demo"
-            className="px-8 py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
-              bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
-            View demo
-          </Link>
-        </div>
+<p className="mt-4 text-neutral-400 text-lg max-w-xl mx-auto">
+ Nexra helps founders think clearly about product, market, and execution — so you build with conviction, not guesswork.
+</p>
 
-        {/* Terminal Card */}
-        <pre className="mt-12 mx-auto max-w-3xl bg-black/60 backdrop-blur border border-neutral-800 
-          rounded-xl p-5 text-sm text-neutral-300 font-mono shadow-[0_0_40px_rgba(124,58,237,0.15)] text-left">
-{`$ nexra analyze "AI startup idea validator"
+<p className="mt-2 text-xs text-neutral-500">
+  Built for solo founders, indie hackers, and early-stage teams.
+</p>
 
-Idea Score: 83
-Risk: High competition
-Recommendation: Narrow ICP`}
+  <div className="mt-5 flex justify-center gap-4">
+    <button 
+      onClick={() => setOpen(true)}
+      className="bg-white text-black px-8 py-3.5 rounded-lg font-medium text-sm
+        shadow-[0_0_0_0_rgba(124,58,237,0.4)]
+        hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
+        transition">
+      Clarify my startup 
+      {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+    </button>
+
+    <Link
+      href="/demo"
+      className="px-8 py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
+        bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
+        Explore Nexra 
+        {/* <Play className="ml-2 h-4 w-4" /> */}
+
+    </Link>
+  </div>
+
+  {/* Terminal Card */}
+  
+<div className="mt-8 mb-5 mx-auto max-w-2xl bg-black/60 backdrop-blur border border-neutral-800 
+  rounded-xl p-5 shadow-[0_0_40px_rgba(124,58,237,0.15)] text-left">
+
+  <div className="flex gap-2 mb-3">
+    <span className="w-3 h-3 bg-red-500 rounded-full" />
+    <span className="w-3 h-3 bg-yellow-500 rounded-full" />
+    <span className="w-3 h-3 bg-green-500 rounded-full" />
+  </div>
+
+  <pre className="text-xs sm:text-sm text-neutral-300 font-mono 
+    whitespace-pre-wrap sm:whitespace-pre overflow-x-auto break-word">
+{`$ nexra think "AI startup idea validator"
+
+Clarity Index: 0.83
+Decision Risk: High
+Strategic Direction: Narrow ICP and define evaluation framework`}
 <span className="animate-pulse">▍</span>
-        </pre>
-      </div>
+  </pre>
+
+</div>
+
+
+
+</div>
+
 
        <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       {open && (
