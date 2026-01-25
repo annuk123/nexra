@@ -35,15 +35,37 @@
 
 //   return res.json();
 // }
-
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
+export type RuleBreakdown = {
+  market: number;
+  moat: number;
+  execution: number;
+  founder_fit: number;
+  revenue: number;
+};
+
 export type IdeaResponse = {
   id: number;
+  text: string;
   text_length: number;
-  score: number;
-  reasoning: string;
+
+  decision_score: number;
+  verdict: "BUILD" | "PIVOT" | "KILL";
+  confidence: number;
+
+  rule_score: number;
+  ai_score: number;
+  // rule_breakdown: RuleBreakdown;
+
+  assumptions: string[];
+  market_analysis: string;
+  competitors: string[];
+  risks: string[];
+  roadmap: string[];
+  rule_breakdown?: Record<string, number>;
+  created_at: string;
 };
 
 export type IdeasPageResponse = {
@@ -61,7 +83,8 @@ export async function analyzeIdea(text: string): Promise<IdeaResponse> {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to analyze idea");
+    const err = await res.text();
+    throw new Error(`Failed to analyze idea: ${err}`);
   }
 
   return res.json();
@@ -77,7 +100,8 @@ export async function getIdeas(
   );
 
   if (!res.ok) {
-    throw new Error("Failed to fetch ideas");
+    const err = await res.text();
+    throw new Error(`Failed to fetch ideas: ${err}`);
   }
 
   return res.json();

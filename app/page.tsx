@@ -15,6 +15,7 @@ import StructureReasoning from "@/components/StructureReasoning/StructureReasoni
 import Testimonials from "@/components/testimonial/testimonial";
 import HowAnalyze from "@/components/how-analyzes/how-analyze";
 import TimeSavedCalculator from "@/components/TimeSavedCalculater/TimeSavedCaluclater";
+import Hero from "@/components/Hero/Hero";
 
 export default function Home() {
     const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -42,149 +43,9 @@ export default function Home() {
       }
     };
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100">
+    <main className=" bg-neutral-950 text-neutral-100">
       {/* Hero */}
-<Section size="md">
-  {/* <span className="text-xs tracking-widest text-neutral-500">
-    NEXRA AI
-  </span> */}
-
-  {/* Headline */}
-  <h1 className="text-3xl sm:text-6xl lg:text-5xl font-semibold leading-tight sm:leading-[1.05] max-w-5xl">
-    AI for startup idea validation and clarity before Commitment.
-    <br />
-    <span className="text-neutral-400 block mt-2 sm:mt-0">
-      Build the right startup.  
-      Or waste months on the wrong one.
-    </span>
-  </h1>
-
-  <div className="w-12 h-px bg-neutral-700 my-6 sm:my-8" />
-
-  <p className="mt-2 text-xs text-neutral-500">
-    Trusted by founders to kill bad ideas fast.
-  </p>
-
-  <p className="text-base sm:text-lg text-neutral-300 max-w-2xl leading-relaxed mt-3">
-    Nexra analyzes your idea, surfaces blind spots, and maps what to build — before you waste time, money, and momentum.
-  </p>
-
-  <p className="mt-3 text-sm text-neutral-500 max-w-xl">
-    Structured reasoning for founders who want signal, not vibes.
-  </p>
-
-  <p className="mt-2 text-sm text-neutral-400 max-w-xl">
-    Most founders realize their idea is bad after shipping. Nexra tells you before.
-  </p>
-
-  {/* CTA Buttons */}
-  <div className="mt-8 flex flex-row gap-3 sm:gap-4 w-full max-w-md">
-    <button
-      onClick={() => setOpen(true)}
-      className="flex-1 inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm rounded-lg
-                 bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition font-medium"
-    >
-      Request access →
-    </button>
-
-    <Link
-      href="/demo"
-      className="flex-1 inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm rounded-lg
-                 border border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-neutral-100 transition"
-    >
-      View demo →
-    </Link>
-  </div>
-
-  <p className="mt-3 text-xs text-neutral-500">
-    Join builders validating ideas before building.
-  </p>
-</Section>
-
-{open && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
-    onClick={() => setOpen(false)}
-  >
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="relative bg-neutral-950 border border-neutral-800 rounded-xl p-6 w-full max-w-md shadow-2xl"
-    >
-      {/* Close */}
-      <button
-        onClick={() => setOpen(false)}
-        className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-300 transition text-sm"
-      >
-        ✕
-      </button>
-
-      {/* Header */}
-      <h3 className="text-lg font-semibold">
-        Join the waitlist
-      </h3>
-      <p className="text-sm text-neutral-400 mt-1">
-        Early access for founders. No marketing emails.
-      </p>
-
-      {/* SUCCESS */}
-      {status === "success" && (
-        <div className="mt-6">
-          <p className="text-neutral-200 font-medium">
-            You’re on the list.
-          </p>
-          <p className="mt-2 text-sm text-neutral-500">
-            We’ll email you when there’s something meaningful.
-          </p>
-        </div>
-      )}
-
-      {/* FORM */}
-      {status === "idle" && (
-        <form
-          onSubmit={handleSubmit}
-          className="mt-6 flex flex-col sm:flex-row gap-3"
-        >
-          <input
-            type="email"
-            required
-            placeholder="you@startup.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
-          />
-
-          <button
-            type="submit"
-            className="px-5 py-3 text-sm rounded-lg bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition font-medium"
-          >
-            Join →
-          </button>
-        </form>
-      )}
-
-      {/* ERROR */}
-      {status === "error" && (
-        <p className="mt-4 text-sm text-red-400">
-          Something went wrong. Try again.
-        </p>
-      )}
-
-      {/* Footer */}
-      <p className="mt-6 text-xs text-neutral-500">
-        No newsletters. Just product updates.
-      </p>
-
-      <p className="mt-2 text-xs text-neutral-500">
-        By joining, you agree to our{" "}
-        <Link href="/privacy" className="underline hover:text-neutral-300">
-          Privacy Policy
-        </Link>
-        .
-      </p>
-    </div>
-  </div>
-)}
-
+      <Hero />
 
 
 

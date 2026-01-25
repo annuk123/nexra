@@ -17,11 +17,24 @@ class IdeaIn(BaseModel):
     text: str
 
 # ---------- Response models ----------
+# class IdeaOut(BaseModel):
+#     id: int
+#     text_length: int
+#     score: int
+#     reasoning: str | None = None
+
 class IdeaOut(BaseModel):
     id: int
+    text: str
     text_length: int
-    score: int
-    reasoning: str | None = None
+    decision_score: int
+    verdict: str
+    assumptions: list[str]
+    market_analysis: str
+    competitors: list[str]
+    risks: list[str]
+    roadmap: list[str]
+    created_at: str
 
 class IdeasPage(BaseModel):
     total: int
