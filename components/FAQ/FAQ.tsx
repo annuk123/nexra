@@ -40,7 +40,7 @@ export default function FAQ() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
-    <section className="max-w-3xl mx-auto px-6 py-32">
+    <section >
       <span className="text-xs tracking-widest text-neutral-500">
         FAQ
       </span>

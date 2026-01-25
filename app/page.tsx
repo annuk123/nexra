@@ -41,9 +41,9 @@ export default function Home() {
       }
     };
   return (
-    <main className=" bg-black text-neutral-100 min-h-screen">
+    <main className=" bg-black text-neutral-100">
       {/* Hero */}
-      <Hero />
+      <Hero  />
       <Section size="md">
         <TimeComparison />
       </Section>
@@ -109,7 +109,7 @@ export default function Home() {
 
       {/* Feedback */}
           <Section size="md">
-      <span className="text-xs tracking-widest text-neutral-500">
+      <span className="text-xs tracking-widest text-neutral-500 py-7">
         FEEDBACK
       </span>
 

@@ -16,7 +16,7 @@ const steps = [
 
 
   return (
-    <Section>
+    <div>
       <h2 className="text-3xl sm:text-4xl font-semibold max-w-3xl">
         How Nexra thinks about your startup idea
       </h2>
@@ -54,7 +54,7 @@ const steps = [
       <p className="mt-8 text-sm text-neutral-400 max-w-xl">
         Think of Nexra as a startup decision engine, not another AI chatbot.
       </p>
-    </Section>
+    </div>
   );
 }
 

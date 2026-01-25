@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function HowAnalyze() {
   return (
-      <Section>
+      <div>
       <h2 className="text-3xl sm:text-4xl font-semibold max-w-3xl">
         See how Nexra analyzes a real startup idea
       </h2>
@@ -75,6 +75,6 @@ export default function HowAnalyze() {
         </div>
     
       </div>
-    </Section>
+    </div>
   );
 }

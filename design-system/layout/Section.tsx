@@ -18,8 +18,8 @@ export function Section({
       className={`
         ${sizes[size]}
         mx-auto 
-        px-4 sm:px-6 min-h-screen
-        ${hero ? "pt-24 sm:pt-28 lg:pt-32" : "py-8 sm:py-12 lg:py-16"}
+        px-4 sm:px-6
+        ${hero ? "min-h-screen pt-24 sm:pt-28 lg:pt-32" : "py-20 sm:py-28"}
       `}
     >
       {children}
