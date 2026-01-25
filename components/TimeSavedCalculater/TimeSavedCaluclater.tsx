@@ -10,7 +10,7 @@ export default function TimeSavedCalculator() {
 
   return (
     
-    <div className=" bg-neutral-950 border border-neutral-800 rounded-2xl">
+    <div className=" p-8 bg-neutral-950 border border-neutral-800 rounded-2xl">
       
       <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-100">
         How much time do you usually waste before realizing an idea won’t work?
