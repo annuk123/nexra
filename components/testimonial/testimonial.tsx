@@ -43,6 +43,7 @@ export default function Testimonials() {
     const [active, setActive] = useState(0);
   
   return (
+    
     <div className="relative">
   <div className="pointer-events-none absolute left-0 top-0 h-full w-16 bg-linear-to-r from-black/30 to-transparent z-10" />
   <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-linear-to-l from-black/30 to-transparent z-10" />

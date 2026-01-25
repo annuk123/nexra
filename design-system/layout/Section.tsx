@@ -17,8 +17,8 @@ export function Section({
     <section
       className={`
         ${sizes[size]}
-        mx-auto
-        px-4 sm:px-6
+        mx-auto 
+        px-4 sm:px-6 min-h-screen
         ${hero ? "pt-24 sm:pt-28 lg:pt-32" : "py-8 sm:py-12 lg:py-16"}
       `}
     >

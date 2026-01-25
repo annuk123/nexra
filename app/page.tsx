@@ -25,8 +25,6 @@ export default function Home() {
     const [status, setStatus] = React.useState<
       "idle" | "success" | "error"
     >("idle");
-    const [open, setOpen] = useState(false);
-
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
   
@@ -43,12 +41,9 @@ export default function Home() {
       }
     };
   return (
-    <main className=" bg-neutral-950 text-neutral-100">
+    <main className=" bg-black text-neutral-100 min-h-screen">
       {/* Hero */}
       <Hero />
-
-
-
       <Section size="md">
         <TimeComparison />
       </Section>

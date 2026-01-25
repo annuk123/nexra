@@ -35,6 +35,8 @@ export default function Hero() {
         };
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
+    
+
       
       {/* ===== Premium Background Layers ===== */}
 
@@ -65,13 +67,23 @@ export default function Hero() {
 
 
 
-<h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight 
+{/* <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight 
   bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
 
   Clarity Before Commitment  
   <br className="hidden sm:block" />
-  for Startup Founders
+   <span className="block sm:inline">for Startup Founders</span>
+</h1> */}
+
+<h1 className="text-5xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight 
+  bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
+
+  Clarity Before Commitment
+  <span className="block text-neutral-400 text-2xl sm:text-3xl font-medium mt-2 sm:hidden">
+    for startup founders
+  </span>
 </h1>
+
 
 <p className="mt-4 text-neutral-400 text-lg max-w-xl mx-auto">
  Nexra helps founders think clearly about product, market, and execution — so you build with conviction, not guesswork.
@@ -84,18 +96,18 @@ export default function Hero() {
   <div className="mt-5 flex justify-center gap-4">
     <button 
       onClick={() => setOpen(true)}
-      className="bg-white text-black px-8 py-3.5 rounded-lg font-medium text-sm
-        shadow-[0_0_0_0_rgba(124,58,237,0.4)]
-        hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
-        transition">
+      className="bg-white text-black px-6 py-3 sm:px-8 sm:py-3.5 rounded-lg font-medium text-sm
+  shadow-[0_0_0_0_rgba(124,58,237,0.4)]
+  hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
+  transition">
       Clarify my startup 
       {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
     </button>
 
     <Link
       href="/demo"
-      className="px-8 py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
-        bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
+       className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
+  bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
         Explore Nexra 
         {/* <Play className="ml-2 h-4 w-4" /> */}
 
@@ -115,7 +127,9 @@ export default function Hero() {
 
   <pre className="text-xs sm:text-sm text-neutral-300 font-mono 
     whitespace-pre-wrap sm:whitespace-pre overflow-x-auto break-word">
-{`$ nexra think "AI startup idea validator"
+{`$ nexra think
+> "AI startup idea validator"
+    Idea: AI tool that helps indie hackers validate startup ideas
 
 Clarity Index: 0.83
 Decision Risk: High

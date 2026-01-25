@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 
 export function TimeComparison() {
   return (
-    <section className="py-24">
+    <section className="py-24 ">
       <h2 className="text-3xl sm:text-4xl font-semibold max-w-3xl">
         Most founders waste months before realizing their idea was wrong.
       </h2>

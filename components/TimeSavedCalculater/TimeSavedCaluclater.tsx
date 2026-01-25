@@ -1,4 +1,5 @@
 "use client";
+import { s } from "framer-motion/client";
 import { useState } from "react";
 
 export default function TimeSavedCalculator() {
@@ -8,6 +9,7 @@ export default function TimeSavedCalculator() {
   const hoursSaved = daysSaved * 8;
 
   return (
+    
     <div className="p-8 bg-neutral-950 border border-neutral-800 rounded-2xl">
       
       <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-100">
