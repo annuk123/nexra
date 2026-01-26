@@ -86,11 +86,11 @@ export default function Hero() {
 
 
 <p className="mt-4 text-neutral-400 text-lg max-w-xl mx-auto">
- Nexra helps founders think clearly about product, market, and execution — so you build with conviction, not guesswork.
+ Nexra helps founders reason about product, market, and execution — so decisions are based on thinking, not instinct.
 </p>
 
 <p className="mt-2 text-xs text-neutral-500">
-  Built for solo founders, indie hackers, and early-stage teams.
+ Built for solo founders and early-stage teams.
 </p>
 
   <div className="mt-5 flex justify-center gap-4">
@@ -100,7 +100,7 @@ export default function Hero() {
   shadow-[0_0_0_0_rgba(124,58,237,0.4)]
   hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
   transition">
-      Clarify my startup 
+      Start a session 
       {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
     </button>
 
@@ -108,7 +108,7 @@ export default function Hero() {
       href="/demo"
        className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
   bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
-        Explore Nexra 
+        See how it works 
         {/* <Play className="ml-2 h-4 w-4" /> */}
 
     </Link>
