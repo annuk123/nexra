@@ -18,6 +18,7 @@
   100% { background-position: 0% 50%; }
 }
 
+
 .spark {
   position: absolute;
   width: 3px;
@@ -41,6 +42,14 @@
     transform: translate(300px, 200px);
     opacity: 0;
   }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
 }
 
 

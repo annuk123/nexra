@@ -118,47 +118,46 @@ from app.domain.ideas.decision_engine import nexra_decision_engine
 # -----------------------------
 
 def analyze_idea_text(text: str, session: Session) -> dict:
-    """
-    Core Nexra pipeline:
-    1. Run Hybrid Decision Engine (rules + AI)
-    2. Save structured analysis to DB
-    3. Return API-safe response
-    """
-
-    # Run Nexra Hybrid Brain
     result = nexra_decision_engine(text)
 
-    # Persist to DB
+    confidence = result["confidence"]
+
     idea = Idea(
         text=text,
         text_length=len(text),
         decision_score=result["decision_score"],
         verdict=result["verdict"],
+        confidence=confidence,
         assumptions=result["assumptions"],
         market_analysis=result["market_analysis"],
         competitors=result["competitors"],
         risks=result["risks"],
         roadmap=result["roadmap"],
-        
+        rule_breakdown=result["rule_breakdown"],
     )
 
     session.add(idea)
     session.commit()
     session.refresh(idea)
 
-    # Return structured API response
     return {
         "id": idea.id,
         "text": idea.text,
-         "text_length": idea.text_length,
+        "text_length": idea.text_length,
         "decision_score": idea.decision_score,
         "verdict": idea.verdict,
+
+        # 🔥 ADD THESE
+        "confidence": confidence,
+        "rule_score": result["rule_score"],
+        "ai_score": result["ai_score"],
+        "rule_breakdown": result["rule_breakdown"],
+
         "assumptions": idea.assumptions,
         "market_analysis": idea.market_analysis,
         "competitors": idea.competitors,
         "risks": idea.risks,
         "roadmap": idea.roadmap,
-         "rule_breakdown": result["rule_breakdown"],
         "created_at": idea.created_at.isoformat(),
     }
 
@@ -218,6 +217,8 @@ def _idea_to_dict(idea: Idea) -> Dict:
         "competitors": idea.competitors,
         "risks": idea.risks,
         "roadmap": idea.roadmap,
-        "rule_breakdown": result["rule_breakdown"],
+        "rule_breakdown": idea.rule_breakdown,
+        "confidence": idea.confidence,
+
         "created_at": idea.created_at.isoformat(),
     }

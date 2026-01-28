@@ -66,15 +66,6 @@ export default function Hero() {
       <div className="relative max-w-5xl mx-auto px-6 pt-40 text-center">
 
 
-
-{/* <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight 
-  bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
-
-  Clarity Before Commitment  
-  <br className="hidden sm:block" />
-   <span className="block sm:inline">for Startup Founders</span>
-</h1> */}
-
 <h1 className="text-5xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight 
   bg-linear-to-b from-white to-neutral-300 bg-clip-text text-transparent">
 
@@ -88,6 +79,10 @@ export default function Hero() {
 <p className="mt-4 text-neutral-400 text-lg max-w-xl mx-auto">
  Nexra helps founders reason about product, market, and execution — so decisions are based on thinking, not instinct.
 </p>
+
+{/* <p className="mt-2 text-sm text-neutral-500">
+  Paste your idea → get structured analysis → discuss strategy with an AI thinking partner.
+</p> */}
 
 <p className="mt-2 text-xs text-neutral-500">
  Built for solo founders and early-stage teams.
@@ -118,6 +113,7 @@ export default function Hero() {
   
 <div className="mt-8 mb-5 mx-auto max-w-2xl bg-black/60 backdrop-blur border border-neutral-800 
   rounded-xl p-5 shadow-[0_0_40px_rgba(124,58,237,0.15)] text-left">
+ <p className="text-xs text-neutral-500 mb-2">Example Nexra output</p>
 
   <div className="flex gap-2 mb-3">
     <span className="w-3 h-3 bg-red-500 rounded-full" />

@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 from sqlalchemy import Column, JSON
@@ -14,6 +14,7 @@ class Idea(SQLModel, table=True):
     # Core Nexra Decision Engine fields
     decision_score: int = Field(index=True)
     verdict: str = Field(index=True)
+    confidence: int = Field(default=0, index=True)
 
     # Structured reasoning (JSON)
     assumptions: List[str] = Field(sa_column=Column(JSON), default_factory=list)
@@ -21,6 +22,9 @@ class Idea(SQLModel, table=True):
     competitors: List[str] = Field(sa_column=Column(JSON), default_factory=list)
     risks: List[str] = Field(sa_column=Column(JSON), default_factory=list)
     roadmap: List[str] = Field(sa_column=Column(JSON), default_factory=list)
+
+    # Decision engine breakdown
+    rule_breakdown: Dict[str, int] = Field(sa_column=Column(JSON), default_factory=dict)
 
     # Metadata
     created_at: datetime = Field(default_factory=datetime.utcnow)

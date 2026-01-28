@@ -23,18 +23,28 @@ class IdeaIn(BaseModel):
 #     score: int
 #     reasoning: str | None = None
 
+from typing import Dict
+
 class IdeaOut(BaseModel):
     id: int
     text: str
     text_length: int
+
     decision_score: int
     verdict: str
+    confidence: int
+
+    rule_score: int
+    ai_score: int
+    rule_breakdown: Dict[str, int]
+
     assumptions: list[str]
     market_analysis: str
     competitors: list[str]
     risks: list[str]
     roadmap: list[str]
     created_at: str
+
 
 class IdeasPage(BaseModel):
     total: int

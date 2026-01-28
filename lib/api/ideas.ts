@@ -35,14 +35,14 @@
 
 //   return res.json();
 // }
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-
 export type RuleBreakdown = {
   market: number;
-  moat: number;
   execution: number;
   founder_fit: number;
+  moat: number;
   revenue: number;
 };
 
@@ -53,20 +53,21 @@ export type IdeaResponse = {
 
   decision_score: number;
   verdict: "BUILD" | "PIVOT" | "KILL";
-  confidence: number;
+  confidence?: number;
 
   rule_score: number;
   ai_score: number;
-  // rule_breakdown: RuleBreakdown;
 
   assumptions: string[];
   market_analysis: string;
   competitors: string[];
   risks: string[];
   roadmap: string[];
-  rule_breakdown?: Record<string, number>;
+
+  rule_breakdown?: RuleBreakdown;
   created_at: string;
 };
+
 
 export type IdeasPageResponse = {
   total: number;

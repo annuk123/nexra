@@ -6,6 +6,7 @@ import { ConvexAppProvider } from "@/components/ConvexProvider/ConvexProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/Navbar/nav";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black `}
       >
+         <Providers>
         <ConvexAppProvider>
           <Navbar />
           {children}
@@ -72,6 +74,7 @@ export default function RootLayout({
           <SpeedInsights />
           <Footer />
         </ConvexAppProvider>
+        </Providers>
       </body>
     </html>
   );

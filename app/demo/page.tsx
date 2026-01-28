@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { analyzeIdea, IdeaResponse } from "../lib/api/ideas";
+import { analyzeIdea, IdeaResponse } from "../../lib/api/ideas";
 
 const USAGE_LIMIT = 5;
 const STORAGE_KEY = "nexra_usage";
@@ -79,10 +79,11 @@ export default function Demo() {
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-20 text-neutral-100 space-y-12">
-
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Nexra — Startup Decision Engine</h1>
+        <h1 className="text-2xl font-semibold">
+          Nexra — Startup Decision Engine
+        </h1>
         <p className="text-sm text-neutral-500">
           Paste your startup idea. Nexra will give a structured decision.
         </p>
@@ -122,7 +123,6 @@ export default function Demo() {
       {/* RESULT PANEL */}
       {result && (
         <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 space-y-8">
-
           <p className="text-xs text-neutral-500 tracking-wide">
             NEXRA ANALYSIS (v1)
           </p>
@@ -130,7 +130,9 @@ export default function Demo() {
           {/* Verdict Card */}
           <div className="flex items-center justify-between">
             <p className="text-neutral-500">Verdict</p>
-            <p className={`text-xl font-semibold ${verdictColor(result.verdict)}`}>
+            <p
+              className={`text-xl font-semibold ${verdictColor(result.verdict)}`}
+            >
               {result.verdict}
             </p>
           </div>
@@ -147,28 +149,34 @@ export default function Demo() {
             <p className="text-neutral-300">{result.confidence}%</p>
           </div>
 
-{/* Metrics */}
-<div className="grid grid-cols-2 gap-3 text-xs pt-2">
-  {Object.entries(result?.rule_breakdown || {}).map(([key, value]) => (
-    <div key={key} className="flex justify-between bg-neutral-900 p-2 rounded">
-      <span className="capitalize text-neutral-400">{key}</span>
-      <span className="text-neutral-200">{value}/10</span>
-    </div>
-  ))}
+          {/* Metrics */}
+          <div className="grid grid-cols-2 gap-3 text-xs pt-2">
+            {Object.entries(result?.rule_breakdown || {}).map(
+              ([key, value]) => (
+                <div
+                  key={key}
+                  className="flex justify-between bg-neutral-900 p-2 rounded"
+                >
+                  <span className="capitalize text-neutral-400">{key}</span>
+                  <span className="text-neutral-200">{value}/10</span>
+                </div>
+              ),
+            )}
 
- {result?.rule_breakdown && (
-  <div className="grid grid-cols-2 gap-3 text-xs pt-2">
-    {Object.entries(result.rule_breakdown).map(([key, value]) => (
-      <div key={key} className="flex justify-between bg-neutral-900 p-2 rounded">
-        <span className="capitalize text-neutral-400">{key}</span>
-        <span className="text-neutral-200">{value}/10</span>
-      </div>
-    ))}
-  </div>
-)}
-
-</div>
-
+            {result?.rule_breakdown && (
+              <div className="grid grid-cols-2 gap-3 text-xs pt-2">
+                {Object.entries(result.rule_breakdown).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex justify-between bg-neutral-900 p-2 rounded"
+                  >
+                    <span className="capitalize text-neutral-400">{key}</span>
+                    <span className="text-neutral-200">{value}/10</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Roadmap */}
           <div>

@@ -7,17 +7,21 @@ export default function TimeSavedCalculator() {
 
   const daysSaved = months * 30;
   const hoursSaved = daysSaved * 8;
+const costPerHour = 50
+const moneySaved = hoursSaved * costPerHour
 
   return (
     
     <div className=" p-8 bg-neutral-950 border border-neutral-800 rounded-2xl">
       
       <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-100">
-        How much time do you usually waste before realizing an idea won’t work?
+        How long do you usually build before realizing an idea won’t work?
+
       </h2>
 
       <p className="mt-3 text-neutral-400">
-        Most founders build for months before validating. See what that costs.
+       Most founders validate after shipping, not before building.
+
       </p>
 
       {/* Slider */}
@@ -44,21 +48,25 @@ export default function TimeSavedCalculator() {
 
       {/* Result */}
       <div className="mt-8 p-6 bg-neutral-900/60 border border-neutral-800 rounded-xl">
-        <p className="text-lg text-neutral-100">
-          You could save{" "}
-          <span className="font-semibold text-emerald-400">
-            {daysSaved} days
-          </span>
-        </p>
+       <p className="text-lg text-neutral-100">
+  You could save{" "}
+  <span className="font-semibold text-emerald-400">
+    {daysSaved} days
+  </span>
+</p>
 
-        <p className="mt-1 text-sm text-neutral-400">
-          That’s roughly{" "}
-          <span className="text-neutral-200">{hoursSaved} hours</span> of founder time.
-        </p>
+<p className="mt-1 text-sm text-neutral-400">
+  That’s roughly <span className="text-neutral-200">{hoursSaved} hours</span> of founder time.
+</p>
 
-        <p className="mt-3 text-xs text-neutral-500">
-          Nexra helps you decide before you waste it.
-        </p>
+<p className="mt-1 text-sm text-neutral-400">
+  ≈ ${moneySaved.toLocaleString()} in opportunity cost.
+</p>
+
+<p className="mt-3 text-xs text-neutral-500">
+  Nexra helps you reach clarity before you burn it.
+</p>
+
       </div>
     </div>
   );
