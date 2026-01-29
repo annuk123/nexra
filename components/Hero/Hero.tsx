@@ -80,9 +80,6 @@ export default function Hero() {
  Nexra helps founders reason about product, market, and execution — so decisions are based on thinking, not instinct.
 </p>
 
-{/* <p className="mt-2 text-sm text-neutral-500">
-  Paste your idea → get structured analysis → discuss strategy with an AI thinking partner.
-</p> */}
 
 <p className="mt-2 text-xs text-neutral-500">
  Built for solo founders and early-stage teams.
@@ -96,11 +93,10 @@ export default function Hero() {
   hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
   transition">
       Start a session 
-      {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
     </button>
 
     <Link
-      href="/demo"
+      href="/nexra-engine-v1"
        className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
   bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
         See how it works 
@@ -113,8 +109,7 @@ export default function Hero() {
   
 <div className="mt-8 mb-5 mx-auto max-w-2xl bg-black/60 backdrop-blur border border-neutral-800 
   rounded-xl p-5 shadow-[0_0_40px_rgba(124,58,237,0.15)] text-left">
- <p className="text-xs text-neutral-500 mb-2">Example Nexra output</p>
-
+    
   <div className="flex gap-2 mb-3">
     <span className="w-3 h-3 bg-red-500 rounded-full" />
     <span className="w-3 h-3 bg-yellow-500 rounded-full" />

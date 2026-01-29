@@ -1,5 +1,6 @@
 import { Message } from "./ChatPanel";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
 
 export default function ChatMessage({ msg }: { msg: Message }) {
   const isUser = msg.role === "user";
@@ -27,13 +28,33 @@ export default function ChatMessage({ msg }: { msg: Message }) {
         </p>
 
         <div
-          className={`px-4 py-2 rounded-xl text-sm leading-relaxed ${
+          className={`px-4 py-2 rounded-xl text-sm leading-relaxed whitespace-pre-wrap ${
             isUser
               ? "bg-neutral-800 text-neutral-100 rounded-br-none"
-              : "bg-neutral-900 text-neutral-200 rounded-bl-none border border-neutral-800/80"
+              : "bg-neutral-900 text-neutral-200 rounded-bl-none border border-neutral-800/80 mb-10"
           }`}
         >
-          {msg.content}
+          {/* Render markdown for Nexra */}
+          {!isUser ? (
+            <ReactMarkdown
+              components={{
+                strong: ({ children }) => (
+                  <strong className="text-yellow-400 font-semibold">
+                    {children}
+                  </strong>
+                ),
+                li: ({ children }) => (
+                  <li className="ml-4  list-disc text-neutral-300">
+                    {children}
+                  </li>
+                ),
+              }}
+            >
+              {msg.content}
+            </ReactMarkdown>
+          ) : (
+            msg.content
+          )}
         </div>
       </div>
 

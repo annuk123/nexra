@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import NexraModeToggle from "./NexraModeToggle";
 import ScoreBar from "./ScoreBar";
 import VerdictCard from "./VerdictCard";
 import { useNexraStore } from "@/lib/nexraStore";
@@ -8,8 +10,8 @@ function nexraSummary(m: any) {
   if (m.decision_score >= 70)
     return "This is strong. I'd lean toward building, but validate distribution early.";
   if (m.decision_score >= 40)
-    return "This has potential, but the wedge is weak. I’d pivot positioning.";
-  return "This is risky. I’d rethink the problem or narrow the market.";
+    return "This has potential, but the wedge is weak. I'd pivot positioning.";
+  return "This is risky. I'd rethink the problem or narrow the market.";
 }
 
 export default function MetricsPanel() {
@@ -21,6 +23,7 @@ export default function MetricsPanel() {
 
   const m = metrics;
   const summary = nexraSummary(m);
+
 
   return (
     <div className="backdrop-blur shadow-xl space-y-6">
@@ -52,6 +55,7 @@ export default function MetricsPanel() {
   {/* Left text block */}
   <div className="space-y-1">
     <p className="text-sm font-medium text-neutral-300">Decision Score</p>
+    <NexraModeToggle />
     <p className="text-sm font-medium text-neutral-300 mt-8">Confidence: {m.confidence}%</p>
   </div>
 

@@ -16,6 +16,7 @@ import Testimonials from "@/components/testimonial/testimonial";
 import HowAnalyze from "@/components/how-analyzes/how-analyze";
 import TimeSavedCalculator from "@/components/TimeSavedCalculater/TimeSavedCaluclater";
 import Hero from "@/components/Hero/Hero";
+import Footer from "@/components/Footer/footer";
 
 export default function Home() {
     const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -231,7 +232,7 @@ export default function Home() {
 </Section>
 
 
-
+ <Footer />
     </main>
   );
 }

@@ -43,41 +43,85 @@
 // }
 
 // lib/nexraNarrator.ts
-// lib/nexraNarrator.ts
 
-export function narrateIdea(data: any): string[] {
-  const score = data.decision_score;
-  const verdict = data.verdict;
+// import { NexraMode } from "./nexraStore";
 
-  const lines: string[] = [];
+// function isLikelyIdea(input: any): boolean {
+//   if (!input) return false;
 
-  // 1️⃣ Direct Answer
-  lines.push(`Decision: ${verdict}. Score: ${score}/100.`);
+//   const text = typeof input === "string" ? input : input.idea || input.text;
 
-  // 2️⃣ Explanation (Brutal but Calm)
-  if (score < 30)
-    lines.push("Why: Market urgency is weak and differentiation is unclear.");
-  else if (score < 70)
-    lines.push("Why: There is some signal, but distribution and positioning are risky.");
-  else
-    lines.push("Why: Market signal and execution feasibility look strong.");
+//   if (!text || text.length < 20) return false;
 
-  // 3️⃣ How to Overcome (Paths)
-  lines.push("How to improve this idea:");
+//   const ideaKeywords = [
+//     "build",
+//     "startup",
+//     "app",
+//     "platform",
+//     "tool",
+//     "SaaS",
+//     "AI",
+//     "market",
+//     "users",
+//     "problem",
+//   ];
 
-  lines.push("• Safe path: Interview 10 target users and validate willingness to pay.");
-  lines.push("• Balanced path: Build a focused MVP and test distribution on Twitter/Indie Hackers.");
-  lines.push("• Aggressive path: Ship in 7 days and push distribution hard.");
+//   return ideaKeywords.some(k => text.toLowerCase().includes(k));
+// }
 
-  // 4️⃣ Nexra Recommendation (Highlight One)
-  if (score < 50)
-    lines.push("My recommendation: Start with the Safe path. Data before code.");
-  else
-    lines.push("My recommendation: Follow the Balanced path. Build and test fast.");
 
-  // 5️⃣ Tease V2
-  lines.push("Conversational Nexra is coming in v2. I’ll ask questions and refine this with you.");
-lines.push("This is Nexra v1. My goal is to help you avoid building bad startups.");
+// export function narrateIdea(data: any, mode: NexraMode): string[] {
+//   const lines: string[] = [];
 
-  return lines;
-}
+//   // 🚨 If not an idea → show waitlist message
+//   if (!isLikelyIdea(data)) {
+//     lines.push("This doesn’t look like a startup idea.");
+//     lines.push("Nexra v1 only analyzes startup ideas.");
+//     lines.push("Nexra v2 will understand any context like a co-founder.");
+//     lines.push("Join the waitlist to unlock Nexra v2.");
+
+//     return lines;
+//   }
+
+//   // Normal idea flow
+//   const score = data.decision_score;
+//   const verdict = data.verdict;
+
+//   lines.push(`Decision: ${verdict}. Score: ${score}/100.`);
+
+//   if (score < 30) {
+//     lines.push("This is weak. Market urgency is low and differentiation is unclear.");
+//   } else if (score < 70) {
+//     lines.push("There is signal, but distribution and positioning are risky.");
+//   } else {
+//     lines.push("Strong signal. Execution and market fit look promising.");
+//   }
+
+//   lines.push("Paths forward:");
+
+//   if (mode === "safe") {
+//     lines.push("• Talk to 10 users. Validate willingness to pay.");
+//     lines.push("• Prototype manually before writing code.");
+//     lines.push("• Kill fast if no strong signal.");
+//     lines.push("My recommendation: Do not build yet. Learn first.");
+//   }
+
+//   if (mode === "balanced") {
+//     lines.push("• Interview users to validate pain.");
+//     lines.push("• Build a focused MVP.");
+//     lines.push("• Test distribution on Twitter / Indie Hackers.");
+//     lines.push("My recommendation: Build fast and measure traction.");
+//   }
+
+//   if (mode === "aggressive") {
+//     lines.push("• Ship in 7 days.");
+//     lines.push("• Push distribution hard.");
+//     lines.push("• Iterate in public. Kill or scale fast.");
+//     lines.push("My recommendation: Go aggressive. High risk, high upside.");
+//   }
+
+//   lines.push("I’m Nexra v1 — decision mode only. My job is to stop you wasting months.");
+//   lines.push("In v2, I’ll challenge your assumptions and refine this with you like a co-founder.");
+
+//   return lines;
+// }

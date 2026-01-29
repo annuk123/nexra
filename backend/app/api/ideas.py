@@ -43,6 +43,7 @@ class IdeaOut(BaseModel):
     competitors: list[str]
     risks: list[str]
     roadmap: list[str]
+    nexra_output: str
     created_at: str
 
 

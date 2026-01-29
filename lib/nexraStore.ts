@@ -1,51 +1,38 @@
-// lib/nexraStore.ts
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-type Breakdown = {
-  market: number;
-  execution: number;
-  founder_fit: number;
-  moat: number;
-  revenue: number;
-};
+export type NexraMode = "safe" | "balanced" | "aggressive";
 
 type Metrics = {
   verdict: string;
   decision_score: number;
   confidence: number;
-  breakdown?: Breakdown;
+  breakdown?: Record<string, number>;
   roadmap: string[];
 };
 
 type NexraState = {
-  ideaText: string | null;
   metrics: Metrics | null;
-  stage:
-    | "idle"
-    | "initial"
-    | "questioning"
-    | "founder_response"
-    | "updated_decision";
-
-  setIdeaText: (t: string) => void;
+  stage: "initial" | "locked";
+  mode: NexraMode;
   setMetrics: (m: Metrics) => void;
   setStage: (s: NexraState["stage"]) => void;
-  reset: () => void;
+  setMode: (m: NexraMode) => void;
 };
 
-export const useNexraStore = create<NexraState>((set) => ({
-  ideaText: null,
-  metrics: null,
-  stage: "idle",
-
-  setIdeaText: (t) => set({ ideaText: t }),
-  setMetrics: (m) => set({ metrics: m }),
-  setStage: (s) => set({ stage: s }),
-
-  reset: () =>
-    set({
-      ideaText: null,
+export const useNexraStore = create<NexraState>()(
+  persist(
+    (set) => ({
       metrics: null,
-      stage: "idle",
+      stage: "initial",
+      mode: "balanced",
+
+      setMetrics: (m) => set({ metrics: m }),
+      setStage: (s) => set({ stage: s }),
+      setMode: (m) => set({ mode: m }),
     }),
-}));
+    {
+      name: "nexra-store",
+    }
+  )
+);

@@ -1,12 +1,10 @@
-// app/page.tsx
-
 import NexraLayout from "@/components/layout/NexraLayout";
 import ChatPanel from "@/components/chat/ChatPanel";
 import MetricsPanel from "@/components/metrics/MetricsPanel";
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100">
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 py-10">
       
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 pt-12 space-y-2">

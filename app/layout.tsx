@@ -72,7 +72,6 @@ export default function RootLayout({
           {children}
           <Analytics />
           <SpeedInsights />
-          <Footer />
         </ConvexAppProvider>
         </Providers>
       </body>

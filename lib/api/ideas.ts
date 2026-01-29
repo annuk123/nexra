@@ -65,6 +65,7 @@ export type IdeaResponse = {
   roadmap: string[];
 
   rule_breakdown?: RuleBreakdown;
+  nexra_output?: string;
   created_at: string;
 };
 

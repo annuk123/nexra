@@ -1,5 +1,3 @@
-// components/chat/ChatInput.tsx
-
 "use client";
 
 import { useState } from "react";
@@ -20,7 +18,7 @@ export default function ChatInput({
   }
 
   return (
-    <div className="mt-4 flex gap-2">
+    <div className=" flex gap-2">
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}

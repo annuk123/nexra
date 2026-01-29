@@ -111,16 +111,26 @@ from app.db.models import Idea
 from app.domain.ai.scorer import score_idea_with_ai
 
 from app.domain.ideas.decision_engine import nexra_decision_engine
+from app.domain.ideas.nexra_narrator import narrate_idea
+
 
 
 # -----------------------------
 # Analyze & Save Idea
 # -----------------------------
 
+
 def analyze_idea_text(text: str, session: Session) -> dict:
     result = nexra_decision_engine(text)
 
     confidence = result["confidence"]
+
+    # ✅ ALWAYS define mode
+    mode = "balanced"   # default
+
+    # Generate narration BEFORE saving
+    nexra_output = narrate_idea(result, mode)
+
 
     idea = Idea(
         text=text,
@@ -134,11 +144,17 @@ def analyze_idea_text(text: str, session: Session) -> dict:
         risks=result["risks"],
         roadmap=result["roadmap"],
         rule_breakdown=result["rule_breakdown"],
+        nexra_output=nexra_output,
+
     )
 
     session.add(idea)
     session.commit()
     session.refresh(idea)
+
+    # ✅ MUST ALIGN WITH session.commit()
+    mode = "balanced"
+    nexra_output = narrate_idea(result, mode)
 
     return {
         "id": idea.id,
@@ -147,7 +163,6 @@ def analyze_idea_text(text: str, session: Session) -> dict:
         "decision_score": idea.decision_score,
         "verdict": idea.verdict,
 
-        # 🔥 ADD THESE
         "confidence": confidence,
         "rule_score": result["rule_score"],
         "ai_score": result["ai_score"],
@@ -158,6 +173,10 @@ def analyze_idea_text(text: str, session: Session) -> dict:
         "competitors": idea.competitors,
         "risks": idea.risks,
         "roadmap": idea.roadmap,
+
+        # 🔥 THIS IS IMPORTANT
+        "nexra_output": nexra_output,
+
         "created_at": idea.created_at.isoformat(),
     }
 
@@ -219,6 +238,7 @@ def _idea_to_dict(idea: Idea) -> Dict:
         "roadmap": idea.roadmap,
         "rule_breakdown": idea.rule_breakdown,
         "confidence": idea.confidence,
+        "nexra_output": idea.nexra_output,
 
         "created_at": idea.created_at.isoformat(),
     }
