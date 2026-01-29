@@ -75,7 +75,7 @@ export default function Navbar() {
   {/* Mobile Dropdown */}
   {mobileOpen && (
     <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
-      <Link href="/demo" className="block text-neutral-400 hover:text-white">Product</Link>
+      <Link href="/nexra-engine-v1" className="block text-neutral-400 hover:text-white">Product</Link>
 
       <button
         onClick={() => {
