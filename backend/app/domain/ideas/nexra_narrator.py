@@ -2,7 +2,6 @@ from app.domain.ideas.verdict_mapper import map_verdict
 from app.domain.ideas.nexra_personality import get_personality
 
 
-
 def narrate_idea(data: dict, mode: str) -> str:
     score = data["decision_score"]
     verdict = map_verdict(score)
@@ -45,3 +44,4 @@ Context:
 This is Nexra v1. You can validate startup ideas here.
 Conversation, follow-ups, and co-founder mode are coming in Nexra v2.
 Join the waitlist to unlock Nexra v2.
+"""
