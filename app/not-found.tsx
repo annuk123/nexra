@@ -5,64 +5,46 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="scanlines min-h-screen py-18 bg-black text-gray-400 font-mono flex items-center justify-center px-6">
-      <div className="max-w-3xl w-full border border-neutral-800 bg-black/90 p-6 rounded-xl shadow-[0_0_40px_rgba(124,58,237,0.15)]">
-        <div className="flex gap-2 mb-3">
-    <span className="w-3 h-3 bg-red-500 rounded-full" />
-    <span className="w-3 h-3 bg-yellow-500 rounded-full" />
-    <span className="w-3 h-3 bg-green-500 rounded-full" />
-  </div>
-
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex items-center justify-center px-6">
+      <div className="max-w-xl w-full border border-neutral-800 bg-neutral-950/80 p-8 rounded-xl">
+        
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xs text-green-500">nexra://system/error</span>
-          <span className="text-xs text-red-500">ERROR_CODE: 404</span>
-        </div>
+        <p className="text-xs text-neutral-500 mb-2">Nexra • Not Found</p>
 
-        {/* Terminal Body */}
-        <pre className="text-sm leading-relaxed whitespace-pre-wrap">
-{`> booting nexra kernel...
-> loading decision engine...
-> scanning route...
+        <h1 className="text-3xl font-semibold tracking-tight text-neutral-100">
+          This page doesn’t exist
+        </h1>
 
-[!] PATH NOT FOUND
+        <p className="mt-4 text-sm text-neutral-400 leading-relaxed">
+          The page you’re looking for isn’t available.  
+          It may have been removed, renamed, or never built.
+        </p>
 
-The path you requested does not exist.
-Either it was never built,
-or Nexra would have killed it anyway.
+        {/* Subtle Nexra Philosophy */}
+        <p className="mt-4 text-sm text-neutral-500 italic">
+          Think before you build. Kill weak paths early.
+        </p>
 
-Manifesto:
-- Think before you build.
-- Kill weak paths fast.
-- Double down on strong signals.
-
-System suggestion:
-Run another analysis.
-`}
-<span className="cursor-blink"></span>
-
-        </pre>
-
-        {/* Command Buttons */}
-        <div className="mt-6 flex flex-wrap gap-3">
+        {/* Actions */}
+        <div className="mt-6 flex gap-3">
           <Link
             href="/"
-            className="px-3 py-1.5 border border-green-500 text-green-400 hover:bg-green-500 hover:text-black text-xs rounded"
+            className="px-4 py-2 bg-neutral-100 text-neutral-900 text-sm rounded-lg hover:bg-neutral-200 transition"
           >
-            $ cd /
+            Go home
           </Link>
 
           <Link
             href="/nexra-engine-v1"
-            className="px-3 py-1.5 border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-xs rounded"
+            className="px-4 py-2 border border-neutral-700 text-sm rounded-lg hover:bg-neutral-900 transition"
           >
-            $ nexra analyze
+            Analyze an idea
           </Link>
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-xs text-green-600/60">
-          Nexra v1 • brutal truth mode enabled
+        <p className="mt-6 text-xs text-neutral-600">
+          Nexra v1 • Decision Engine
         </p>
       </div>
     </div>
