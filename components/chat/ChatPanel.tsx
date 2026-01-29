@@ -210,43 +210,164 @@ const interval = setInterval(() => {
 
 
   return (
-    <>
-      {/* Chat Messages */}
-      <div className="flex flex-col h-full overflow-y-auto space-y-6 pr-2">
-        {messages.map((msg, i) => (
-          <ChatMessage key={i} msg={msg} />
-        ))}
-        {loading && <TypingIndicator />}
+//     <>
+//       {/* Chat Messages */}
+//       <div className="flex flex-col h-full overflow-y-auto space-y-6 pr-2">
+//         {messages.map((msg, i) => (
+//           <ChatMessage key={i} msg={msg} />
+//         ))}
+//         {loading && <TypingIndicator />}
+//       </div>
+
+//       {/* Usage UI */}
+//       <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-2">
+//         <span>{USAGE_LIMIT - usage} analyses left today</span>
+
+//         <div className="w-24">
+//           <div className="h-1 bg-neutral-800 rounded">
+//             <div
+//               className="h-1 bg-yellow-400 rounded transition-all"
+//               style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
+//             />
+//           </div>
+
+//           {usage >= USAGE_LIMIT && (
+//             // <button className="text-xs text-yellow-400 underline mt-2">
+//             //   Join Nexra v2 waitlist →
+//             // </button>
+//             <button 
+//       onClick={() => setOpen(true)}
+//       className="text-xs text-yellow-400 underline mt-2">
+//       Join Nexra v2 waitlist →
+//     </button>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* Input */}
+//       <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} />
+//         {open && (
+//   <div
+//     className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
+//     onClick={() => setOpen(false)}
+//   >
+//     <div
+//       onClick={(e) => e.stopPropagation()}
+//       className="relative bg-neutral-950 border border-neutral-800 rounded-xl p-6 w-full max-w-md shadow-2xl"
+//     >
+//       {/* Close */}
+//       <button
+//         onClick={() => setOpen(false)}
+//         className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-300 transition text-sm"
+//       >
+//         ✕
+//       </button>
+
+//       {/* Header */}
+//       <h3 className="text-lg font-semibold">
+//         Join the waitlist
+//       </h3>
+//       <p className="text-sm text-neutral-400 mt-1">
+//         Early access for founders. No marketing emails.
+//       </p>
+
+//       {/* SUCCESS */}
+//       {status === "success" && (
+//         <div className="mt-6">
+//           <p className="text-neutral-200 font-medium">
+//             You’re on the list.
+//           </p>
+//           <p className="mt-2 text-sm text-neutral-500">
+//             We’ll email you when there’s something meaningful.
+//           </p>
+//         </div>
+//       )}
+
+//       {/* FORM */}
+//       {status === "idle" && (
+//         <form
+//           onSubmit={handleSubmit}
+//           className="mt-6 flex flex-col sm:flex-row gap-3"
+//         >
+//           <input
+//             type="email"
+//             required
+//             placeholder="you@startup.com"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//             className="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
+//           />
+
+//           <button
+//             type="submit"
+//             className="px-5 py-3 text-sm rounded-lg bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition font-medium"
+//           >
+//             Join →
+//           </button>
+//         </form>
+//       )}
+
+//       {/* ERROR */}
+//       {status === "error" && (
+//         <p className="mt-4 text-sm text-red-400">
+//           Something went wrong. Try again.
+//         </p>
+//       )}
+
+//       {/* Footer */}
+//       <p className="mt-6 text-xs text-neutral-500">
+//         No newsletters. Just product updates.
+//       </p>
+
+//       <p className="mt-2 text-xs text-neutral-500">
+//         By joining, you agree to our{" "}
+//         <Link href="/privacy" className="underline hover:text-neutral-300">
+//           Privacy Policy
+//         </Link>
+//         .
+//       </p>
+//     </div>
+//   </div>
+// )}
+//     </>
+<div className="flex flex-col h-full">
+  
+  {/* Chat Messages */}
+  <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+    {messages.map((msg, i) => (
+      <ChatMessage key={i} msg={msg} />
+    ))}
+    {loading && <TypingIndicator />}
+  </div>
+
+  {/* Usage UI */}
+  <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-2">
+    <span>{USAGE_LIMIT - usage} analyses left today</span>
+
+    <div className="w-24">
+      <div className="h-1 bg-neutral-800 rounded">
+        <div
+          className="h-1 bg-yellow-400 rounded transition-all"
+          style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
+        />
       </div>
 
-      {/* Usage UI */}
-      <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-2">
-        <span>{USAGE_LIMIT - usage} analyses left today</span>
+      {usage >= USAGE_LIMIT && (
+        <button
+          onClick={() => setOpen(true)}
+          className="text-xs text-yellow-400 underline mt-2"
+        >
+          Join Nexra v2 waitlist →
+        </button>
+      )}
+    </div>
+  </div>
 
-        <div className="w-24">
-          <div className="h-1 bg-neutral-800 rounded">
-            <div
-              className="h-1 bg-yellow-400 rounded transition-all"
-              style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
-            />
-          </div>
+  {/* Input */}
+  <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} />
 
-          {usage >= USAGE_LIMIT && (
-            // <button className="text-xs text-yellow-400 underline mt-2">
-            //   Join Nexra v2 waitlist →
-            // </button>
-            <button 
-      onClick={() => setOpen(true)}
-      className="text-xs text-yellow-400 underline mt-2">
-      Join Nexra v2 waitlist →
-    </button>
-          )}
-        </div>
-      </div>
-
-      {/* Input */}
-      <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} />
-        {open && (
+  {/* Modal */}
+  {open && (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
     onClick={() => setOpen(false)}
@@ -329,7 +450,8 @@ const interval = setInterval(() => {
     </div>
   </div>
 )}
-    </>
+</div>
+
   );
 }
 

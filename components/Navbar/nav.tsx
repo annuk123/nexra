@@ -6,9 +6,7 @@ import React from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
-import { button } from "framer-motion/client";
-import { Button } from "../ui/button";
+import { X } from "lucide-react";
 import MenuIcon from "../menu/menuicon";
 
 export default function Navbar() {
@@ -46,7 +44,7 @@ export default function Navbar() {
 
     {/* Desktop Nav */}
     <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
-      <Link href="/demo" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
+      <Link href="/nexra-engine-v1" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
 >Product</Link>
 
       <button

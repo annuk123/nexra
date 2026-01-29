@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="scanlines min-h-screen py-18 bg-black text-green-400 font-mono flex items-center justify-center px-6">
-      <div className="max-w-3xl w-full border border-green-500/30 bg-black/90 p-6 rounded-xl shadow-[0_0_40px_rgba(34,197,94,0.15)]">
+    <div className="scanlines min-h-screen py-18 bg-black text-gray-400 font-mono flex items-center justify-center px-6">
+      <div className="max-w-3xl w-full border border-neutral-800 bg-black/90 p-6 rounded-xl shadow-[0_0_40px_rgba(124,58,237,0.15)]">
         <div className="flex gap-2 mb-3">
     <span className="w-3 h-3 bg-red-500 rounded-full" />
     <span className="w-3 h-3 bg-yellow-500 rounded-full" />
