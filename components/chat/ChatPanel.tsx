@@ -333,7 +333,7 @@ const interval = setInterval(() => {
 <div className="flex flex-col h-full">
   
   {/* Chat Messages */}
-  <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+  <div className="flex-1 overflow-y-auto space-y-6 pr-2 pb-24">
     {messages.map((msg, i) => (
       <ChatMessage key={i} msg={msg} />
     ))}
@@ -364,7 +364,13 @@ const interval = setInterval(() => {
   </div>
 
   {/* Input */}
-  <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} />
+  {/* <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} /> */}
+<div className="sticky bottom-0 bg-neutral-950 pt-2">
+  <ChatInput
+    onSend={handleSend}
+    disabled={loading || usage >= USAGE_LIMIT}
+  />
+</div>
 
   {/* Modal */}
   {open && (
