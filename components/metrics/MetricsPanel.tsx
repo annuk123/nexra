@@ -26,107 +26,121 @@ export default function MetricsPanel() {
 
 
   return (
-    <div className="backdrop-blur shadow-xl space-y-6">
+<div className="backdrop-blur shadow-xl space-y-6">
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <p className="text-sm font-medium text-neutral-300 tracking-wide">Decision Analysis</p>
-        <span className="text-[10px] px-2 py-1 bg-neutral-900 border border-neutral-700 rounded text-neutral-400">
-          Nexra v1 • Hybrid Brain
-        </span>
-      </div>
-      <div className="border border-t-0 border-gray-900 p-0" />
-
-      {/* Verdict */}
-      <VerdictCard verdict={m.verdict} />
-
-      {/* Nexra Personality Summary */}
-      <p className="text-xs text-neutral-400 italic">
-        “{summary}”
-      </p>
-
-      <div className="border border-t-0 border-gray-900 p-0" />
-
-      {/* Score */}
-      <div className="flex items-center gap-4">
-       
-<div className="flex items-center justify-between w-full">
-
-  {/* Left text block */}
-  <div className="space-y-1">
-    <p className="text-sm font-medium text-neutral-300">Decision Score</p>
-    <NexraModeToggle />
-    <p className="text-sm font-medium text-neutral-300 mt-8">Confidence: {m.confidence}%</p>
+  {/* Header */}
+  <div className="flex justify-between items-center">
+    <p className="text-sm font-medium text-neutral-300 tracking-wide">
+      Decision Analysis
+    </p>
+    <span className="text-[10px] px-2 py-1 bg-neutral-900 border border-neutral-700 rounded text-neutral-400">
+      Nexra v1 • Hybrid Brain
+    </span>
   </div>
 
-  {/* Right Score Circle */}
+  {/* Sticky Verdict + Summary (mobile) */}
+  <div className="sticky top-0 z-10 bg-neutral-950 pb-4 space-y-3">
+    <VerdictCard verdict={m.verdict} />
 
-<div className="relative w-20 h-20">
-  <svg width="80" height="80" className="-rotate-90">
-    <circle cx="40" cy="40" r="34" stroke="#262626" strokeWidth="4" fill="none" />
-    <circle
-      cx="40"
-      cy="40"
-      r="34"
-      stroke="#facc15"
-      strokeWidth="4"
-      fill="none"
-      strokeDasharray={2 * Math.PI * 34}
-      strokeDashoffset={(1 - m.decision_score / 100) * 2 * Math.PI * 34}
-      strokeLinecap="round"
-    />
-  </svg>
-
-  <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-yellow-400">
-    {m.decision_score}
+    <p className="text-xs text-neutral-400 italic">
+      “{summary}”
+    </p>
   </div>
-</div>
 
+  <div className="border-t border-neutral-800" />
 
+  {/* Score Section */}
+  <div className="space-y-4">
+    <p className="text-sm font-medium text-neutral-300">
+      Decision Score
+    </p>
 
-
-</div>
-
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      
+      {/* Left info */}
+      <div className="space-y-2">
+        <NexraModeToggle />
+        <p className="text-sm text-neutral-300">
+          Confidence: {m.confidence}%
+        </p>
       </div>
 
-      <div className="border border-t-0 border-gray-900 p-0" />
+      {/* Score Circle */}
+      <div className="relative w-20 h-20 mx-auto sm:mx-0">
+        <svg width="80" height="80" className="-rotate-90">
+          <circle
+            cx="40"
+            cy="40"
+            r="34"
+            stroke="#262626"
+            strokeWidth="4"
+            fill="none"
+          />
+          <circle
+            cx="40"
+            cy="40"
+            r="34"
+            stroke="#facc15"
+            strokeWidth="4"
+            fill="none"
+            strokeDasharray={2 * Math.PI * 34}
+            strokeDashoffset={(1 - m.decision_score / 100) * 2 * Math.PI * 34}
+            strokeLinecap="round"
+          />
+        </svg>
 
-      {/* Key Signals */}
-      <p className="text-xs uppercase tracking-wide text-neutral-500">
-        Key Signals
-      </p>
-
-      {m.breakdown && (
-        <div className="space-y-3">
-          <ScoreBar label="Market Urgency" value={m.breakdown.market ?? 0} max={10} />
-          <ScoreBar label="Execution Strength" value={m.breakdown.execution ?? 0} max={10} />
-          <ScoreBar label="Founder Leverage" value={m.breakdown.founder_fit ?? 0} max={10} />
-          <ScoreBar label="Moat Strength" value={m.breakdown.moat ?? 0} max={10} />
-          <ScoreBar label="Revenue Clarity" value={m.breakdown.revenue ?? 0} max={10} />
+        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-yellow-400">
+          {m.decision_score}
         </div>
-      )}
-
-      <div className="border border-t-0 border-gray-900 p-0" />
-
-      {/* Next Steps */}
-      <div>
-        <p className="text-sm text-neutral-400 mb-2">Next Steps</p>
-        <ul className="list-decimal ml-4 text-xs text-neutral-300 space-y-1">
-          {m.roadmap.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Footer Personality */}
-      <div>
-      <p className="text-[10px] text-neutral-600">
-        Nexra combines heuristics + AI. I challenge assumptions, not founders.
-      </p>
-            <p className="text-[10px] text-neutral-600">
-        Nexra V1 uses hybrid anallysis. Full analysis coming soon.
-      </p>
       </div>
     </div>
+  </div>
+
+  <div className="border-t border-neutral-800" />
+
+  {/* Key Signals (collapsed on mobile) */}
+  {m.breakdown && (
+    <details className="space-y-4 lg:open">
+      <summary className="text-xs uppercase tracking-wide text-neutral-500 cursor-pointer">
+        Key Signals
+      </summary>
+
+      <div className="space-y-3">
+        <ScoreBar label="Market Urgency" value={m.breakdown.market ?? 0} max={10} />
+        <ScoreBar label="Execution Strength" value={m.breakdown.execution ?? 0} max={10} />
+        <ScoreBar label="Founder Leverage" value={m.breakdown.founder_fit ?? 0} max={10} />
+        <ScoreBar label="Moat Strength" value={m.breakdown.moat ?? 0} max={10} />
+        <ScoreBar label="Revenue Clarity" value={m.breakdown.revenue ?? 0} max={10} />
+      </div>
+    </details>
+  )}
+
+  <div className="border-t border-neutral-800" />
+
+  {/* Next Steps (collapsed on mobile) */}
+  <details className="space-y-3 lg:open">
+    <summary className="text-sm text-neutral-400 cursor-pointer">
+      Next Steps
+    </summary>
+
+    <ul className="list-decimal ml-4 text-xs text-neutral-300 space-y-1">
+      {m.roadmap.map((step, i) => (
+        <li key={i}>{step}</li>
+      ))}
+    </ul>
+  </details>
+
+  {/* Footer Personality */}
+  <div className="pt-4 space-y-1">
+    <p className="text-[10px] text-neutral-600">
+      Nexra combines heuristics + AI. I challenge assumptions, not founders.
+    </p>
+    <p className="text-[10px] text-neutral-600">
+      Nexra V1 uses hybrid analysis. Full analysis coming soon.
+    </p>
+  </div>
+
+</div>
+
   );
 }
