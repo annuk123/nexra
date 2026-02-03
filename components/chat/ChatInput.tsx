@@ -58,7 +58,7 @@ export default function ChatInput({
         onClick={send}
         disabled={disabled}
         className="
-          px-4 py-2
+          px-4 py-3
           bg-neutral-100
           text-neutral-900
           rounded-lg

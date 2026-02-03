@@ -364,7 +364,6 @@ const interval = setInterval(() => {
   </div>
 
   {/* Input */}
-  {/* <ChatInput onSend={handleSend} disabled={loading || usage >= USAGE_LIMIT} /> */}
 <div className="sticky bottom-0 bg-neutral-950 pt-2">
   <ChatInput
     onSend={handleSend}
