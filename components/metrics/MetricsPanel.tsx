@@ -39,7 +39,7 @@ export default function MetricsPanel() {
   </div>
 
   {/* Sticky Verdict + Summary (mobile) */}
-  <div className="sticky top-0 z-10 bg-neutral-950 pb-4 space-y-3">
+  <div className="top-0 z-10 bg-neutral-950 pb-4 space-y-3">
     <VerdictCard verdict={m.verdict} />
 
     <p className="text-xs text-neutral-400 italic">
@@ -50,15 +50,15 @@ export default function MetricsPanel() {
   <div className="border-t border-neutral-800" />
 
   {/* Score Section */}
-  <div className="space-y-4">
+  <div className="space-y-2">
     <p className="text-sm font-medium text-neutral-300">
       Decision Score
     </p>
 
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
       
       {/* Left info */}
-      <div className="space-y-2">
+      <div className="space-y-4">
         <NexraModeToggle />
         <p className="text-sm text-neutral-300">
           Confidence: {m.confidence}%

@@ -330,10 +330,10 @@ const interval = setInterval(() => {
 //   </div>
 // )}
 //     </>
-<div className="flex flex-col h-full">
-  
+<div className="flex flex-col h-full overflow-hidden">
+
   {/* Chat Messages */}
-  <div className="flex-1 overflow-y-auto space-y-6 pr-2 pb-24">
+  <div className="flex-1 overflow-y-auto space-y-6 pr-2">
     {messages.map((msg, i) => (
       <ChatMessage key={i} msg={msg} />
     ))}
@@ -341,7 +341,7 @@ const interval = setInterval(() => {
   </div>
 
   {/* Usage UI */}
-  <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-2">
+  <div className="shrink-0 flex items-center justify-between text-[10px] text-neutral-500 mt-3">
     <span>{USAGE_LIMIT - usage} analyses left today</span>
 
     <div className="w-24">
@@ -364,12 +364,13 @@ const interval = setInterval(() => {
   </div>
 
   {/* Input */}
-<div className="sticky bottom-0 bg-neutral-950 pt-2">
-  <ChatInput
-    onSend={handleSend}
-    disabled={loading || usage >= USAGE_LIMIT}
-  />
-</div>
+  <div className="shrink-0 bg-neutral-950 pt-3">
+    <ChatInput
+      onSend={handleSend}
+      disabled={loading || usage >= USAGE_LIMIT}
+    />
+  </div>
+
 
   {/* Modal */}
   {open && (
