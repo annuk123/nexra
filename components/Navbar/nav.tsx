@@ -44,7 +44,7 @@ export default function Navbar() {
 
     {/* Desktop Nav */}
     <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
-      <Link href="/nexra-engine-v1" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
+      <Link href="/nexra-engine-v2" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
 >Product</Link>
 
       <button
@@ -75,7 +75,8 @@ export default function Navbar() {
   {/* Mobile Dropdown */}
   {mobileOpen && (
     <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
-      <Link href="/nexra-engine-v1" className="block text-neutral-400 hover:text-white">Product</Link>
+      
+      <Link href="/nexra-engine-v2" className="block text-neutral-400 hover:text-white">Product</Link>
 
       <button
         onClick={() => {

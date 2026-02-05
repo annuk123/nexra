@@ -459,5 +459,3 @@ const interval = setInterval(() => {
 
   );
 }
-
-

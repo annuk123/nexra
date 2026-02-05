@@ -17,6 +17,7 @@ import HowAnalyze from "@/components/how-analyzes/how-analyze";
 import TimeSavedCalculator from "@/components/TimeSavedCalculater/TimeSavedCaluclater";
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/footer";
+import NexraThinkingDemo from "@/components/marketing/NexraThinkingDemo";
 
 export default function Home() {
     const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -45,6 +46,20 @@ export default function Home() {
     <main className=" bg-black text-neutral-100">
       {/* Hero */}
       <Hero  />
+
+      {/* See Nexra in Action */}
+      <Section size="md">
+        <h2 className="text-3xl sm:text-4xl font-semibold max-w-3xl">
+        See how Nexra analyzes a real startup idea
+      </h2>
+    
+      <p className="mt-2 mb-5 text-neutral-400 max-w-2xl text-xs">
+        This is the structured reasoning pipeline in action.
+      </p>
+        <NexraThinkingDemo />
+      </Section>
+
+      {/* Time Comparison */}
       <Section size="md">
         <TimeComparison />
       </Section>
@@ -89,9 +104,9 @@ export default function Home() {
   </Section>
 
       {/* How Nexra Analyzes */}
-  <Section size="md">
+  {/* <Section size="md">
     <HowAnalyze />
-</Section>
+</Section> */}
 
       {/* Testimonials */}
 <Section size="md">

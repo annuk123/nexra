@@ -92,11 +92,11 @@ export default function Hero() {
   shadow-[0_0_0_0_rgba(124,58,237,0.4)]
   hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
   transition">
-      Start a session 
+        Join waitlist 
     </button>
 
     <Link
-      href="/nexra-engine-v1"
+      href="/nexra-engine-v2"
        className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
   bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
         See how it works 
@@ -136,6 +136,7 @@ Strategic Direction: Narrow ICP and define evaluation framework`}
 
 
        <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+
       {open && (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
