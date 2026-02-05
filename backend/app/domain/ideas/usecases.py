@@ -130,7 +130,7 @@ def analyze_idea_text(text: str, session: Session) -> dict:
 
     # Generate narration BEFORE saving
     nexra_output = narrate_idea(result, mode)
-
+    trace = result.get("trace", {})
 
     idea = Idea(
         text=text,
@@ -155,6 +155,9 @@ def analyze_idea_text(text: str, session: Session) -> dict:
     # ✅ MUST ALIGN WITH session.commit()
     mode = "balanced"
     nexra_output = narrate_idea(result, mode)
+    print("RESULT KEYS:", result.keys())
+    print("TRACE:", result.get("trace"))
+
 
     return {
         "id": idea.id,
@@ -164,8 +167,10 @@ def analyze_idea_text(text: str, session: Session) -> dict:
         "verdict": idea.verdict,
 
         "confidence": confidence,
-        "rule_score": result["rule_score"],
-        "ai_score": result["ai_score"],
+          "rule_score": trace.get("rule_score", 0),
+           "ai_score": trace.get("ai_score", 0),
+
+        # "ai_score": result["ai_score"],
         "rule_breakdown": result["rule_breakdown"],
 
         "assumptions": idea.assumptions,

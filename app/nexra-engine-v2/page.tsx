@@ -40,6 +40,17 @@ export default function NexraV2Page() {
     <p className="text-neutral-400 mt-6 text-lg">
       We’re rebuilding Nexra’s brain. On purpose.
     </p>
+    <p className="mt-3 text-neutral-400">
+  While Engine v2 is being rebuilt, you can still try the current
+  Nexra Engine (v1){" "}
+  <a
+    href="/nexra-engine-v1"
+    className="underline underline-offset-4 hover:text-white transition"
+  >
+    here
+  </a>.
+</p>
+
   </section>
 
   {/* Content Wrapper */}

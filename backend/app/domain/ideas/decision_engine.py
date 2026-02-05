@@ -69,7 +69,7 @@ def nexra_decision_engine(text: str) -> dict:
         "confidence": confidence,
 
         # UI-facing structure
-        "breakdown": breakdown,
+        "rule_breakdown": breakdown,
         "roadmap": ai.get("roadmap", []),
         "risks": ai.get("risks", []),
 
