@@ -100,11 +100,10 @@ export default function MetricsPanel() {
 
   {/* Key Signals (collapsed on mobile) */}
   {m.breakdown && (
-    <details className="space-y-4 lg:open">
-      <summary className="text-xs uppercase tracking-wide text-neutral-500 cursor-pointer">
-        Key Signals
-      </summary>
-
+    <div className="space-y-2">
+       <p className="text-sm font-medium text-neutral-300">
+       Key Signals
+    </p>
       <div className="space-y-3">
         <ScoreBar label="Market Urgency" value={m.breakdown.market ?? 0} max={10} />
         <ScoreBar label="Execution Strength" value={m.breakdown.execution ?? 0} max={10} />
@@ -112,23 +111,23 @@ export default function MetricsPanel() {
         <ScoreBar label="Moat Strength" value={m.breakdown.moat ?? 0} max={10} />
         <ScoreBar label="Revenue Clarity" value={m.breakdown.revenue ?? 0} max={10} />
       </div>
-    </details>
+    </div>
   )}
 
   <div className="border-t border-neutral-800" />
 
   {/* Next Steps (collapsed on mobile) */}
-  <details className="space-y-3 lg:open">
-    <summary className="text-sm text-neutral-400 cursor-pointer">
-      Next Steps
-    </summary>
+  <div className="space-y-3">
+     <p className="text-sm font-medium text-neutral-300">
+      Recommended Next Steps
+    </p>
 
     <ul className="list-decimal ml-4 text-xs text-neutral-300 space-y-1">
       {m.roadmap.map((step, i) => (
         <li key={i}>{step}</li>
       ))}
     </ul>
-  </details>
+  </div>
 
   {/* Footer Personality */}
   <div className="pt-4 space-y-1">
