@@ -6,19 +6,25 @@ def narrate_idea(data: dict, mode: str) -> str:
     score = int(data["decision_score"])
     verdict = map_verdict(score)
 
-    # Signal framing (more nuanced, still deterministic)
-    if score < 25:
-        signal = "Weak signal. The problem does not appear urgent or well-defined."
-    elif score < 50:
-        signal = "Mixed signal. Some pain exists, but clarity and leverage are missing."
-    elif score < 70:
-        signal = "Promising signal, but execution and distribution risk is high."
-    else:
-        signal = "Strong signal. Clear pain, defined buyer, and realistic leverage."
+    # Verdict-aligned signal framing
+    if verdict == "KILL":
+        signal = (
+            "This idea does not clear the minimum decision threshold. "
+            "Further execution is not justified in its current form."
+        )
+    elif verdict == "BLOCKED":
+        signal = (
+            "This idea is blocked by unresolved assumptions. "
+            "Progress requires new evidence, not iteration."
+        )
+    else:  # PROCEED
+        signal = (
+            "This idea clears the minimum decision threshold. "
+            "Execution is justified only within defined constraints."
+        )
 
     personality = get_personality(mode)
     actions = personality["actions"]
-    recommendation = personality["recommendation"]
     philosophy = personality["philosophy"]
 
     risks = data.get("risks", [])
@@ -27,27 +33,41 @@ def narrate_idea(data: dict, mode: str) -> str:
     risks_text = (
         "\n".join([f"- {r}" for r in top_risks])
         if top_risks
-        else "- No critical risks identified at this stage"
+        else "- No critical failures identified at this stage"
     )
+
+    # Verdict-dominant final note
+    if verdict == "KILL":
+        final_note = (
+            "Do not invest further time. Redefine the problem entirely "
+            "before considering another attempt."
+        )
+    elif verdict == "BLOCKED":
+        final_note = (
+            "This idea is paused. Advancement is denied until the conditions "
+            "below are satisfied."
+        )
+    else:  # PROCEED
+        final_note = personality["recommendation"]
 
     return f"""
 DECISION
 {verdict} ({score}/100)
 
-SUMMARY
+SIGNAL
 {signal}
 
-KEY RISKS
+KEY FAILURES
 {risks_text}
 
-RECOMMENDED ACTIONS
+REQUIRED CONDITIONS TO CONTINUE
 1. {actions[0]}
 2. {actions[1]}
 3. {actions[2]}
 
-NEXRA MODE
+DECISION POSTURE
 {mode.upper()} — {philosophy}
 
-FINAL NOTE
-{recommendation}
+NON-NEGOTIABLE NOTE
+{final_note}
 """.strip()

@@ -1,38 +1,45 @@
 PERSONALITY_RULES = {
     "safe": {
-        "tone": "cautious",
-        "recommendation": "Do not build yet. Learn first.",
+        "tone": "restrictive",
+        "recommendation": (
+            "Execution is not justified yet. "
+            "Do not build until demand and willingness to pay are proven."
+        ),
         "actions": [
-            "Talk to 15 users and validate willingness to pay",
-            "Prototype manually before writing code",
-            "Kill if no strong signal"
+            "Secure 3–5 explicit commitments to pay (pre-orders, LOIs, or equivalents)",
+            "Manually validate the workflow without writing production code",
+            "Terminate the idea if commitments are not reached"
         ],
-        "philosophy": "Bias toward caution. Protect founder time."
+        "philosophy": "Preserve founder time. Default to stopping unless evidence is undeniable."
     },
 
     "balanced": {
-        "tone": "pragmatic",
-        "recommendation": "Build fast and measure traction.",
+        "tone": "disciplinary",
+        "recommendation": (
+            "Execution is conditionally allowed. "
+            "Proceed only if validation and learning happen alongside building."
+        ),
         "actions": [
-            "Interview users to validate pain",
-            "Build a focused MVP",
-            "Test distribution on Twitter / Indie Hackers"
+            "Validate the problem with real users before expanding scope",
+            "Build the smallest version that tests the core assumption",
+            "Prove a repeatable acquisition path before further investment"
         ],
-        "philosophy": "Validate and execute in parallel."
+        "philosophy": "No blind execution. Progress requires evidence at every step."
     },
 
     "aggressive": {
-        "tone": "brutal",
-        "recommendation": "Go aggressive. High risk, high upside.",
+        "tone": "unforgiving",
+        "recommendation": (
+            "Proceed at speed, but accept a fast death if signals do not appear immediately."
+        ),
         "actions": [
-            "Ship in 7 days",
-            "Push distribution hard",
-            "Iterate in public"
+            "Ship a usable version within 7 days",
+            "Force distribution immediately and observe real behavior",
+            "Abandon the idea quickly if engagement or pull is weak"
         ],
-        "philosophy": "Speed > perfection. Kill or scale fast."
+        "philosophy": "Speed creates truth. Weak ideas should die quickly."
     }
 }
-
 
 def get_personality(mode: str):
     return PERSONALITY_RULES.get(mode, PERSONALITY_RULES["balanced"])
