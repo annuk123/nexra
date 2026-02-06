@@ -210,7 +210,7 @@ const interval = setInterval(() => {
 
 
   return (
-<div className=" flex flex-col  overflow-hidden">
+<div className="flex h-full flex-col overflow-hidden">
 
   {/* Chat Messages */}
   <div className="flex-1 overflow-y-auto space-y-6 pr-2">
