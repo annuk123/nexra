@@ -3,4 +3,4 @@ uvicorn
 sqlmodel
 sqlalchemy
 pydantic
-
+python-jose[cryptography]
