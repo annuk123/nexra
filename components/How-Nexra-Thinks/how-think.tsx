@@ -1,5 +1,4 @@
 "use client";
-import { Section } from "@/design-system/layout/Section";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 

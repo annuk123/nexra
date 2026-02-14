@@ -1,4 +1,3 @@
-// components/chat/ChatPanel.tsx
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -39,7 +38,7 @@ function incrementUsage() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 }
 
-// 🔥 Idea detector (v1 rules)
+//  Idea detector (v1 rules)
 function isLikelyIdea(text: string) {
   return (
     text.length > 20 &&
@@ -116,6 +115,13 @@ useEffect(() => {
     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
   }, [messages]);
 
+// const resetMetrics = useNexraStore((s) => s.resetMetrics);
+
+// useEffect(() => {
+//   resetMetrics();
+// }, [mode]);
+
+
   async function handleSend(text: string) {
     if (!text.trim()) return;
 
@@ -157,43 +163,82 @@ async function realNexraReply(text: string) {
   try {
     const data = await analyzeIdea(text);
 
-    setMetrics({
-      verdict: data.verdict,
-      decision_score: data.decision_score,
-      confidence: data.confidence ?? 0,
-      breakdown: data.rule_breakdown,
-      roadmap: data.roadmap ?? [],
-    });
+setMetrics({
+  verdict: data.verdict,
+  decision_score: data.decision_score,
+  confidence: data.confidence,
+  breakdown: data.rule_breakdown,
+  weakest_link: data.weakest_link,
+  assumptions: data.assumptions,
+  signals: data.signals,
+});
+
+
 
     incrementUsage();
     setUsage(getUsage().count);
 
-   const baseText = (data.nexra_output || "");
+//     if (data.verdict === "KILL") {
+//   setMessages((prev) => [
+//     ...prev,
+//     {
+//       role: "nexra",
+//       content:
+//         "I recommend killing this idea. Review the weakest link and assumptions before continuing.",
+//     },
+//   ]);
+//   return;
+// }
 
- const fullText = baseText;
 
+ const fullText = data.nexra_output?.trim();
 
-   // Pre-seed first character
-setMessages((prev) => [...prev, { role: "nexra", content: fullText[0] }]);
+if (!fullText) {
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "nexra",
+      content:
+        "Decision completed. Review the verdict and risks in the panel.",
+    },
+  ]);
+  return;
+}
+// Add empty Nexra message first
+setMessages((prev) => [...prev, { role: "nexra", content: "" }]);
 
 const parts = fullText.split(" ");
-
 let i = 0;
 let buffer = "";
 
 const interval = setInterval(() => {
-  if (i >= parts.length) return clearInterval(interval);
+  if (i >= parts.length) {
+    clearInterval(interval);
+    return;
+  }
 
   buffer += parts[i] + " ";
 
   setMessages((prev) => {
     const updated = [...prev];
-    updated[updated.length - 1].content = buffer;
+
+    // Always update last message safely
+    const lastIndex = updated.length - 1;
+
+    if (lastIndex >= 0 && updated[lastIndex].role === "nexra") {
+      updated[lastIndex] = {
+        ...updated[lastIndex],
+        content: buffer,
+      };
+    }
+
     return updated;
   });
 
   i++;
-}, 80);
+}, 60);
+
+
 
 
   } catch (e) {

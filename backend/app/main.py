@@ -5,6 +5,8 @@ from app.db.database import create_db_and_tables
 from fastapi.middleware.cors import CORSMiddleware
 # from dotenv import load_dotenv
 # load_dotenv()
+from app.auth.router import router as auth_router
+
 
 app = FastAPI()
 
@@ -23,3 +25,4 @@ def on_startup():
 
 app.include_router(health_router)
 app.include_router(ideas_router)
+app.include_router(auth_router)

@@ -1,0 +1,173 @@
+{
+  "version": "1.2",
+  "scoring_scale": {
+    "min": 0,
+    "max": 20,
+    "default_floor": 4
+  },
+
+  "market": {
+    "intent": "Assess clarity of market category and avoid buzzword-driven ideas",
+
+    "positive_keywords": [
+      "saas",
+      "api",
+      "platform",
+      "tool",
+      "automation",
+      "marketplace",
+      "dashboard",
+      "analytics"
+    ],
+
+    "generic_keywords": [
+      "ai",
+      "blockchain",
+      "web3",
+      "metaverse",
+      "revolutionary",
+      "next-gen"
+    ],
+
+    "points_per_positive": 4,
+    "generic_penalty": 3,
+
+    "default_score": 6,
+    "max_score": 20,
+
+    "red_flags": {
+      "generic_only": {
+        "enabled": true,
+        "count": 1,
+        "message": "Idea relies on buzzwords without clear market definition"
+      }
+    }
+  },
+
+  "founder_fit": {
+    "intent": "Use problem articulation clarity as proxy for founder understanding",
+
+    "problem_verbs": [
+      "solve",
+      "reduce",
+      "eliminate",
+      "automate",
+      "simplify",
+      "replace",
+      "optimize"
+    ],
+
+    "problem_context_keywords": [
+      "time",
+      "cost",
+      "manual",
+      "inefficient",
+      "slow",
+      "error",
+      "complex"
+    ],
+
+    "points": {
+      "verb_hit": 4,
+      "context_hit": 3
+    },
+
+    "default_score": 6,
+    "max_score": 20,
+
+    "red_flags": {
+      "weak_problem_definition": {
+        "enabled": true,
+        "threshold": 0,
+        "count": 2,
+        "message": "Problem exists but is weakly or vaguely defined"
+      }
+    }
+  },
+
+  "execution": {
+    "intent": "Estimate execution and regulatory risk for early-stage founders",
+
+    "high_complexity_keywords": [
+      "hardware",
+      "medical",
+      "biotech",
+      "robot",
+      "deep learning",
+      "embedded",
+      "semiconductor",
+      "autonomous"
+    ],
+
+    "base_score": 16,
+    "penalty_per_complexity": 5,
+
+    "min_score": 4,
+    "max_score": 20,
+
+    "red_flags": {
+      "high_execution_risk": {
+        "enabled": true,
+        "threshold_score": 8,
+        "count": 1,
+        "message": "High execution or regulatory complexity detected"
+      }
+    }
+  },
+
+  "moat": {
+    "intent": "Evaluate defensibility and long-term differentiation",
+
+    "defensibility_keywords": [
+      "data",
+      "network",
+      "integration",
+      "workflow",
+      "community",
+      "switching cost",
+      "ecosystem"
+    ],
+
+    "points_per_hit": 4,
+
+    "default_score": 6,
+    "max_score": 20,
+
+    "red_flags": {
+      "no_moat": {
+        "enabled": true,
+        "count": 1,
+        "message": "No clear moat or defensibility mentioned"
+      }
+    }
+  },
+
+  "revenue": {
+    "intent": "Check monetization clarity and buyer realism",
+
+    "monetization_keywords": [
+      "b2b",
+      "subscription",
+      "pricing",
+      "enterprise",
+      "pay",
+      "contract",
+      "usage-based",
+      "per seat",
+      "license"
+    ],
+
+    "points_per_hit": 4,
+
+    "default_score": 6,
+    "max_score": 20,
+
+    "red_flags": {
+      "missing_revenue_model": {
+        "enabled": true,
+        "count": 2,
+        "message": "Revenue model is unclear or missing"
+      }
+    }
+  }
+}

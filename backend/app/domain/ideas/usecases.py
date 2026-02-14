@@ -102,16 +102,14 @@
 
 
 
-from typing import Dict, List
+from typing import Dict
 from sqlmodel import Session, select
 from sqlalchemy import func
 from fastapi import HTTPException
 
 from app.db.models import Idea
-from app.domain.ai.scorer import score_idea_with_ai
-
-from app.domain.ideas.decision_engine import nexra_decision_engine
-from app.domain.ideas.nexra_narrator import narrate_idea
+from app.domain.ideas.decision_engine.engine import evaluate_idea
+from app.domain.reasoning.narrator import narrate_idea  # optional
 
 
 
@@ -121,67 +119,48 @@ from app.domain.ideas.nexra_narrator import narrate_idea
 
 
 def analyze_idea_text(text: str, session: Session) -> dict:
-    result = nexra_decision_engine(text)
+    # 1. Core decision engine (SOURCE OF TRUTH)
+    result = evaluate_idea(text)
 
-    confidence = result["confidence"]
+    # 2. Optional narration (presentation only)
+    nexra_output = narrate_idea(result, mode="balanced")
 
-    # ✅ ALWAYS define mode
-    mode = "balanced"   # default
-
-    # Generate narration BEFORE saving
-    nexra_output = narrate_idea(result, mode)
-    trace = result.get("trace", {})
-
+    # 3. Persist decision snapshot (V2)
     idea = Idea(
         text=text,
         text_length=len(text),
-        decision_score=result["decision_score"],
-        verdict=result["verdict"],
-        confidence=confidence,
-        assumptions=result["assumptions"],
-        market_analysis=result["market_analysis"],
-        competitors=result["competitors"],
-        risks=result["risks"],
-        roadmap=result["roadmap"],
-        rule_breakdown=result["rule_breakdown"],
-        nexra_output=nexra_output,
 
+        decision_score=result.get("total_score", 0),
+        verdict=result.get("verdict", "UNKNOWN"),
+        confidence=result.get("confidence", 0),
+
+        assumptions=result.get("assumptions", []),
+        weakest_link=result.get("weakest_link", {}),
+        rule_breakdown=result.get("rule_breakdown", {}),
+        signals=result.get("signals", {}),
+        nexra_output=nexra_output,
     )
 
     session.add(idea)
     session.commit()
     session.refresh(idea)
 
-    # ✅ MUST ALIGN WITH session.commit()
-    mode = "balanced"
-    nexra_output = narrate_idea(result, mode)
-    print("RESULT KEYS:", result.keys())
-    print("TRACE:", result.get("trace"))
-
-
+    # 4. API response (V2-aligned)
     return {
         "id": idea.id,
         "text": idea.text,
         "text_length": idea.text_length,
+
         "decision_score": idea.decision_score,
         "verdict": idea.verdict,
-
-        "confidence": confidence,
-          "rule_score": trace.get("rule_score", 0),
-           "ai_score": trace.get("ai_score", 0),
-
-        # "ai_score": result["ai_score"],
-        "rule_breakdown": result["rule_breakdown"],
+        "confidence": idea.confidence,
 
         "assumptions": idea.assumptions,
-        "market_analysis": idea.market_analysis,
-        "competitors": idea.competitors,
-        "risks": idea.risks,
-        "roadmap": idea.roadmap,
+        "weakest_link": idea.weakest_link,
+        "rule_breakdown": idea.rule_breakdown,
+        "signals": idea.signals,
 
-        # 🔥 THIS IS IMPORTANT
-        "nexra_output": nexra_output,
-
+        "nexra_output": idea.nexra_output,
         "created_at": idea.created_at.isoformat(),
     }
 

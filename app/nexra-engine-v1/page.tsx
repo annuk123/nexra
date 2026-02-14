@@ -44,7 +44,7 @@ export default function Page() {
       {/* Header */}
       <div className="shrink-0 max-w-7xl lg:ml-12 px-6 pt-12 pb-4 space-y-2">
         <h1 className="text-2xl font-semibold">
-          Nexra — Startup Decision Engine V1
+          Nexra — Startup Decision Engine V2
         </h1>
         <p className="text-sm text-neutral-500">
           Talk about your startup idea. Nexra will challenge your thinking.

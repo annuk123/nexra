@@ -27,35 +27,37 @@ export default function ChatMessage({ msg }: { msg: Message }) {
           {isUser ? "You" : "Nexra"}
         </p>
 
-        <div
-          className={`px-4 py-2 rounded-xl text-sm leading-relaxed whitespace-pre-wrap ${
-            isUser
-              ? "bg-neutral-800 text-neutral-100 rounded-br-none"
-              : "bg-neutral-900 text-neutral-200 rounded-bl-none border border-neutral-800/80 mb-10"
-          }`}
-        >
-          {/* Render markdown for Nexra */}
-          {!isUser ? (
-            <ReactMarkdown
-              components={{
-                strong: ({ children }) => (
-                  <strong className="text-yellow-400 font-semibold">
-                    {children}
-                  </strong>
-                ),
-                li: ({ children }) => (
-                  <li className="ml-4  list-disc text-neutral-300">
-                    {children}
-                  </li>
-                ),
-              }}
-            >
-              {msg.content}
-            </ReactMarkdown>
-          ) : (
-            msg.content
-          )}
-        </div>
+<div
+  className={`px-4 py-2 rounded-xl text-sm leading-relaxed whitespace-pre-wrap ${
+    isUser
+      ? "bg-emerald-900/30 text-emerald-300 rounded-br-none"
+      : "bg-neutral-900 text-neutral-200 rounded-bl-none border border-neutral-800/80 mb-10"
+  }`}
+>
+  {!isUser ? (
+    <ReactMarkdown
+      components={{
+        strong: ({ children }) => (
+          <strong className="text-yellow-400 font-semibold">
+            {children}
+          </strong>
+        ),
+        li: ({ children }) => (
+          <li className="ml-4 list-disc text-neutral-300">
+            {children}
+          </li>
+        ),
+      }}
+    >
+      {msg.content}
+    </ReactMarkdown>
+  ) : (
+    <span className="text-emerald-300">
+      {msg.content}
+    </span>
+  )}
+</div>
+
       </div>
 
       {/* User Avatar */}

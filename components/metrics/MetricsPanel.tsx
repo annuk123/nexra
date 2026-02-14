@@ -1,17 +1,35 @@
 "use client";
 
-import { useEffect } from "react";
 import NexraModeToggle from "./NexraModeToggle";
-import ScoreBar from "./ScoreBar";
 import VerdictCard from "./VerdictCard";
-import { useNexraStore } from "@/lib/nexraStore";
+import { useNexraStore,  } from "@/lib/nexraStore";
+import { Assumption, RuleBreakdownItem } from "@/lib/api/ideas";
+
 
 function nexraSummary(m: any) {
-  if (m.decision_score >= 70)
-    return "This is strong. I'd lean toward building, but validate distribution early.";
-  if (m.decision_score >= 40)
-    return "This has potential, but the wedge is weak. I'd pivot positioning.";
-  return "This is risky. I'd rethink the problem or narrow the market.";
+  if (m.verdict === "PROCEED")
+    return "Directionally sound. Execution discipline will decide the outcome.";
+
+  if (m.verdict === "PIVOT")
+    return "Potential exists, but a core assumption needs revision.";
+
+  return "Structurally weak. Continuing without new evidence is not recommended.";
+}
+
+// Simple heuristic to convert reasons → visual strength
+function strengthFromReasons(reasons: string[]) {
+  if (!reasons || reasons.length === 0) return 3;
+  if (reasons.some((r) => r.toLowerCase().includes("no clear"))) return 1;
+  return Math.max(1, Math.min(5, 5 - reasons.length));
+}
+
+// V2 signal strength heuristic
+function strengthFromBreakdown(b: RuleBreakdownItem): number {
+  if (b.blocking_failure) return 1;
+  if (b.penalties.length >= 2) return 2;
+  if (b.penalties.length === 1) return 3;
+  if (b.signals.length >= 2) return 5;
+  return 4;
 }
 
 export default function MetricsPanel() {
@@ -25,121 +43,162 @@ export default function MetricsPanel() {
   const summary = nexraSummary(m);
 
 
+
+ const highRiskAssumptions = (m.assumptions ?? []).filter(
+    (a: Assumption) =>
+      a.risk_level === "high" || a.risk_level === "critical"
+  );
+
   return (
-<div className="backdrop-blur shadow-xl space-y-6">
+    <div className="backdrop-blur shadow-xl space-y-6">
 
-  {/* Header */}
-  <div className="flex justify-between items-center">
-    <p className="text-sm font-medium text-neutral-300 tracking-wide">
-      Decision Analysis
-    </p>
-    <span className="text-[10px] px-2 py-1 bg-neutral-900 border border-neutral-700 rounded text-neutral-400">
-      Nexra v1 • Hybrid Brain
-    </span>
-  </div>
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm font-medium text-neutral-300 tracking-wide">
+          Decision Analysis
+        </p>
+        <span className="text-[10px] px-2 py-1 bg-neutral-900 border border-neutral-700 rounded text-neutral-400">
+          Nexra v2 • Decision Engine
+        </span>
+      </div>
 
-  {/* Sticky Verdict + Summary (mobile) */}
-  <div className="top-0 z-10 bg-neutral-950 pb-4 space-y-3">
-    <VerdictCard verdict={m.verdict} />
-
-    <p className="text-xs text-neutral-400 italic">
-      “{summary}”
-    </p>
-  </div>
-
-  <div className="border-t border-neutral-800" />
-
-  {/* Score Section */}
-  <div className="space-y-2">
-    <p className="text-sm font-medium text-neutral-300">
-      Decision Score
-    </p>
-
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-      
-      {/* Left info */}
-      <div className="space-y-4">
-        <NexraModeToggle />
-        <p className="text-sm text-neutral-300">
-          Confidence: {m.confidence}%
+      {/* Verdict */}
+      <div className="space-y-2">
+        <VerdictCard verdict={m.verdict} />
+        <p className="text-xs text-neutral-400 italic">
+          “{summary}”
         </p>
       </div>
 
-      {/* Score Circle */}
-      <div className="relative w-20 h-20 mx-auto sm:mx-0">
-        <svg width="80" height="80" className="-rotate-90">
-          <circle
-            cx="40"
-            cy="40"
-            r="34"
-            stroke="#262626"
-            strokeWidth="4"
-            fill="none"
-          />
-          <circle
-            cx="40"
-            cy="40"
-            r="34"
-            stroke="#facc15"
-            strokeWidth="4"
-            fill="none"
-            strokeDasharray={2 * Math.PI * 34}
-            strokeDashoffset={(1 - m.decision_score / 100) * 2 * Math.PI * 34}
-            strokeLinecap="round"
-          />
-        </svg>
+      <div className="border-t border-neutral-800" />
 
-        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-yellow-400">
-          {m.decision_score}
+      {/* Score + Confidence */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-neutral-300">
+            Decision Score
+          </p>
+          <NexraModeToggle />
+          <p className="text-xs text-neutral-400">
+            Confidence: {m.confidence}%
+          </p>
+        </div>
+
+        <div className="relative w-20 h-20">
+          <svg width="80" height="80" className="-rotate-90">
+            <circle cx="40" cy="40" r="34" stroke="#262626" strokeWidth="4" fill="none" />
+            <circle
+              cx="40"
+              cy="40"
+              r="34"
+              stroke="#facc15"
+              strokeWidth="4"
+              fill="none"
+              strokeDasharray={2 * Math.PI * 34}
+              strokeDashoffset={(1 - m.decision_score / 100) * 2 * Math.PI * 34}
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-yellow-400">
+            {m.decision_score}%
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div className="border-t border-neutral-800" />
+      <div className="border-t border-neutral-800" />
 
-  {/* Key Signals (collapsed on mobile) */}
-  {m.breakdown && (
-    <div className="space-y-2">
-       <p className="text-sm font-medium text-neutral-300">
-       Key Signals
-    </p>
-      <div className="space-y-3">
-        <ScoreBar label="Market Urgency" value={m.breakdown.market ?? 0} max={10} />
-        <ScoreBar label="Execution Strength" value={m.breakdown.execution ?? 0} max={10} />
-        <ScoreBar label="Founder Leverage" value={m.breakdown.founder_fit ?? 0} max={10} />
-        <ScoreBar label="Moat Strength" value={m.breakdown.moat ?? 0} max={10} />
-        <ScoreBar label="Revenue Clarity" value={m.breakdown.revenue ?? 0} max={10} />
+      {/* Weakest Link */}
+      <div className="border border-red-900/40 bg-red-950/30 rounded-lg p-3">
+        <p className="text-xs font-semibold text-red-400 mb-1">
+          Primary Risk
+        </p>
+        <p className="text-sm text-neutral-200">
+          {m.weakest_link.summary}
+        </p>
+        <p className="text-[11px] text-neutral-400 mt-1">
+          {m.weakest_link.impact}
+        </p>
       </div>
+
+      <div className="border-t border-neutral-800" />
+
+      {/* Assumption Risk */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-neutral-300">
+          Assumption Risk
+        </p>
+
+        <div className="flex gap-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              className={`h-2 w-6 rounded-sm ${
+                i < highRiskAssumptions.length
+                  ? "bg-red-500"
+                  : "bg-neutral-800"
+              }`}
+            />
+          ))}
+        </div>
+
+        <p className="text-[10px] text-neutral-500">
+          {highRiskAssumptions.length} high-risk assumptions detected
+        </p>
+      </div>
+
+      <div className="border-t border-neutral-800" />
+
+      {/* Signal Strength (V2) */}
+{/* Signal Strength (V2) */}
+{/* Signal Strength (V2) */}
+<div className="space-y-3">
+  <p className="text-sm font-medium text-neutral-300">
+    Signal Strength
+  </p>
+
+  {m.breakdown && Object.keys(m.breakdown).length > 0 ? (
+    <div className="space-y-3">
+      {Object.entries(m.breakdown).map(([key, breakdownItem]) => {
+        const strength = strengthFromBreakdown(breakdownItem);
+
+        return (
+          <div key={key} className="flex items-center gap-3">
+            <span className="w-24 text-xs capitalize text-neutral-400">
+              {key.replace("_", " ")}
+            </span>
+
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-2 w-4 rounded-sm ${
+                    i < strength
+                      ? "bg-yellow-400"
+                      : "bg-neutral-800"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
+  ) : (
+    <p className="text-xs text-neutral-500">
+      No signal data available for this analysis.
+    </p>
   )}
-
-  <div className="border-t border-neutral-800" />
-
-  {/* Next Steps (collapsed on mobile) */}
-  <div className="space-y-3">
-     <p className="text-sm font-medium text-neutral-300">
-      Recommended Next Steps
-    </p>
-
-    <ul className="list-decimal ml-4 text-xs text-neutral-300 space-y-1">
-      {m.roadmap.map((step, i) => (
-        <li key={i}>{step}</li>
-      ))}
-    </ul>
-  </div>
-
-  {/* Footer Personality */}
-  <div className="pt-4 space-y-1">
-    <p className="text-[10px] text-neutral-600">
-      Nexra combines heuristics + AI. I challenge assumptions, not founders.
-    </p>
-    <p className="text-[10px] text-neutral-600">
-      Nexra V1 uses hybrid analysis. Full analysis coming soon.
-    </p>
-  </div>
-
 </div>
 
+
+
+      {/* Footer */}
+      <div className="pt-3">
+        <p className="text-[10px] text-neutral-600">
+          Nexra v2 visualizes structural risk. Detailed reasoning lives in the analysis.
+        </p>
+      </div>
+
+    </div>
   );
 }
