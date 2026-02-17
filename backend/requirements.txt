@@ -5,4 +5,3 @@ sqlalchemy
 pydantic
 python-jose[cryptography]
 pyproject.toml
-uv.lock
