@@ -26,42 +26,73 @@ class User(SQLModel, table=True):
 
     
 class Idea(SQLModel, table=True):
+
     __tablename__ = "ideas"
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
     # -----------------
+    # User association (V3 memory)
+    # -----------------
+
+    user_id: Optional[uuid.UUID] = Field(
+        default=None,
+        foreign_key="users.id",
+        index=True
+    )
+
+    # -----------------
     # Input
     # -----------------
+
     text: str = Field(
         sa_column=Column(Text, index=True)
     )
+
     text_length: int
 
     # -----------------
-    # Decision summary (V2)
+    # Decision summary
     # -----------------
-    decision_score: int = Field(index=True)  # total_score (0–100)
+
+    decision_score: int = Field(index=True)
+
     verdict: str = Field(index=True)
+
+    verdict_severity: Optional[str] = Field(default=None, index=True)
+
     confidence: int = Field(index=True)
 
-    signals: Dict[str, Any] = Field(
-        sa_column=Column(JSON),
-        default_factory=dict
-    )
+    engine_version: str = Field(default="v2", index=True)
 
     # -----------------
-    # Core reasoning artifacts (V2)
+    # Structural signals
     # -----------------
-    assumptions: List[Dict[str, Any]] = Field(
-        sa_column=Column(JSON),
-        default_factory=list
+
+    signals: Dict[str, int] = Field(
+    sa_column=Column(JSON),
+    default_factory=dict
     )
+
+    weakest_dimension: Optional[str] = Field(default=None, index=True)
+
+    primary_weakness: Optional[str] = Field(default=None)
 
     weakest_link: Dict[str, Any] = Field(
         sa_column=Column(JSON),
         default_factory=dict
     )
+
+    # -----------------
+    # Reasoning artifacts
+    # -----------------
+
+    assumptions: List[Dict[str, Any]] = Field(
+    sa_column=Column(JSON),
+    default_factory=list
+    )
+
+
 
     rule_breakdown: Dict[str, Dict[str, Any]] = Field(
         sa_column=Column(JSON),
@@ -69,8 +100,9 @@ class Idea(SQLModel, table=True):
     )
 
     # -----------------
-    # Presentation-only
+    # Presentation
     # -----------------
+
     nexra_output: Optional[str] = Field(
         default="",
         sa_column=Column(Text)
@@ -79,4 +111,8 @@ class Idea(SQLModel, table=True):
     # -----------------
     # Metadata
     # -----------------
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow,
+        index=True
+    )   

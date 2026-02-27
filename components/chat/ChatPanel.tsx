@@ -89,14 +89,20 @@ Join the waitlist to unlock it.
 `;
 
 useEffect(() => {
-  const saved = localStorage.getItem(CHAT_HISTORY_KEY);
+  if (typeof window === "undefined") return;
+
+const saved = localStorage.getItem(CHAT_HISTORY_KEY);
   const bannerShown = localStorage.getItem("nexra_v1_banner");
 
   if (saved) {
     setMessages(JSON.parse(saved));
   } else {
     const initial: Message[] = [
-      { role: "nexra", content: "Talk about your startup idea. I’ll challenge your thinking." },
+      {
+        role: "nexra",
+        content:
+          "Describe what you're building. I'll think through it with you and identify structural risks.",
+      },
     ];
 
     if (!bannerShown) {
@@ -110,6 +116,7 @@ useEffect(() => {
   setUsage(getUsage().count);
 }, []);
 
+
   // Save chat history
   useEffect(() => {
     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
@@ -122,9 +129,8 @@ useEffect(() => {
 // }, [mode]);
 
 
-  async function handleSend(text: string) {
-    if (!text.trim()) return;
-
+async function handleSend(text: string) {
+  if (loading) return;
     // Daily limit check
     if (usage >= USAGE_LIMIT) {
       setMessages((m) => [
@@ -133,7 +139,7 @@ useEffect(() => {
         {
           role: "nexra",
           content:
-            "You’ve hit today’s decision limit. Real founders don’t need more answers—just execution. Nexra v2 unlocks unlimited co-founder mode. Join waitlist →",
+            "You’ve hit today’s decision limit. Real founders don’t need more answers—just execution. Nexra v2.5 unlocks unlimited co-founder mode. Join waitlist →",
         },
       ]);
       return;
@@ -147,7 +153,7 @@ useEffect(() => {
         {
           role: "nexra",
           content:
-            "This doesn’t look like a startup idea. Nexra v1 only analyzes startup ideas. Nexra v2 will think with you like a co-founder. Join waitlist →",
+            "This doesn’t look like a startup idea. Nexra v2 only analyzes startup ideas. Nexra v2.5 will think with you like a co-founder. Join waitlist →",
         },
       ]);
       return;
@@ -156,96 +162,83 @@ useEffect(() => {
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setLoading(true);
 
-    await realNexraReply(text);
+   setTimeout(() => {
+  realNexraReply(text);
+}, 600 + Math.random() * 800);
+
   }
 
 async function realNexraReply(text: string) {
   try {
     const data = await analyzeIdea(text);
 
-setMetrics({
-  verdict: data.verdict,
-  decision_score: data.decision_score,
-  confidence: data.confidence,
-  breakdown: data.rule_breakdown,
-  weakest_link: data.weakest_link,
-  assumptions: data.assumptions,
-  signals: data.signals,
-});
+    setMetrics({
+      verdict: data.verdict,
+      decision_score: data.decision_score,
+      confidence: data.confidence,
+      breakdown: data.rule_breakdown,
+      weakest_link: data.weakest_link,
+      assumptions: data.assumptions,
+      signals: data.signals,
+    });
 
+    const updatedUsage = getUsage().count + 1;
+incrementUsage();
+setUsage(updatedUsage);
+//     const fullText =
+//       data.nexra_output?.trim() ||
+//       `Verdict: ${data.verdict}
+// Score: ${data.decision_score}/100
+// Confidence: ${data.confidence}%`;
+const fullText =
+  data.nexra_output?.trim() ||
+  `Verdict: ${data.verdict}
+Score: ${data.decision_score}/100
+Confidence: ${data.confidence}%`;
+    setMessages((prev) => [...prev, { role: "nexra", content: "" }]);
 
+    let i = 0;
+    let buffer = "";
 
-    incrementUsage();
-    setUsage(getUsage().count);
+    const parts = fullText.split(" ");
 
-//     if (data.verdict === "KILL") {
-//   setMessages((prev) => [
-//     ...prev,
-//     {
-//       role: "nexra",
-//       content:
-//         "I recommend killing this idea. Review the weakest link and assumptions before continuing.",
-//     },
-//   ]);
-//   return;
-// }
+    let interval: NodeJS.Timeout;
 
+interval = setInterval(() => {
+      if (i >= parts.length) {
+        clearInterval(interval);
+        return;
+      }
 
- const fullText = data.nexra_output?.trim();
+      buffer += parts[i] + " ";
 
-if (!fullText) {
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "nexra",
-      content:
-        "Decision completed. Review the verdict and risks in the panel.",
-    },
-  ]);
-  return;
-}
-// Add empty Nexra message first
-setMessages((prev) => [...prev, { role: "nexra", content: "" }]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        const lastIndex = updated.length - 1;
 
-const parts = fullText.split(" ");
-let i = 0;
-let buffer = "";
+        if (lastIndex >= 0 && updated[lastIndex].role === "nexra") {
+          updated[lastIndex] = {
+            ...updated[lastIndex],
+            content: buffer,
+          };
+        }
 
-const interval = setInterval(() => {
-  if (i >= parts.length) {
-    clearInterval(interval);
-    return;
-  }
+        return updated;
+      });
 
-  buffer += parts[i] + " ";
-
-  setMessages((prev) => {
-    const updated = [...prev];
-
-    // Always update last message safely
-    const lastIndex = updated.length - 1;
-
-    if (lastIndex >= 0 && updated[lastIndex].role === "nexra") {
-      updated[lastIndex] = {
-        ...updated[lastIndex],
-        content: buffer,
-      };
-    }
-
-    return updated;
-  });
-
-  i++;
-}, 60);
-
-
-
-
+      i++;
+    }, 60);
+// cleanup safety
+return () => clearInterval(interval);
   } catch (e) {
     console.error(e);
-    setMessages((m) => [
-      ...m,
-      { role: "nexra", content: "Failed to analyze idea. Check backend logs." },
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "nexra",
+        content: "Nexra could not complete structural evaluation.",
+      },
     ]);
   } finally {
     setLoading(false);

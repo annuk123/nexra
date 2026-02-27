@@ -1,49 +1,115 @@
+from .criteria import CRITERIA
+
+
 WEAKEST_LINK_MAP = {
     "market": {
         "summary": "Weak market signal",
-        "impact": "Without clear demand, growth will stall regardless of execution quality",
+        "impact": "Without real demand, even strong execution cannot sustain growth",
         "urgency": "critical",
-        "default_action": "Validate demand with real buyers"
+        "default_action": "Validate demand directly with target buyers"
     },
     "founder_fit": {
         "summary": "Founder–problem mismatch",
-        "impact": "Even strong ideas fail if the founder lacks context or capability",
+        "impact": "Execution risk increases when founder context or expertise is limited",
         "urgency": "high",
-        "default_action": "Narrow scope or acquire missing expertise"
+        "default_action": "Deepen domain understanding or narrow problem scope"
     },
     "execution": {
-        "summary": "High execution risk",
-        "impact": "Complex execution increases delays, cost, and failure probability",
+        "summary": "Execution feasibility risk",
+        "impact": "High execution complexity increases delay and failure risk",
         "urgency": "critical",
-        "default_action": "Reduce scope or simplify initial version"
+        "default_action": "Simplify scope and focus on minimum viable version"
     },
     "moat": {
-        "summary": "Lack of defensibility",
-        "impact": "Competitors can replicate the idea once traction appears",
+        "summary": "Weak defensibility",
+        "impact": "Competitors may replicate quickly once traction appears",
         "urgency": "medium",
-        "default_action": "Identify compounding or switching-cost advantages"
+        "default_action": "Develop structural or compounding advantages"
     },
     "revenue": {
-        "summary": "Unclear monetization",
-        "impact": "Without willingness to pay, the business cannot sustain itself",
+        "summary": "Revenue model unclear",
+        "impact": "Without willingness to pay, sustainability is unlikely",
         "urgency": "critical",
-        "default_action": "Clarify pricing and buyer willingness to pay"
+        "default_action": "Clarify pricing and validate willingness to pay"
     }
 }
 
 
 def find_weakest_link(scores: dict) -> dict:
+
     if not scores:
         return {}
 
-    weakest_dimension = min(scores, key=scores.get)
+    # Severity-weighted weakest detection
+    weighted_ratios = {}
+
+    for dimension, score in scores.items():
+
+        criterion = CRITERIA[dimension]
+
+        ratio = score / criterion.max_score
+
+        weighted_ratio = ratio * criterion.severity_weight
+
+        weighted_ratios[dimension] = weighted_ratio
+
+    weakest_dimension = min(weighted_ratios, key=weighted_ratios.get)
+
     weakest_score = scores[weakest_dimension]
+
+    criterion = CRITERIA[weakest_dimension]
+
+    ratio = weakest_score / criterion.max_score
+
+    # Dynamic severity (future-proof)
+    if ratio < 0.3:
+        severity = "critical"
+
+    elif ratio < 0.5:
+        severity = "high"
+
+    else:
+        severity = "medium"
 
     meta = WEAKEST_LINK_MAP.get(weakest_dimension, {})
 
     return {
+
         "dimension": weakest_dimension,
+
         "score": weakest_score,
-        "summary": meta.get("summary", "Weak area detected"),
-        "impact": meta.get("impact", "This area poses a significant risk")
+
+        "max_score": criterion.max_score,
+
+        "score_ratio": round(ratio, 3),
+
+        "severity": severity,
+
+        "severity_weight": criterion.severity_weight,
+
+        "summary": meta.get(
+            "summary",
+            "Structural weakness detected"
+        ),
+
+        "impact": meta.get(
+            "impact",
+            "This weakness increases failure probability"
+        ),
+
+        "urgency": meta.get(
+            "urgency",
+            severity
+        ),
+
+        "default_action": meta.get(
+            "default_action",
+            "Investigate and improve this dimension"
+        ),
+
+        # Explainability metadata
+        "confidence_impact": round(
+            (1 - ratio) * criterion.severity_weight,
+            3
+        )
     }

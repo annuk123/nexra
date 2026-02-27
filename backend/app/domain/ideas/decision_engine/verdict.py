@@ -4,65 +4,72 @@ PIVOT_MIN_SCORE = 45
 LOW_CONFIDENCE_THRESHOLD = 60
 VERY_LOW_CONFIDENCE_THRESHOLD = 45
 
-HIGH_RED_FLAG_THRESHOLD = 2
-
-
-def total_score(scores: dict) -> int:
-    return sum(scores.values())
+HIGH_RED_FLAG_THRESHOLD = 3
 
 
 def decide_verdict(
-    scores: dict,
+    total_score: int,
     confidence: int,
-    weakest_link: dict,
+    weakest_dimension: str,
     red_flags: int,
     blocking_failures: list[str] | None = None
 ) -> dict:
-    """
-    Determines Nexra's verdict using V2 judgment logic.
-
-    Verdict meanings:
-    - PROCEED: Signals are strong and decision is reliable
-    - PIVOT: Idea has potential but assumptions or structure must change
-    - KILL: Risks outweigh potential; do not invest further
-    """
 
     blocking_failures = blocking_failures or []
-    score = total_score(scores)
-    weakest_dimension = weakest_link.get("dimension", "unknown")
+
+    blocking_count = len(blocking_failures)
 
     # -----------------------
-    # 1. Absolute kill gates
+    # Structural kill gates
     # -----------------------
 
-    if blocking_failures:
+    if blocking_count >= 2:
         return {
             "verdict": "KILL",
             "severity": "critical",
             "reason": (
-                "One or more blocking dimensions fail basic viability: "
+                "Multiple structural failures in "
                 + ", ".join(blocking_failures)
             ),
-            "next_mode": "rethink_idea"
+            "next_mode": "idea_rethink"
         }
 
-    if red_flags >= HIGH_RED_FLAG_THRESHOLD:
+    # Single blocking failure → pivot, not kill
+    if blocking_count == 1:
         return {
-            "verdict": "KILL",
+            "verdict": "PIVOT",
             "severity": "high",
-            "reason": "Multiple unresolved risks invalidate the decision",
-            "next_mode": "risk_review"
+            "reason": (
+                f"Structural weakness in {blocking_failures[0]} must be resolved"
+            ),
+            "next_mode": "assumption_validation"
         }
 
     # -----------------------
-    # 2. Confidence gates
+    # Red flag gates
+    # -----------------------
+
+    if red_flags >= HIGH_RED_FLAG_THRESHOLD:
+        return {
+            "verdict": "PIVOT",
+            "severity": "high",
+            "reason": (
+                "Multiple structural risk signals reduce viability confidence"
+            ),
+            "next_mode": "risk_reduction"
+        }
+
+    # -----------------------
+    # Confidence gates
     # -----------------------
 
     if confidence < VERY_LOW_CONFIDENCE_THRESHOLD:
         return {
             "verdict": "KILL",
             "severity": "high",
-            "reason": "Decision confidence is extremely low due to fragile assumptions",
+            "reason": (
+                "Evaluation confidence is too low due to weak or inconsistent signals"
+            ),
             "next_mode": "assumption_reset"
         }
 
@@ -71,43 +78,44 @@ def decide_verdict(
             "verdict": "PIVOT",
             "severity": "medium",
             "reason": (
-                "Low confidence suggests unstable assumptions, "
-                "especially around "
-                f"{weakest_dimension}"
+                f"Uncertainty remains around {weakest_dimension}"
             ),
-            "next_mode": "assumption_validation"
+            "next_mode": "targeted_validation"
         }
 
     # -----------------------
-    # 3. Score-based judgment
+    # Score gates
     # -----------------------
 
-    if score >= PROCEED_MIN_SCORE and confidence >= 70:
+    if total_score >= PROCEED_MIN_SCORE and confidence >= 70:
         return {
             "verdict": "PROCEED",
             "severity": "low",
-            "reason": "Strong signals with balanced execution and acceptable risk",
+            "reason": (
+                "Strong structural signals across key dimensions"
+            ),
             "next_mode": "execution_planning"
         }
 
-    if score >= PIVOT_MIN_SCORE:
+    if total_score >= PIVOT_MIN_SCORE:
         return {
             "verdict": "PIVOT",
             "severity": "medium",
             "reason": (
-                f"The weakest dimension ({weakest_dimension}) "
-                "needs refinement before further investment"
+                f"Weakness in {weakest_dimension} limits viability"
             ),
             "next_mode": "targeted_iteration"
         }
 
     # -----------------------
-    # 4. Default kill
+    # Default kill
     # -----------------------
 
     return {
         "verdict": "KILL",
         "severity": "medium",
-        "reason": "Overall signal strength is too weak to justify continued effort",
+        "reason": (
+            "Insufficient structural strength across multiple dimensions"
+        ),
         "next_mode": "idea_replacement"
     }

@@ -101,8 +101,7 @@
 #     }
 
 
-
-from typing import Dict
+from dataclasses import asdict
 from sqlmodel import Session, select
 from sqlalchemy import func
 from fastapi import HTTPException
@@ -111,63 +110,46 @@ from app.db.models import Idea
 from app.domain.ideas.decision_engine.engine import evaluate_idea
 from app.domain.reasoning.narrator import narrate_idea  # optional
 
-
-
 # -----------------------------
 # Analyze & Save Idea
 # -----------------------------
 
 
 def analyze_idea_text(text: str, session: Session) -> dict:
-    # 1. Core decision engine (SOURCE OF TRUTH)
+
+    # 1. Authoritative decision
     result = evaluate_idea(text)
+    assumptions_payload = [asdict(a) for a in result.assumptions]
 
-    # 2. Optional narration (presentation only)
-    nexra_output = narrate_idea(result, mode="balanced")
+    # 2. Narration layer
+    narration = narrate_idea(result, mode="balanced")
 
-    # 3. Persist decision snapshot (V2)
+    # 3. Persist snapshot
     idea = Idea(
         text=text,
         text_length=len(text),
-
-        decision_score=result.get("total_score", 0),
-        verdict=result.get("verdict", "UNKNOWN"),
-        confidence=result.get("confidence", 0),
-
-        assumptions=result.get("assumptions", []),
-        weakest_link=result.get("weakest_link", {}),
-        rule_breakdown=result.get("rule_breakdown", {}),
-        signals=result.get("signals", {}),
-        nexra_output=nexra_output,
+        decision_score=result.score,
+        verdict=result.verdict,
+        confidence=result.confidence,
+        assumptions=assumptions_payload,
+        weakest_link=result.weakest_link,
+        rule_breakdown=result.scoring_breakdown,
+        signals=result.structural_scores,
+        primary_weakness=result.primary_weakness,
+        weakest_dimension=result.weakest_link.get("dimension"),
+        nexra_output=narration,
     )
 
     session.add(idea)
     session.commit()
     session.refresh(idea)
 
-    # 4. API response (V2-aligned)
-    return {
-        "id": idea.id,
-        "text": idea.text,
-        "text_length": idea.text_length,
-
-        "decision_score": idea.decision_score,
-        "verdict": idea.verdict,
-        "confidence": idea.confidence,
-
-        "assumptions": idea.assumptions,
-        "weakest_link": idea.weakest_link,
-        "rule_breakdown": idea.rule_breakdown,
-        "signals": idea.signals,
-
-        "nexra_output": idea.nexra_output,
-        "created_at": idea.created_at.isoformat(),
-    }
-
+    # 4. Return flat response matching IdeaOut
+    return _idea_to_dict(idea)
 # -----------------------------
 # Get Single Idea
 # -----------------------------
-def get_idea_by_id(idea_id: int, session: Session) -> Dict:
+def get_idea_by_id(idea_id: int, session: Session) -> dict:
     statement = select(Idea).where(Idea.id == idea_id)
     idea = session.exec(statement).first()
 
@@ -184,7 +166,7 @@ def list_ideas_with_count(
     session: Session,
     limit: int = 10,
     offset: int = 0,
-) -> Dict:
+) -> dict:
 
     total = session.exec(
         select(func.count()).select_from(Idea)
@@ -208,21 +190,20 @@ def list_ideas_with_count(
 # -----------------------------
 # Internal Helper Serializer
 # -----------------------------
-def _idea_to_dict(idea: Idea) -> Dict:
+def _idea_to_dict(idea: Idea) -> dict:
     return {
         "id": idea.id,
         "text": idea.text,
-         "text_length": idea.text_length,
+        "text_length": idea.text_length,
         "decision_score": idea.decision_score,
         "verdict": idea.verdict,
-        "assumptions": idea.assumptions,
-        "market_analysis": idea.market_analysis,
-        "competitors": idea.competitors,
-        "risks": idea.risks,
-        "roadmap": idea.roadmap,
-        "rule_breakdown": idea.rule_breakdown,
+        "verdict_severity": idea.verdict_severity,
         "confidence": idea.confidence,
+        "weakest_link": idea.weakest_link,
+        "assumptions": idea.assumptions,
+        "rule_breakdown": idea.rule_breakdown,
+        "signals": idea.signals,
         "nexra_output": idea.nexra_output,
-
-        "created_at": idea.created_at.isoformat(),
+        "engine_version": idea.engine_version,
+        "created_at": idea.created_at,
     }

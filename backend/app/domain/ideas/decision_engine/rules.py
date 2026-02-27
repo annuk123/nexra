@@ -1,4 +1,5 @@
 from typing import List, Tuple, Dict
+from .criteria import CRITERIA
 
 # ---------------------------
 # Helpers
@@ -158,12 +159,13 @@ def revenue_rules(text: str) -> Tuple[int, List[str], int]:
 # Aggregator
 # ---------------------------
 
+
 def apply_rules(text: str) -> Dict:
+
     text = normalize(text)
 
     rules = {
         "market": market_rules,
-        "problem": problem_rules,
         "execution": execution_rules,
         "moat": moat_rules,
         "revenue": revenue_rules
@@ -174,16 +176,52 @@ def apply_rules(text: str) -> Dict:
     total_red_flags = 0
 
     for name, rule_fn in rules.items():
+
         score, reasons, flags = rule_fn(text)
+
+        max_allowed = CRITERIA[name].max_score
+
+        score = clamp(score, 0, max_allowed)
+
         scores[name] = score
-        breakdown[name] = reasons
+
+        breakdown[name] = {
+            "score": score,
+            "reasons": reasons,
+            "red_flags": flags
+        }
+
         total_red_flags += flags
 
-    total_score = sum(scores.values())
+    # Proper normalization
+    weighted_total = sum(
+        scores[k] * CRITERIA[k].severity_weight
+        for k in scores
+    )
+
+    max_weighted = sum(
+        CRITERIA[k].max_score * CRITERIA[k].severity_weight
+        for k in scores
+    )
+
+    normalized_score = int((weighted_total / max_weighted) * 100)
+
+    normalized_score -= total_red_flags * 2
+
+    normalized_score = clamp(normalized_score, 0, 100)
+
+    # Severity-weighted weakest dimension
+    weakest_dimension = min(
+        scores,
+        key=lambda k: (
+            scores[k] / CRITERIA[k].max_score
+        ) * CRITERIA[k].severity_weight
+    )
 
     return {
         "scores": scores,
-        "total_score": total_score,
+        "total_score": normalized_score,
+        "weakest_dimension": weakest_dimension,
         "breakdown": breakdown,
         "red_flags": total_red_flags
     }

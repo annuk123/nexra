@@ -119,9 +119,7 @@ export default function Home() {
       </Section>
 
       {/* Static Demo */}
-      {/* <Section size="sm">
-        <StaticDemo />
-      </Section> */}
+     
 
       {/* Feedback */}
           <Section size="md">

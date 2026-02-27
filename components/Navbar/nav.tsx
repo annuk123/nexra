@@ -37,15 +37,15 @@ export default function Navbar() {
     <Link href="/" className="flex items-center gap-2 text-sm font-medium text-white">
       <Image src="/nexra.png" alt="Nexra" width={28} height={28} className="h-6 w-6" />
       <span className="tracking-tight">Nexra</span>
-      <span className="text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 rounded">
+      {/* <span className="text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 rounded">
         beta
-      </span>
+      </span> */}
     </Link>
 
     {/* Desktop Nav */}
     <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
       <Link href="/nexra-engine-v2" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
->Product</Link>
+>Nexra Engine</Link>
 
       <button
         onClick={() => setFeedbackOpen(true)}
@@ -59,7 +59,7 @@ export default function Navbar() {
         onClick={() => setOpen(true)}
         className="px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-white text-xs hover:bg-white/10 transition"
       >
-        Start session
+        Join Waitlist
       </button>
     </nav>
 
@@ -76,7 +76,7 @@ export default function Navbar() {
   {mobileOpen && (
     <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
       
-      <Link href="/nexra-engine-v2" className="block text-neutral-400 hover:text-white">Product</Link>
+      <Link href="/nexra-engine-v2" className="block text-neutral-400 hover:text-white">Nexra Engine</Link>
 
       <button
         onClick={() => {
@@ -95,7 +95,7 @@ export default function Navbar() {
         }}
         className="w-full px-3 py-2 bg-white/5 border border-white/10 text-white rounded-md"
       >
-        Start session
+        Join Waitlist
       </button>
     </div>
   )}

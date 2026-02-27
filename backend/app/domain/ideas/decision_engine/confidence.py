@@ -1,71 +1,82 @@
 import statistics
-from typing import Dict, Optional
+from typing import Dict, Optional, List
+
+
+# Dimension importance weights (must match assumption system)
+DIMENSION_WEIGHT = {
+    "market": 1.0,
+    "revenue": 0.95,
+    "founder_fit": 0.9,
+    "execution": 0.85,
+    "moat": 0.6
+}
 
 
 def calculate_confidence(
-    scores: Dict[str, int],
+    scores: Dict[str, float],
     red_flags: int = 0,
-    blocking_failures: int = 0
+    blocking_failures: Optional[List[str]] = None,
+    max_score: float = 20.0
 ) -> int:
     """
-    Confidence measures how reliable Nexra's verdict is.
+    Calculates verdict confidence (not idea quality).
 
-    High confidence means:
-    - Scores are balanced
-    - No critical dimensions are failing
-    - Few unresolved red flags
+    Confidence answers:
+    How reliable is this evaluation?
 
-    Low confidence means:
-    - Decision depends on fragile assumptions
-    - One or more dimensions could collapse the idea
+    NOT:
+    How good is this idea?
     """
 
     if not scores:
-        return 0
+        return 10
+
+    blocking_failures = blocking_failures or []
 
     values = list(scores.values())
 
-    # -----------------------
-    # 1. Base confidence (neutral, not optimistic)
-    # -----------------------
-    confidence = 70
+    # Normalize scores to ratio (future-proof)
+    ratios = [v / max_score for v in values]
 
-    # -----------------------
-    # 2. Imbalance penalty (normalized)
-    # -----------------------
+    avg_ratio = sum(ratios) / len(ratios)
+
+    # Base confidence derived from signal strength
+    confidence = int(avg_ratio * 60 + 20)
+    # range: 20–80 baseline
+
+    # Signal consistency penalty
     if len(values) > 1:
-        stdev = statistics.pstdev(values)
-        confidence -= int(stdev * 4)
+        stdev = statistics.pstdev(ratios)
 
-    # -----------------------
-    # 3. Structural weakness penalty
-    # -----------------------
-    weakest = min(values)
+        # high variance = low reliability
+        confidence -= int(stdev * 40)
 
-    if weakest <= 5:
-        confidence -= 20   # critical fragility
-    elif weakest <= 8:
-        confidence -= 10   # notable risk
-    elif weakest <= 12:
-        confidence -= 5    # mild weakness
+    # Weakest dimension penalty (weighted)
+    weakest_dimension = min(scores, key=scores.get)
+    weakest_ratio = scores[weakest_dimension] / max_score
 
-    # -----------------------
-    # 4. Blocking failures penalty
-    # -----------------------
-    confidence -= blocking_failures * 15
+    weight = DIMENSION_WEIGHT.get(weakest_dimension, 0.7)
 
-    # -----------------------
-    # 5. Red flag uncertainty penalty
-    # -----------------------
+    if weakest_ratio < 0.3:
+        confidence -= int(25 * weight)
+
+    elif weakest_ratio < 0.5:
+        confidence -= int(15 * weight)
+
+    elif weakest_ratio < 0.7:
+        confidence -= int(8 * weight)
+
+    # Blocking failures penalty (major reliability reduction)
+    confidence -= len(blocking_failures) * 12
+
+    # Red flag penalty (moderate reliability reduction)
     confidence -= red_flags * 6
 
-    # -----------------------
-    # 6. Strong balance bonus (rare, intentional)
-    # -----------------------
-    if min(values) >= 14 and statistics.pstdev(values) < 2:
+    # Strong signal consistency bonus
+    if min(ratios) > 0.7 and statistics.pstdev(ratios) < 0.15:
         confidence += 5
 
-    # -----------------------
-    # 7. Clamp to 0–100
-    # -----------------------
-    return max(0, min(100, confidence))
+    # Clamp final range
+    confidence = max(10, min(95, confidence))
+
+    return confidence

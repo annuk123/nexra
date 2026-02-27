@@ -86,23 +86,26 @@ export default function Hero() {
 </p>
 
   <div className="mt-5 flex justify-center gap-4">
+
+        <Link
+      href="/nexra-engine-v2"
+       className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border 
+   bg-white text-black transition hover:bg-neutral-100">
+       Try Nexra →
+        {/* <Play className="ml-2 h-4 w-4" /> */}
+
+    </Link>
+
     <button 
       onClick={() => setOpen(true)}
-      className="bg-white text-black px-6 py-3 sm:px-8 sm:py-3.5 rounded-lg font-medium text-sm
+      className="bg-white/5  backdrop-blur text-neutral-300 border border-neutral-700 hover:bg-white/20 px-6 py-3 sm:px-8 sm:py-3.5 rounded-lg font-medium text-sm
   shadow-[0_0_0_0_rgba(124,58,237,0.4)]
   hover:shadow-[0_0_25px_2px_rgba(124,58,237,0.4)]
   transition">
         Join waitlist 
     </button>
 
-    <Link
-      href="/nexra-engine-v2"
-       className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border border-neutral-700 
-  bg-white/5 backdrop-blur text-neutral-300 hover:bg-white/10 transition">
-        See how it works 
-        {/* <Play className="ml-2 h-4 w-4" /> */}
 
-    </Link>
   </div>
 
   {/* Terminal Card */}

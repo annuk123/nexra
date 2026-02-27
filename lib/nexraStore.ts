@@ -10,10 +10,10 @@ import type {
 
 export type Signals = {
   market: number;
-  competition: number;
   founder_fit: number;
-  timing: number;
-  distribution: number;
+  execution: number;
+  moat: number;
+  revenue: number;
 };
 
 export type NexraMode = "safe" | "balanced" | "aggressive";
