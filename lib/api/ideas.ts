@@ -113,7 +113,7 @@ async function safeFetch<T>(
 
   const timeout = setTimeout(() => {
     controller.abort();
-  }, 20000); // 20s timeout
+  }, 45000); // 20s timeout
 
   try {
     const res = await fetch(url, {
