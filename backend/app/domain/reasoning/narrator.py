@@ -160,48 +160,47 @@ STRICT RULES:
 INTERPRETATION:
 <your response>
 """
-
     try:
-    rate_limit_guard()
-    client = get_openai_client()
+        rate_limit_guard()
+        client = get_openai_client()
 
-    # 🔒 If no API key → skip AI layer safely
-    if client is None:
-        return base_text
+        # 🔒 If no API key → skip AI layer safely
+        if client is None:
+            return base_text
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        temperature=0.2,
-        max_tokens=250,
-        messages=[
-            {
-                "role": "system",
-                "content": build_nexra_system_prompt(mode)
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0.2,
+            max_tokens=250,
+            messages=[
+                {
+                    "role": "system",
+                    "content": build_nexra_system_prompt(mode)
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
 
         ai_text = response.choices[0].message.content.strip()
 
         # -------- SAFETY VALIDATION --------
-
         if not ai_text.startswith("INTERPRETATION:"):
             return base_text
 
-        # Prevent AI from sneaking in verdict override
         blocked_terms = ["VERDICT", "SCORE", "CONFIDENCE"]
         if any(term in ai_text.upper() for term in blocked_terms):
-         return base_text
+            return base_text
 
         return base_text + "\n\n" + ai_text
 
     except Exception as e:
         print("OpenAI error:", e)
         return base_text
+
+
 
 def generate_challenge_question(result: ReasoningObject) -> str:
     """
