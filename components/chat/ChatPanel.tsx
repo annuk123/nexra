@@ -82,9 +82,9 @@ export default function ChatPanel() {
 
   // Load chat history
 const V1_BANNER = `
-This is **Nexra v1**. You can validate startup ideas here.
+This is **Nexra v2**. You can validate startup ideas here.
 
-Conversational co-founder mode is coming in **Nexra v2**.
+Conversational co-founder mode is coming in **Nexra v2.5**.
 Join the waitlist to unlock it.
 `;
 
