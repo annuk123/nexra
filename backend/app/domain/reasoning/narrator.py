@@ -9,7 +9,13 @@ from app.domain.reasoning.schema import ReasoningObject
 load_dotenv()
 
 # Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 
 # Rate limit guard (5 requests/minute safe)
 LAST_CALL = 0
@@ -107,7 +113,6 @@ def narrate_idea_ai(
     result: ReasoningObject,
     base_text: str,
     mode: str = "balanced",
-    founder_memory: str = ""
 ) -> str:
 
     verdict = result.verdict
@@ -158,6 +163,7 @@ INTERPRETATION:
 
     try:
         rate_limit_guard()
+        client = get_openai_client()
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
