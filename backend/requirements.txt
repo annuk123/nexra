@@ -5,3 +5,4 @@ sqlalchemy
 pydantic
 python-jose[cryptography]
 pyproject.toml
+openai>=1.0.0
