@@ -177,7 +177,7 @@ async function realNexraReply(text: string) {
       decision_score: data.decision_score,
       confidence: data.confidence,
       breakdown: data.rule_breakdown,
-      weakest_link: data.weakest_link,
+      weakest_link: data.weakest_link ?? null,
       assumptions: data.assumptions,
       signals: data.signals,
     });

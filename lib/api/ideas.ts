@@ -81,7 +81,7 @@ export type IdeaResponse = {
 
   confidence: number;
 
-  weakest_link: WeakestLink;
+  weakest_link?: WeakestLink | null;
 
   assumptions: Assumption[];
 

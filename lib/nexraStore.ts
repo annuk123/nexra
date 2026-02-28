@@ -27,7 +27,7 @@ type Metrics = {
   confidence: number;
 
   breakdown: RuleBreakdown;
-  weakest_link: WeakestLink;
+  weakest_link: WeakestLink | null;
   assumptions: Assumption[];
   signals: Signals;
 };

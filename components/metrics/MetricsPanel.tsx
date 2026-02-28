@@ -107,18 +107,27 @@ export default function MetricsPanel() {
 
       <div className="border-t border-neutral-800" />
 
-      {/* Weakest Link */}
-      <div className="border border-red-900/40 bg-red-950/30 rounded-lg p-3">
-        <p className="text-xs font-semibold text-red-400 mb-1">
-          Primary Risk
-        </p>
-        <p className="text-sm text-neutral-200">
-          {m.weakest_link.summary}
-        </p>
-        <p className="text-[11px] text-neutral-400 mt-1">
-          {m.weakest_link.impact}
-        </p>
-      </div>
+
+     {/* Weakest Link */}
+{m.weakest_link ? (
+  <div className="border border-red-900/40 bg-red-950/30 rounded-lg p-3">
+    <p className="text-xs font-semibold text-red-400 mb-1">
+      Primary Risk
+    </p>
+    <p className="text-sm text-neutral-200">
+      {m.weakest_link?.summary ?? "No dominant structural weakness detected."}
+    </p>
+    <p className="text-[11px] text-neutral-400 mt-1">
+      {m.weakest_link.impact}
+    </p>
+  </div>
+) : (
+  <div className="border border-neutral-800 bg-neutral-900/40 rounded-lg p-3">
+    <p className="text-xs text-neutral-500">
+      No dominant structural weakness detected.
+    </p>
+  </div>
+)}
 
       <div className="border-t border-neutral-800" />
 
