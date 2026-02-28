@@ -132,7 +132,7 @@ def analyze_idea_text(text: str, session: Session) -> dict:
         verdict=result.verdict,
         confidence=result.confidence,
         assumptions=assumptions_payload,
-        weakest_link=result?.weakest_link?.summary || "—",
+        weakest_link=result.weakest_link,
         rule_breakdown=result.scoring_breakdown,
         signals=result.structural_scores,
         primary_weakness=result.primary_weakness,

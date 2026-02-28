@@ -162,24 +162,28 @@ INTERPRETATION:
 """
 
     try:
-        rate_limit_guard()
-        client = get_openai_client()
+    rate_limit_guard()
+    client = get_openai_client()
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0.2,
-            max_tokens=250,   # Hard cap for cost control
-            messages=[
-                {
-                    "role": "system",
-                    "content": build_nexra_system_prompt(mode)
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+    # 🔒 If no API key → skip AI layer safely
+    if client is None:
+        return base_text
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0.2,
+        max_tokens=250,
+        messages=[
+            {
+                "role": "system",
+                "content": build_nexra_system_prompt(mode)
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
 
         ai_text = response.choices[0].message.content.strip()
 
