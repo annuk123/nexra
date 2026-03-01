@@ -164,7 +164,7 @@ async function handleSend(text: string) {
 
    setTimeout(() => {
   realNexraReply(text);
-}, 600 + Math.random() * 20000);
+}, 600 + Math.random() * 800);
 
   }
 
