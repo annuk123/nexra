@@ -82,10 +82,10 @@ export default function ChatPanel() {
 
   // Load chat history
 const V1_BANNER = `
-This is **Nexra v2**. You can validate startup ideas here.
+You’re using **Nexra v2 — Structural Startup Validation**.
 
-Conversational co-founder mode is coming in **Nexra v2.5**.
-Join the waitlist to unlock it.
+Full Co-Founder Mode with unlimited reasoning unlocks in **Nexra v2.5**.
+Join the waitlist to access it first.
 `;
 
 useEffect(() => {
@@ -139,7 +139,7 @@ async function handleSend(text: string) {
         {
           role: "nexra",
           content:
-            "You’ve hit today’s decision limit. Real founders don’t need more answers—just execution. Nexra v2.5 unlocks unlimited co-founder mode. Join waitlist →",
+  "You’ve reached today’s decision limit. More analysis won’t replace execution. Nexra v2.5 unlocks unlimited Co-Founder Mode. Join the waitlist →",
         },
       ]);
       return;
@@ -185,11 +185,6 @@ async function realNexraReply(text: string) {
     const updatedUsage = getUsage().count + 1;
 incrementUsage();
 setUsage(updatedUsage);
-//     const fullText =
-//       data.nexra_output?.trim() ||
-//       `Verdict: ${data.verdict}
-// Score: ${data.decision_score}/100
-// Confidence: ${data.confidence}%`;
 const fullText =
   data.nexra_output?.trim() ||
   `Verdict: ${data.verdict}
