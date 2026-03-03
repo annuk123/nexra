@@ -338,14 +338,15 @@ async function realNexraReply(text: string, thinkingId: string) {
   }
 }
   return (
-<div className="flex flex-col min-h-screen bg-neutral-950 text-neutral-100 pb-14">
-  <div className="flex flex-col flex-1 max-w-4xl w-full mx-auto">
+<div className="flex h-screen flex-col bg-neutral-950 text-neutral-100 pb-14">
+  {/* Centered Chat Container */}
+<div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0 flex-1">
     {/* Chat Area */}
 
 
     <div
       ref={chatContainerRef}
-      className="flex-1 overflow-y-auto min-h-0 px-6 py-8 space-y-6 scrollbar-none"
+      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none min-h-0"
     >
 
       {messages.length <= 1 && (
@@ -381,7 +382,7 @@ async function realNexraReply(text: string, thinkingId: string) {
     </div>
 
     {/* Footer Input Section */}
-   <div className="shrink-0 px-6 py-4 border-t border-neutral-800/60 bg-neutral-950">
+    <div className="px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md shrink-0">
       
       {/* Input */}
       <div className="relative ">
