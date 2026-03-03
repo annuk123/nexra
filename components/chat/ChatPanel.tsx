@@ -73,7 +73,7 @@ export default function ChatPanel() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-
+  const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -168,32 +168,20 @@ useEffect(() => {
     };
   }, []);
 
-  function isUserNearBottom() {
-    const container = chatContainerRef.current;
-    if (!container) return true;
-
-    const threshold = 120; // px from bottom
-    const position =
-      container.scrollHeight - container.scrollTop - container.clientHeight;
-
-    return position < threshold;
-  }
 
   function handleSampleClick(idea: string) {
   handleSend(idea);
 }
 
-  useEffect(() => {
-    const container = chatContainerRef.current;
-    if (!container) return;
+useEffect(() => {
+  const container = chatContainerRef.current;
+  if (!container) return;
 
-    if (isUserNearBottom()) {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages]);
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: "smooth",
+  });
+}, [messages]);
 
 async function handleSend(text: string) {
   if (loading) return;
@@ -257,24 +245,45 @@ async function realNexraReply(text: string, thinkingId: string) {
       {
         role: "user",
         content: text,
-      }
+      },
     ]);
 
     incrementUsage();
     setUsage(prev => prev + 1);
 
-    setMessages(prev =>
-      prev.map(m =>
-        m.id === thinkingId
-          ? {
-              ...m,
-              content:
-                data.message ??
-                "I couldn't generate a response.",
-            }
-          : m
-      )
-    );
+    const fullText =
+      data.message ?? "I couldn't generate a response.";
+
+    const words = fullText.split(" ");
+    let index = 0;
+
+    const interval = setInterval(() => {
+     index += index < 30 ? 2 : 5; // reveal 3 words at a time
+
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === thinkingId
+            ? {
+                ...m,
+                content: words.slice(0, index).join(" "),
+              }
+            : m
+        )
+      );
+
+      // auto-scroll while typing
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top: chatContainerRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+
+      if (index >= words.length) {
+        clearInterval(interval);
+      }
+    }, 35); // typing speed
+
   } catch {
     setMessages(prev =>
       prev.map(m =>
@@ -294,13 +303,13 @@ async function realNexraReply(text: string, thinkingId: string) {
   return (
 <div className="flex h-screen bg-neutral-950 text-neutral-100">
   {/* Centered Chat Container */}
-  <div className="relative flex flex-col w-full max-w-4xl mx-auto">
+  <div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0">
     {/* Chat Area */}
 
 
     <div
       ref={chatContainerRef}
-      className="flex-1 overflow-y-auto px-6 py-8 space-y-6"
+      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none"
     >
 
       {messages.length <= 1 && (
@@ -323,16 +332,20 @@ async function realNexraReply(text: string, thinkingId: string) {
   </div>
 )}
       {messages.map((msg) => (
-        <ChatMessage key={msg.id} msg={msg} />
-      ))}
+  <ChatMessage
+    key={msg.id}
+    msg={msg}
+    isTyping={loading && msg.role === "nexra"}
+  />
+))}
 
-      {loading && <TypingIndicator />}
+      {/* {loading && <TypingIndicator />} */}
 
       <div ref={chatEndRef} />
     </div>
 
     {/* Footer Input Section */}
-    <div className="px-6 py-5 border-t border-neutral-800/60 bg-neutral-950">
+    <div className="px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
       
       {/* Input */}
       <div className="relative">

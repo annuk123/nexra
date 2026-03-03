@@ -3,12 +3,18 @@
 @plugin "tailwindcss-animate";
 @import "tw-animate-css";
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 @custom-variant dark (&:is(.dark *));
 
-.scrollbar-hide::-webkit-scrollbar {
+.scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide {
+
+.scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
