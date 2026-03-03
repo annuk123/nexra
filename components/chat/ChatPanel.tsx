@@ -338,7 +338,7 @@ async function realNexraReply(text: string, thinkingId: string) {
   }
 }
   return (
-<div className="flex flex-col min-h-screen bg-neutral-950 text-neutral-100">
+<div className="flex flex-col min-h-screen bg-neutral-950 text-neutral-100 pb-14">
   <div className="flex flex-col flex-1 max-w-4xl w-full mx-auto">
     {/* Chat Area */}
 
