@@ -338,20 +338,20 @@ async function realNexraReply(text: string, thinkingId: string) {
   }
 }
   return (
-<div className="flex h-screen bg-neutral-950 text-neutral-100">
+<div className="flex min-h-screen h-dvh flex-col bg-neutral-950 text-neutral-100">
   {/* Centered Chat Container */}
-  <div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0">
+<div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0 flex-1">
     {/* Chat Area */}
 
 
     <div
       ref={chatContainerRef}
-      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none"
+      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none min-h-0"
     >
 
       {messages.length <= 1 && (
   <div className="space-y-3 mb-6">
-    <p className="text-sm text-neutral-500">
+    <p className="text-sm text-neutral-500 ">
       Not sure where to start? Try one:
     </p>
 
@@ -382,10 +382,10 @@ async function realNexraReply(text: string, thinkingId: string) {
     </div>
 
     {/* Footer Input Section */}
-    <div className="px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
+    <div className="px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md shrink-0">
       
       {/* Input */}
-      <div className="relative">
+      <div className="relative ">
         <ChatInput
   onSend={handleSend}
   isTyping={isTyping}
@@ -411,7 +411,7 @@ async function realNexraReply(text: string, thinkingId: string) {
       </div>
 
       {/* Subtle Progress Bar */}
-      <div className="mt-2 h-0.75 w-full bg-neutral-800 rounded-full overflow-hidden">
+      <div className="mt-2 h-1 w-full bg-neutral-800 rounded-full overflow-hidden">
         <div
           className="h-full bg-yellow-500 transition-all duration-500"
           style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
