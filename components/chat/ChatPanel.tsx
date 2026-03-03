@@ -63,6 +63,8 @@ function isLikelyIdea(text: string) {
   return lengthSignal && (structuralSignals || containsNounVerbStructure);
 }
 
+
+
 export default function ChatPanel() {
   const sendTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -73,7 +75,11 @@ export default function ChatPanel() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
+  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+const typingFullTextRef = useRef<string>("");
+const typingMessageIdRef = useRef<string | null>(null);
+
+const [isTyping, setIsTyping] = useState(false);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -173,6 +179,28 @@ useEffect(() => {
   handleSend(idea);
 }
 
+function stopTyping() {
+  if (typingIntervalRef.current) {
+    clearInterval(typingIntervalRef.current);
+    typingIntervalRef.current = null;
+  }
+
+  if (typingMessageIdRef.current && typingFullTextRef.current) {
+    setMessages(prev =>
+      prev.map(m =>
+        m.id === typingMessageIdRef.current
+          ? {
+              ...m,
+              content: typingFullTextRef.current,
+            }
+          : m
+      )
+    );
+  }
+
+  setIsTyping(false);
+}
+
 useEffect(() => {
   const container = chatContainerRef.current;
   if (!container) return;
@@ -257,8 +285,19 @@ async function realNexraReply(text: string, thinkingId: string) {
     const words = fullText.split(" ");
     let index = 0;
 
-    const interval = setInterval(() => {
-     index += index < 30 ? 2 : 5; // reveal 3 words at a time
+    // store references for stop control
+    typingFullTextRef.current = fullText;
+    typingMessageIdRef.current = thinkingId;
+
+    // clear any previous typing interval (safety)
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+    }
+
+    setIsTyping(true);
+
+    typingIntervalRef.current = setInterval(() => {
+      index += index < 30 ? 2 : 5;
 
       setMessages(prev =>
         prev.map(m =>
@@ -271,7 +310,6 @@ async function realNexraReply(text: string, thinkingId: string) {
         )
       );
 
-      // auto-scroll while typing
       if (chatContainerRef.current) {
         chatContainerRef.current.scrollTo({
           top: chatContainerRef.current.scrollHeight,
@@ -280,9 +318,9 @@ async function realNexraReply(text: string, thinkingId: string) {
       }
 
       if (index >= words.length) {
-        clearInterval(interval);
+        stopTyping(); // clean finish
       }
-    }, 35); // typing speed
+    }, 35);
 
   } catch {
     setMessages(prev =>
@@ -299,7 +337,6 @@ async function realNexraReply(text: string, thinkingId: string) {
     setLoading(false);
   }
 }
-
   return (
 <div className="flex h-screen bg-neutral-950 text-neutral-100">
   {/* Centered Chat Container */}
@@ -350,9 +387,11 @@ async function realNexraReply(text: string, thinkingId: string) {
       {/* Input */}
       <div className="relative">
         <ChatInput
-          onSend={handleSend}
-          disabled={loading || usage >= USAGE_LIMIT}
-        />
+  onSend={handleSend}
+  isTyping={isTyping}
+  onStop={stopTyping}
+  disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
+/>
       </div>
 
       {/* Minimal Usage Indicator */}

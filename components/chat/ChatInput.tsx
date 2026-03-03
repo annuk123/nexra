@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-
+import { Send, Square } from "lucide-react";
 export default function ChatInput({
   onSend,
-  disabled
+  disabled,
+  isTyping,
+  onStop
 }: {
   onSend: (text: string) => void;
   disabled?: boolean;
+  isTyping?: boolean;
+  onStop?: () => void;
 }) {
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -27,50 +31,59 @@ export default function ChatInput({
   }, [text]);
 
   return (
-    <div className="flex gap-2 items-end">
+    <div className="relative w-full">
       <textarea
-        ref={textareaRef}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          // Desktop: Cmd/Ctrl + Enter sends
-          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-            e.preventDefault();
-            send();
-          }
-        }}
-        placeholder="Explain your startup idea..."
-        rows={1}
-        className="
-          flex-1
-          resize-none
-          bg-neutral-900
-          border border-neutral-700
-          p-3
-          rounded-lg
-          text-sm
-          focus:outline-none
-          leading-relaxed
-        "
-      />
+  ref={textareaRef}
+  value={text}
+  onChange={(e) => setText(e.target.value)}
+  onKeyDown={(e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      send();
+    }
+  }}
+  placeholder="Explain your startup idea..."
+  rows={1}
+  className="
+    w-full
+    resize-none
+    bg-neutral-900
+    border border-neutral-700
+    px-4
+    py-3
+    pr-14   /* important: space for icon */
+    rounded-2xl
+    text-sm
+    focus:outline-none
+    focus:border-neutral-600
+    leading-relaxed
+    transition
+    scrollbar-none
+  "
+/>
 
-      <button
-        onClick={send}
-        disabled={disabled}
-        className="
-          px-4 py-3
-          bg-neutral-100
-          text-neutral-900
-          rounded-lg
-          text-sm
-          font-medium
-          hover:bg-neutral-200
-          disabled:opacity-50
-          shrink-0
-        "
-      >
-        Send
-      </button>
+<button
+  onClick={isTyping ? onStop : send}
+  disabled={disabled}
+  className="
+    absolute
+    right-3
+    bottom-3
+    p-2
+    rounded-full
+    bg-neutral-100
+    text-neutral-900
+    hover:bg-neutral-200
+    transition
+    disabled:opacity-40
+  "
+>
+  {isTyping ? (
+    <Square size={16} />
+  ) : (
+    <Send size={16} />
+  )}
+</button>
     </div>
   );
 }
