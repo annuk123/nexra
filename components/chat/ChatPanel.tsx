@@ -340,7 +340,7 @@ async function realNexraReply(text: string, thinkingId: string) {
   return (
 <div className="flex h-screen flex-col bg-neutral-950 text-neutral-100 ">
   {/* Centered Chat Container */}
-<div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0 flex-1 lg:pb-12 sm:pb-20">
+<div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0 flex-1 pb-14">
     {/* Chat Area */}
 
 
