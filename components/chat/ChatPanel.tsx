@@ -338,63 +338,54 @@ async function realNexraReply(text: string, thinkingId: string) {
   }
 }
   return (
-<div className="flex h-screen flex-col bg-neutral-950 text-neutral-100 ">
-  {/* Centered Chat Container */}
-<div className="relative flex flex-col w-full max-w-4xl mx-auto min-h-0 flex-1 pb-14">
+<div className="h-dvh bg-neutral-950 text-neutral-100">
+  <div className="flex flex-col h-full max-w-4xl mx-auto">
+
     {/* Chat Area */}
-
-
     <div
       ref={chatContainerRef}
-      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none min-h-0"
+      className="flex-1 overflow-y-auto px-6 py-8 space-y-6"
     >
-
       {messages.length <= 1 && (
-  <div className="space-y-3 mb-6">
-    <p className="text-sm text-neutral-500 ">
-      Not sure where to start? Try one:
-    </p>
+        <div className="space-y-3 mb-6">
+          <p className="text-sm text-neutral-500">
+            Not sure where to start? Try one:
+          </p>
 
-    <div className="flex flex-col gap-2">
-      {SAMPLE_IDEAS.map((idea) => (
-        <button
-          key={idea}
-          onClick={() => handleSampleClick(idea)}
-          className="text-left text-sm px-4 py-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 transition"
-        >
-          {idea}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
+          <div className="flex flex-col gap-2">
+            {SAMPLE_IDEAS.map((idea) => (
+              <button
+                key={idea}
+                onClick={() => handleSampleClick(idea)}
+                className="text-left text-sm px-4 py-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 transition"
+              >
+                {idea}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {messages.map((msg) => (
-  <ChatMessage
-    key={msg.id}
-    msg={msg}
-    isTyping={loading && msg.role === "nexra"}
-  />
-))}
-
-      {/* {loading && <TypingIndicator />} */}
+        <ChatMessage
+          key={msg.id}
+          msg={msg}
+          isTyping={loading && msg.role === "nexra"}
+        />
+      ))}
 
       <div ref={chatEndRef} />
     </div>
 
-    {/* Footer Input Section */}
-    <div className="px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md shrink-0">
-      
-      {/* Input */}
-      <div className="relative ">
-        <ChatInput
-  onSend={handleSend}
-  isTyping={isTyping}
-  onStop={stopTyping}
-  disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
-/>
-      </div>
+    {/* Footer */}
+    <div className="shrink-0 px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
+      <ChatInput
+        onSend={handleSend}
+        isTyping={isTyping}
+        onStop={stopTyping}
+        disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
+      />
 
-      {/* Minimal Usage Indicator */}
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
         <span>
           {USAGE_LIMIT - usage} of {USAGE_LIMIT} sessions remaining today
@@ -410,14 +401,14 @@ async function realNexraReply(text: string, thinkingId: string) {
         )}
       </div>
 
-      {/* Subtle Progress Bar */}
-      <div className="mt-2 h-1 w-full bg-neutral-800 rounded-full overflow-hidden">
+      <div className="mt-2 h-0.5 w-full bg-neutral-800 rounded-full overflow-hidden">
         <div
           className="h-full bg-yellow-500 transition-all duration-500"
           style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
         />
       </div>
     </div>
+
   </div>
 
   {/* Modal */}
