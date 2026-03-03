@@ -58,14 +58,14 @@ export default function ChatMessage({
   return (
     <div className="px-6 py-6">
       <div className="flex items-start gap-3 max-w-3xl">
-        <div className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+        {/* <div className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center">
           <Image
             src="/nexra-logo.png"
             alt="Nexra"
             width={16}
             height={16}
           />
-        </div>
+        </div> */}
 
 <div className="px-6 py-8">
   <div className="max-w-2xl mx-auto">

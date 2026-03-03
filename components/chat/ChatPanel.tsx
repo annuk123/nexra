@@ -339,7 +339,7 @@ async function realNexraReply(text: string, thinkingId: string) {
 }
   return (
 <div className="h-dvh bg-neutral-950 text-neutral-100">
-  <div className="flex flex-col h-full max-w-4xl mx-auto">
+  <div className="flex flex-col h-full max-w-4xl mx-auto pb-12">
 
     {/* Chat Area */}
     <div
@@ -378,7 +378,31 @@ async function realNexraReply(text: string, thinkingId: string) {
     </div>
 
     {/* Footer */}
-    <div className="shrink-0 px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
+    <div className="shrink-0 px-6 py-2 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
+
+  {/* Nexra System Note */}
+  {usage > 0 && usage < USAGE_LIMIT && (
+    <div className="mb-3 text-xs text-neutral-500 italic">
+      Nexra: You have{" "}
+      <span className="text-neutral-300">
+        {USAGE_LIMIT - usage}
+      </span>{" "}
+      strategic session{USAGE_LIMIT - usage !== 1 ? "s" : ""} remaining today.
+    </div>
+  )}
+
+  {usage >= USAGE_LIMIT && (
+    <div className="mb-3 text-xs text-neutral-500 italic transition-opacity duration-500">
+      Nexra: You've reached today’s strategic limit.
+      <button
+        onClick={() => setOpen(true)}
+        className="ml-2 underline text-yellow-600 cursor-pointer hover:text-yellow-300"
+      >
+        Unlock Co-Founder Mode →
+      </button>
+    </div>
+  )}
+
       <ChatInput
         onSend={handleSend}
         isTyping={isTyping}
@@ -386,7 +410,7 @@ async function realNexraReply(text: string, thinkingId: string) {
         disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
       />
 
-      <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
+      {/* <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
         <span>
           {USAGE_LIMIT - usage} of {USAGE_LIMIT} sessions remaining today
         </span>
@@ -406,7 +430,7 @@ async function realNexraReply(text: string, thinkingId: string) {
           className="h-full bg-yellow-500 transition-all duration-500"
           style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
         />
-      </div>
+      </div> */}
     </div>
 
   </div>
