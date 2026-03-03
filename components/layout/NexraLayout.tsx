@@ -1,48 +1,48 @@
-// // components/layout/NexraLayout.tsx
+
 // import { ReactNode } from "react";
 
 // type Props = {
 //   children: ReactNode;
 //   sidebar: ReactNode;
+//   mobileTab?: "chat" | "analysis";
 // };
 
-// export default function NexraLayout({ children, sidebar }: Props) {
+// export default function NexraLayout({
+//   children,
+//   sidebar,
+//   mobileTab = "chat",
+// }: Props) {
 //   return (
 //     <div className="h-full overflow-hidden bg-neutral-950">
 //       <div
 //         className="
 //           max-w-7xl mx-auto px-4 lg:px-6
-//           grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6
 //           h-full
+//           grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6
 //         "
 //       >
-//         {/* LEFT: CHAT PANEL */}
+//         {/* CHAT PANEL */}
 //         <div
-//           className="
-//             bg-neutral-950
-//             border border-neutral-800
-//             rounded-2xl
-//             p-4 sm:p-6
-//             flex flex-col
-//             overflow-hidden
-//           "
+//           className={`
+//             bg-neutral-950 border border-neutral-800 rounded-2xl
+//             p-4 sm:p-6 flex flex-col overflow-hidden
+//             ${mobileTab === "analysis" ? "hidden" : "block"}
+//             lg:block
+//           `}
 //         >
 //           {children}
 //         </div>
 
-//         {/* RIGHT: METRICS PANEL */}
-
+//         {/* METRICS / ANALYSIS PANEL */}
 //         <aside
-//           className="
-//             bg-neutral-950
-//             border border-neutral-800
-//             rounded-2xl
-//             p-4 sm:p-6
-//             flex flex-col
-//             overflow-y-auto
-//           "
+//           className={`
+//             bg-neutral-950 border border-neutral-800 rounded-2xl
+//             p-4 sm:p-6 flex flex-col overflow-y-auto
+//             ${mobileTab === "chat" ? "hidden" : "block"}
+//             lg:block
+//           `}
 //         >
-//           <div className="flex-1  space-y-6 pr-2">
+//           <div className="flex-1 space-y-6 pr-2">
 //             {sidebar}
 //           </div>
 //         </aside>
@@ -50,57 +50,3 @@
 //     </div>
 //   );
 // }
-
-
-
-import { ReactNode } from "react";
-
-type Props = {
-  children: ReactNode;
-  sidebar: ReactNode;
-  mobileTab?: "chat" | "analysis";
-};
-
-export default function NexraLayout({
-  children,
-  sidebar,
-  mobileTab = "chat",
-}: Props) {
-  return (
-    <div className="h-full overflow-hidden bg-neutral-950">
-      <div
-        className="
-          max-w-7xl mx-auto px-4 lg:px-6
-          h-full
-          grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6
-        "
-      >
-        {/* CHAT PANEL */}
-        <div
-          className={`
-            bg-neutral-950 border border-neutral-800 rounded-2xl
-            p-4 sm:p-6 flex flex-col overflow-hidden
-            ${mobileTab === "analysis" ? "hidden" : "block"}
-            lg:block
-          `}
-        >
-          {children}
-        </div>
-
-        {/* METRICS / ANALYSIS PANEL */}
-        <aside
-          className={`
-            bg-neutral-950 border border-neutral-800 rounded-2xl
-            p-4 sm:p-6 flex flex-col overflow-y-auto
-            ${mobileTab === "chat" ? "hidden" : "block"}
-            lg:block
-          `}
-        >
-          <div className="flex-1 space-y-6 pr-2">
-            {sidebar}
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
-}

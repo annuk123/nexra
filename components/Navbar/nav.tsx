@@ -34,17 +34,28 @@ export default function Navbar() {
   <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
 
     {/* Logo */}
-    <Link href="/" className="flex items-center gap-2 text-sm font-medium text-white">
-      <Image src="/nexra.png" alt="Nexra" width={28} height={28} className="h-6 w-6" />
-      <span className="tracking-tight">Nexra</span>
-      {/* <span className="text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 rounded">
-        beta
-      </span> */}
-    </Link>
+  <Link
+  href="/"
+  className="flex items-center gap-2 text-sm font-medium text-white"
+>
+  <Image
+    src="/nexra.png"
+    alt="Nexra"
+    width={28}
+    height={28}
+    className="h-6 w-6"
+  />
+
+  <span className="tracking-tight">Nexra</span>
+
+  <span className="text-xs text-neutral-500">
+    / Thinking Partner
+  </span>
+</Link>
 
     {/* Desktop Nav */}
     <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
-      <Link href="/nexra-engine-v2" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
+      <Link href="/thinking-partner-v2" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
 >Nexra Engine</Link>
 
       <button

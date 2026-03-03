@@ -1,23 +1,31 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
 import { useNexraStore } from "@/lib/nexraStore";
-import { analyzeIdea } from "@/lib/api/ideas";
+import { thinkWithNexra } from "@/lib/api/chat";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import Link from "next/link";
+import { nanoid } from "nanoid";
 
 export type Message = {
+  id: string;
   role: "nexra" | "user";
-  content: string;
+  content?: string;
 };
 
 const USAGE_LIMIT = 5;
 const STORAGE_KEY = "nexra_chat_usage";
 const CHAT_HISTORY_KEY = "nexra_chat_history";
+
+const SAMPLE_IDEAS = [
+  "AI tool that helps indie hackers validate startup ideas before building",
+  "Marketplace connecting local home chefs with nearby customers",
+  "SaaS tool for YouTubers that turns long videos into structured notes",
+  "Subscription app that helps gym beginners follow simple workout plans",
+];
 
 function todayKey() {
   return new Date().toISOString().split("T")[0];
@@ -40,48 +48,60 @@ function incrementUsage() {
 
 //  Idea detector (v1 rules)
 function isLikelyIdea(text: string) {
-  return (
-    text.length > 20 &&
-    /(build|startup|app|tool|platform|saas|ai|users|market|problem)/i.test(text)
-  );
+  const lower = text.toLowerCase();
+
+  const structuralSignals =
+    /(for|who|that|to|helps|connecting|marketplace|subscription|platform|app|tool|saas|ai)/i.test(
+      text,
+    );
+
+  const lengthSignal = text.length > 25;
+
+  const containsNounVerbStructure =
+    /(build|create|launch|develop|offer|provide|connect)/i.test(text);
+
+  return lengthSignal && (structuralSignals || containsNounVerbStructure);
 }
 
-
-
 export default function ChatPanel() {
-  const setMetrics = useNexraStore((s) => s.setMetrics);
-  const mode = useNexraStore((s) => s.mode); // SAFE / BALANCED / AGGRESSIVE
-
+  const sendTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [usage, setUsage] = useState(0);
-    const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
-        const [feedbackOpen, setFeedbackOpen] = useState(false);
-  
-          const [email, setEmail] = React.useState("");
-          const [status, setStatus] = React.useState<
-            "idle" | "success" | "error"
-          >("idle");
-          const [open, setOpen] = useState(false);
-      
-          const handleSubmit = async (e: React.FormEvent) => {
-            e.preventDefault();
-        
-            try {
-              await addToWaitlist({
-                email,
-                source: "homepage",
-              });
-        
-              setStatus("success");
-              setEmail("");
-            } catch {
-              setStatus("error");
-            }
-          };
+  const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const [email, setEmail] = React.useState("");
+  const [status, setStatus] = React.useState<"idle" | "success" | "error">(
+    "idle",
+  );
+  const [open, setOpen] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await addToWaitlist({
+        email,
+        source: "homepage",
+      });
+
+      setStatus("success");
+      setEmail("");
+    } catch {
+      setStatus("error");
+    }
+  };
 
   // Load chat history
-const V1_BANNER = `
+  const V1_BANNER = `
 You’re using **Nexra v2 — Structural Startup Validation**.
 
 Full Co-Founder Mode with unlimited reasoning unlocks in **Nexra v2.5**.
@@ -91,14 +111,22 @@ Join the waitlist to access it first.
 useEffect(() => {
   if (typeof window === "undefined") return;
 
-const saved = localStorage.getItem(CHAT_HISTORY_KEY);
+  const saved = localStorage.getItem(CHAT_HISTORY_KEY);
   const bannerShown = localStorage.getItem("nexra_v1_banner");
 
   if (saved) {
-    setMessages(JSON.parse(saved));
+    const parsed: Message[] = JSON.parse(saved);
+
+    const fixed = parsed.map((m) => ({
+      ...m,
+      id: m.id ?? nanoid(),
+    }));
+
+    setMessages(fixed);
   } else {
     const initial: Message[] = [
       {
+        id: nanoid(),
         role: "nexra",
         content:
           "Describe what you're building. I'll think through it with you and identify structural risks.",
@@ -106,7 +134,11 @@ const saved = localStorage.getItem(CHAT_HISTORY_KEY);
     ];
 
     if (!bannerShown) {
-      initial.push({ role: "nexra", content: V1_BANNER });
+      initial.push({
+        id: nanoid(),
+        role: "nexra",
+        content: V1_BANNER,
+      });
       localStorage.setItem("nexra_v1_banner", "true");
     }
 
@@ -115,261 +147,286 @@ const saved = localStorage.getItem(CHAT_HISTORY_KEY);
 
   setUsage(getUsage().count);
 }, []);
-
-
   // Save chat history
   useEffect(() => {
     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
   }, [messages]);
 
-// const resetMetrics = useNexraStore((s) => s.resetMetrics);
+  useEffect(() => {
+    return () => {
+      if (sendTimeoutRef.current) {
+        clearTimeout(sendTimeoutRef.current);
+      }
+    };
+  }, []);
 
-// useEffect(() => {
-//   resetMetrics();
-// }, [mode]);
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
+  function isUserNearBottom() {
+    const container = chatContainerRef.current;
+    if (!container) return true;
+
+    const threshold = 120; // px from bottom
+    const position =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+
+    return position < threshold;
+  }
+
+  function handleSampleClick(idea: string) {
+  handleSend(idea);
+}
+
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    if (isUserNearBottom()) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
 async function handleSend(text: string) {
   if (loading) return;
-    // Daily limit check
-    if (usage >= USAGE_LIMIT) {
-      setMessages((m) => [
-        ...m,
-        { role: "user", content: text },
-        {
-          role: "nexra",
-          content:
-  "You’ve reached today’s decision limit. More analysis won’t replace execution. Nexra v2.5 unlocks unlimited Co-Founder Mode. Join the waitlist →",
-        },
-      ]);
-      return;
-    }
 
-    // Not a startup idea → V2 teaser
-    if (!isLikelyIdea(text)) {
-      setMessages((m) => [
-        ...m,
-        { role: "user", content: text },
-        {
-          role: "nexra",
-          content:
-            "This doesn’t look like a startup idea. Nexra v2 only analyzes startup ideas. Nexra v2.5 will think with you like a co-founder. Join waitlist →",
-        },
-      ]);
-      return;
-    }
+  const userMessage: Message = {
+    id: nanoid(),
+    role: "user",
+    content: text,
+  };
 
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
-    setLoading(true);
-
-   setTimeout(() => {
-  realNexraReply(text);
-}, 600 + Math.random() * 800);
-
-  }
-
-async function realNexraReply(text: string) {
-  try {
-    const data = await analyzeIdea(text);
-
-    setMetrics({
-      verdict: data.verdict,
-      decision_score: data.decision_score,
-      confidence: data.confidence,
-      breakdown: data.rule_breakdown,
-      weakest_link: data.weakest_link ?? null,
-      assumptions: data.assumptions,
-      signals: data.signals,
-    });
-
-    const updatedUsage = getUsage().count + 1;
-incrementUsage();
-setUsage(updatedUsage);
-const fullText =
-  data.nexra_output?.trim() ||
-  `Verdict: ${data.verdict}
-Score: ${data.decision_score}/100
-Confidence: ${data.confidence}%`;
-    setMessages((prev) => [...prev, { role: "nexra", content: "" }]);
-
-    let i = 0;
-    let buffer = "";
-
-    const parts = fullText.split(" ");
-
-    let interval: NodeJS.Timeout;
-
-interval = setInterval(() => {
-      if (i >= parts.length) {
-        clearInterval(interval);
-        return;
-      }
-
-      buffer += parts[i] + " ";
-
-      setMessages((prev) => {
-        const updated = [...prev];
-        const lastIndex = updated.length - 1;
-
-        if (lastIndex >= 0 && updated[lastIndex].role === "nexra") {
-          updated[lastIndex] = {
-            ...updated[lastIndex],
-            content: buffer,
-          };
-        }
-
-        return updated;
-      });
-
-      i++;
-    }, 60);
-// cleanup safety
-return () => clearInterval(interval);
-  } catch (e) {
-    console.error(e);
-
-    setMessages((prev) => [
+  // Limit check
+  if (usage >= USAGE_LIMIT) {
+    setMessages(prev => [
       ...prev,
+      userMessage,
       {
+        id: nanoid(),
         role: "nexra",
-        content: "Nexra could not complete structural evaluation.",
+        content:
+          "You've reached today's limit. Join the waitlist to unlock deeper thinking.",
       },
     ]);
+    return;
+  }
+
+  // Idea detection
+  if (!isLikelyIdea(text)) {
+    setMessages(prev => [
+      ...prev,
+      userMessage,
+      {
+        id: nanoid(),
+        role: "nexra",
+        content:
+          "Tell me the actual startup idea you're thinking about. Who it's for. What problem it solves.",
+      },
+    ]);
+    return;
+  }
+
+  const thinkingId = nanoid();
+
+  setMessages(prev => [
+    ...prev,
+    userMessage,
+    {
+      id: thinkingId,
+      role: "nexra",
+      content: "Thinking through this...",
+    },
+  ]);
+
+  setLoading(true);
+
+  realNexraReply(text, thinkingId);
+}
+
+async function realNexraReply(text: string, thinkingId: string) {
+  try {
+    const data = await thinkWithNexra([
+      {
+        role: "user",
+        content: text,
+      }
+    ]);
+
+    incrementUsage();
+    setUsage(prev => prev + 1);
+
+    setMessages(prev =>
+      prev.map(m =>
+        m.id === thinkingId
+          ? {
+              ...m,
+              content:
+                data.message ??
+                "I couldn't generate a response.",
+            }
+          : m
+      )
+    );
+  } catch {
+    setMessages(prev =>
+      prev.map(m =>
+        m.id === thinkingId
+          ? {
+              ...m,
+              content: "Something went wrong. Try again.",
+            }
+          : m
+      )
+    );
   } finally {
     setLoading(false);
   }
 }
 
-
-
   return (
-<div className="flex h-full flex-col overflow-hidden">
-
-  {/* Chat Messages */}
-  <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-    {messages.map((msg, i) => (
-      <ChatMessage key={i} msg={msg} />
-    ))}
-    {loading && <TypingIndicator />}
-  </div>
-
-  {/* Usage UI */}
-  <div className="shrink-0 flex items-center justify-between text-[10px] text-neutral-500 mt-3">
-    <span>{USAGE_LIMIT - usage} analyses left today</span>
-
-    <div className="w-24">
-      <div className="h-1 bg-neutral-800 rounded">
-        <div
-          className="h-1 bg-yellow-400 rounded transition-all"
-          style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
-        />
-      </div>
-
-      {usage >= USAGE_LIMIT && (
-        <button
-          onClick={() => setOpen(true)}
-          className="text-xs text-yellow-400 underline mt-2"
-        >
-          Join Nexra v2 waitlist →
-        </button>
-      )}
-    </div>
-  </div>
-
-  {/* Input */}
-  <div className="shrink-0 bg-neutral-950 pt-3">
-    <ChatInput
-      onSend={handleSend}
-      disabled={loading || usage >= USAGE_LIMIT}
-    />
-  </div>
+<div className="flex h-screen bg-neutral-950 text-neutral-100">
+  {/* Centered Chat Container */}
+  <div className="relative flex flex-col w-full max-w-4xl mx-auto">
+    {/* Chat Area */}
 
 
-  {/* Modal */}
-  {open && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
-    onClick={() => setOpen(false)}
-  >
     <div
-      onClick={(e) => e.stopPropagation()}
-      className="relative bg-neutral-950 border border-neutral-800 rounded-xl p-6 w-full max-w-md shadow-2xl"
+      ref={chatContainerRef}
+      className="flex-1 overflow-y-auto px-6 py-8 space-y-6"
     >
-      {/* Close */}
-      <button
-        onClick={() => setOpen(false)}
-        className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-300 transition text-sm"
-      >
-        ✕
-      </button>
 
-      {/* Header */}
-      <h3 className="text-lg font-semibold">
-        Join the waitlist
-      </h3>
-      <p className="text-sm text-neutral-400 mt-1">
-        Early access for founders. No marketing emails.
-      </p>
+      {messages.length <= 1 && (
+  <div className="space-y-3 mb-6">
+    <p className="text-sm text-neutral-500">
+      Not sure where to start? Try one:
+    </p>
 
-      {/* SUCCESS */}
-      {status === "success" && (
-        <div className="mt-6">
-          <p className="text-neutral-200 font-medium">
-            You’re on the list.
-          </p>
-          <p className="mt-2 text-sm text-neutral-500">
-            We’ll email you when there’s something meaningful.
-          </p>
-        </div>
-      )}
-
-      {/* FORM */}
-      {status === "idle" && (
-        <form
-          onSubmit={handleSubmit}
-          className="mt-6 flex flex-col sm:flex-row gap-3"
+    <div className="flex flex-col gap-2">
+      {SAMPLE_IDEAS.map((idea) => (
+        <button
+          key={idea}
+          onClick={() => handleSampleClick(idea)}
+          className="text-left text-sm px-4 py-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 transition"
         >
-          <input
-            type="email"
-            required
-            placeholder="you@startup.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
-          />
-
-          <button
-            type="submit"
-            className="px-5 py-3 text-sm rounded-lg bg-neutral-100 text-neutral-900 hover:bg-neutral-200 transition font-medium"
-          >
-            Join →
-          </button>
-        </form>
-      )}
-
-      {/* ERROR */}
-      {status === "error" && (
-        <p className="mt-4 text-sm text-red-400">
-          Something went wrong. Try again.
-        </p>
-      )}
-
-      {/* Footer */}
-      <p className="mt-6 text-xs text-neutral-500">
-        No newsletters. Just product updates.
-      </p>
-
-      <p className="mt-2 text-xs text-neutral-500">
-        By joining, you agree to our{" "}
-        <Link href="/privacy" className="underline hover:text-neutral-300">
-          Privacy Policy
-        </Link>
-        .
-      </p>
+          {idea}
+        </button>
+      ))}
     </div>
   </div>
 )}
-</div>
+      {messages.map((msg) => (
+        <ChatMessage key={msg.id} msg={msg} />
+      ))}
 
+      {loading && <TypingIndicator />}
+
+      <div ref={chatEndRef} />
+    </div>
+
+    {/* Footer Input Section */}
+    <div className="px-6 py-5 border-t border-neutral-800/60 bg-neutral-950">
+      
+      {/* Input */}
+      <div className="relative">
+        <ChatInput
+          onSend={handleSend}
+          disabled={loading || usage >= USAGE_LIMIT}
+        />
+      </div>
+
+      {/* Minimal Usage Indicator */}
+      <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
+        <span>
+          {USAGE_LIMIT - usage} of {USAGE_LIMIT} sessions remaining today
+        </span>
+
+        {usage >= USAGE_LIMIT && (
+          <button
+            onClick={() => setOpen(true)}
+            className="text-yellow-400 hover:text-yellow-300 transition"
+          >
+            Upgrade →
+          </button>
+        )}
+      </div>
+
+      {/* Subtle Progress Bar */}
+      <div className="mt-2 h-0.75 w-full bg-neutral-800 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-yellow-500 transition-all duration-500"
+          style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* Modal */}
+  {open && (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-800 p-8 shadow-2xl"
+      >
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-4 right-5 text-neutral-500 hover:text-white"
+        >
+          ✕
+        </button>
+
+        <h3 className="text-xl font-semibold">
+          Unlock Co-Founder Mode
+        </h3>
+
+        <p className="text-sm text-neutral-400 mt-3">
+          Remove limits. Get deeper strategic thinking. Save your sessions.
+        </p>
+
+        {status === "success" && (
+          <div className="mt-6 text-green-400 text-sm">
+            You’re on the list. We’ll reach out soon.
+          </div>
+        )}
+
+        {status === "idle" && (
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <input
+              type="email"
+              required
+              placeholder="you@startup.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-yellow-500"
+            />
+
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-yellow-500 text-black py-3 text-sm font-medium hover:bg-yellow-400 transition"
+            >
+              Request Early Access
+            </button>
+          </form>
+        )}
+
+        {status === "error" && (
+          <p className="mt-4 text-sm text-red-400">
+            Something went wrong. Try again.
+          </p>
+        )}
+      </div>
+    </div>
+  )}
+</div>
   );
 }

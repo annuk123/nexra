@@ -88,7 +88,7 @@ export default function Hero() {
   <div className="mt-5 flex justify-center gap-4">
 
         <Link
-      href="/nexra-engine-v2"
+      href="/thinking-partner-v2"
        className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border 
    bg-white text-black transition hover:bg-neutral-100">
        Try Nexra →

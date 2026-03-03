@@ -3,17 +3,14 @@ import React from "react";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import HowThink from "@/components/How-Nexra-Thinks/how-think";
-import SeeAction from "@/components/See-Action/See-Action";
 import { motion } from "framer-motion"
 import FeedbackModal from "@/components/FeedbackPage/Feedback";
 import { Section } from "@/design-system/layout/Section";
-import Link from "next/link";
 import FAQ from "@/components/FAQ/FAQ";
 import { useState } from "react";
 import { TimeComparison } from "@/components/TimeComparison/TimeComparison";
 import StructureReasoning from "@/components/StructureReasoning/StructureReasoning";
 import Testimonials from "@/components/testimonial/testimonial";
-import HowAnalyze from "@/components/how-analyzes/how-analyze";
 import TimeSavedCalculator from "@/components/TimeSavedCalculater/TimeSavedCaluclater";
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/footer";

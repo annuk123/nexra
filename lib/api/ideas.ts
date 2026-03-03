@@ -1,3 +1,4 @@
+import { DecisionBlock } from "@/types/decision";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -89,8 +90,9 @@ export type IdeaResponse = {
 
   signals: Signals;
 
-  nexra_output: string;
-
+nexra_output: {
+  content: string;
+};
   engine_version?: string;
 
   created_at: string;
