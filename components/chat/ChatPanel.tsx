@@ -80,9 +80,7 @@ const typingFullTextRef = useRef<string>("");
 const typingMessageIdRef = useRef<string | null>(null);
 
 const [isTyping, setIsTyping] = useState(false);
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+
 
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "success" | "error">(
@@ -157,6 +155,13 @@ useEffect(() => {
   useEffect(() => {
     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
   }, [messages]);
+
+   useEffect(() => {
+  chatContainerRef.current?.scrollTo({
+    top: chatContainerRef.current.scrollHeight,
+    behavior: "smooth",
+  });
+}, [messages]);
 
   useEffect(() => {
     return () => {
@@ -339,15 +344,16 @@ async function realNexraReply(text: string, thinkingId: string) {
 }
   return (
 <div className="h-dvh bg-neutral-950 text-neutral-100">
-  <div className="flex flex-col h-full max-w-4xl mx-auto">
+   <div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto">
+
 
     {/* Chat Area */}
     <div
-      ref={chatContainerRef}
-      className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scrollbar-none"
-    >
-      {messages.length <= 1 && (
-        <div className="space-y-3 mb-6">
+  ref={chatContainerRef}
+  className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6 scrollbar-none"
+>
+      {messages.filter(m => m.role === "user").length === 0 && (
+        <div className="space-y-3 mb-6 py-10">
           <p className="text-sm text-neutral-500">
             Not sure where to start? Try one:
           </p>
@@ -378,9 +384,8 @@ async function realNexraReply(text: string, thinkingId: string) {
     </div>
 
     {/* Footer */}
-    <div className="p-8">
-    <div className="shrink-0 px-6 py-4 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
-
+   
+   <div className="shrink-0 px-6 py-3 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
   {/* Nexra System Note */}
   {usage > 0 && usage < USAGE_LIMIT && (
     <div className="mb-3 text-xs text-neutral-500 italic">
@@ -411,30 +416,9 @@ async function realNexraReply(text: string, thinkingId: string) {
         disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
       />
 
-      {/* <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
-        <span>
-          {USAGE_LIMIT - usage} of {USAGE_LIMIT} sessions remaining today
-        </span>
-
-        {usage >= USAGE_LIMIT && (
-          <button
-            onClick={() => setOpen(true)}
-            className="text-yellow-400 hover:text-yellow-300 transition"
-          >
-            Upgrade →
-          </button>
-        )}
-      </div>
-
-      <div className="mt-2 h-0.5 w-full bg-neutral-800 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-yellow-500 transition-all duration-500"
-          style={{ width: `${(usage / USAGE_LIMIT) * 100}%` }}
-        />
-      </div> */}
     </div>
 </div>
-</div>
+
   {/* Modal */}
   {open && (
     <div

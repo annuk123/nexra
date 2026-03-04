@@ -56,23 +56,25 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-<body className={`${geist.className} bg-black antialiased`}>
-
-         <Providers>
-        <ConvexAppProvider>
-          <Navbar />
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </ConvexAppProvider>
+      <body
+        className={`${geist.className} bg-black antialiased h-dvh flex flex-col`}
+      >
+        <Providers>
+          <ConvexAppProvider>
+            <Navbar />
+            <div className="flex-1 min-h-0 flex flex-col">
+              {children}
+            </div>
+            <Analytics />
+            <SpeedInsights />
+          </ConvexAppProvider>
         </Providers>
       </body>
     </html>
