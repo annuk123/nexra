@@ -56,7 +56,7 @@ export default function ChatMessage({
   /* ================= NEXRA ================= */
 
   return (
-    <div className="px-6 py-6">
+    <div className="px-4 py-6">
       <div className="flex items-start gap-3 max-w-3xl">
         {/* <div className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center">
           <Image
@@ -66,8 +66,6 @@ export default function ChatMessage({
             height={16}
           />
         </div> */}
-
-<div className="px-6 py-8">
   <div className="max-w-2xl mx-auto">
     {/* <p className="text-xs text-neutral-500 mb-6 tracking-wide uppercase">
       Nexra
@@ -121,6 +119,5 @@ export default function ChatMessage({
   </div>
 </div>
       </div>
-    </div>
   );
 }
