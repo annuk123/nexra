@@ -115,7 +115,7 @@ export default function ChatMessage({
   {highlightUncertainty(msg.content || "")}
 </ReactMarkdown>
 {isTyping && (
-  <span className="inline-block w-1.5 h-5 bg-indigo-500 ml-1 animate-pulse rounded-sm" />
+  <span className="inline-block w-3 h-3 bg-indigo-500 ml-1 animate-pulse rounded-full" />
 )}
     </div>
   </div>

@@ -339,7 +339,7 @@ async function realNexraReply(text: string, thinkingId: string) {
 }
   return (
 <div className="h-dvh bg-neutral-950 text-neutral-100">
-  <div className="flex flex-col h-full max-w-4xl mx-auto pb-12">
+  <div className="flex flex-col h-full max-w-4xl mx-auto">
 
     {/* Chat Area */}
     <div
@@ -378,6 +378,7 @@ async function realNexraReply(text: string, thinkingId: string) {
     </div>
 
     {/* Footer */}
+    <div className="pb-12">
     <div className="shrink-0 px-6 py-2 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
 
   {/* Nexra System Note */}
@@ -432,7 +433,7 @@ async function realNexraReply(text: string, thinkingId: string) {
         />
       </div> */}
     </div>
-
+</div>
   </div>
 
   {/* Modal */}
