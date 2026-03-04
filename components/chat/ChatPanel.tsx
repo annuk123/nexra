@@ -16,7 +16,7 @@ export type Message = {
   content?: string;
 };
 
-const USAGE_LIMIT = 15;
+const USAGE_LIMIT = 5;
 const STORAGE_KEY = "nexra_chat_usage";
 const CHAT_HISTORY_KEY = "nexra_chat_history";
 
