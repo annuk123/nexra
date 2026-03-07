@@ -6,67 +6,74 @@ export default function RealityCheck({
   return (
     <div className="py-14">
 
-      {/* Step indicator */}
-      <p className="text-sm text-neutral-500">
-        Step 4
-      </p>
-
-      {/* Section label */}
       <span className="text-xs tracking-widest text-neutral-500">
-        REALITY CHECK
+        NEXRA · REALITY CHECK
       </span>
 
-      {/* Intro */}
+      <h2 className="mt-4 text-3xl sm:text-4xl font-semibold">
+        Let’s look at this idea in the real world.
+      </h2>
+
       <p className="mt-4 text-neutral-400 max-w-xl">
-        Here’s a grounded look at how this idea holds up in practice.
+        Ideas often look strong in isolation. The real question is how they behave
+        when they meet existing user habits, competitors, and distribution realities.
       </p>
 
-      <div className="mt-16 space-y-16 max-w-xl">
+      {/* Nexra reasoning */}
+      <div className="mt-12 space-y-6 text-neutral-300 leading-relaxed max-w-xl">
 
-        {/* Strengths */}
-        <div>
-          <h3 className="text-lg font-medium mb-4">
-            Strengths
-          </h3>
-          <ul className="space-y-3 text-neutral-300 list-disc list-inside leading-relaxed">
-            <li>Clear and relatable user pain</li>
-            <li>Simple behavior change required</li>
-            <li>Problem–solution fit is easy to explain</li>
-          </ul>
-        </div>
+        <p>
+          One encouraging signal is that the problem appears easy to explain.
+          When founders can describe the pain clearly, it often means users
+          already recognize it in their daily workflow.
+        </p>
 
-        {/* Weaknesses */}
-        <div>
-          <h3 className="text-lg font-medium mb-4">
-            Weaknesses
-          </h3>
-          <ul className="space-y-3 text-neutral-300 list-disc list-inside leading-relaxed">
-            <li>Existing alternatives already serve this need</li>
-            <li>Distribution strategy is not yet clear</li>
-            <li>Switching cost for users may be higher than expected</li>
-          </ul>
-        </div>
+        <p>
+          However, the existence of existing alternatives introduces a challenge.
+          Even imperfect tools can dominate simply because users are familiar
+          with them. Convincing people to switch behavior usually requires a
+          clear and immediate improvement.
+        </p>
 
-        {/* Conditions */}
-        <div>
-          <h3 className="text-lg font-medium mb-4">
-            Conditions for success
-          </h3>
-          <ul className="space-y-3 text-neutral-300 list-disc list-inside leading-relaxed">
-            <li>You identify a narrow initial user segment</li>
-            <li>You discover a low-cost distribution channel</li>
-            <li>You differentiate on a single, meaningful axis</li>
-          </ul>
-        </div>
+        <p>
+          Another factor is distribution. Even strong ideas struggle if the
+          path to the first hundred users is unclear. The product itself might
+          work well, but discovery becomes the bottleneck.
+        </p>
+
+        {/* Highlight insight */}
+        <p className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-4 py-3 rounded-md">
+          The tension here is between a clear problem and uncertain distribution.
+          Many startups fail not because the idea is wrong, but because they
+          never reach the right early users.
+        </p>
+
+        <p>
+          If this idea succeeds, it will likely happen by focusing on a narrow
+          initial group of users and solving their version of the problem
+          significantly better than existing solutions.
+        </p>
 
       </div>
 
-      {/* Continue */}
+      {/* Continue exploring */}
+      <div className="mt-12 space-y-3 text-indigo-300 max-w-xl">
+
+        <p className="text-xs tracking-widest text-neutral-500">
+          CONTINUE EXPLORING
+        </p>
+
+        <p>• Who would feel the strongest urgency to try this first?</p>
+        <p>• What would make someone abandon their current solution?</p>
+        <p>• How could the first 100 users realistically discover this?</p>
+
+      </div>
+
       <button
         onClick={onNext}
-        className="mt-16 text-sm text-neutral-500 hover:text-neutral-300 transition"
+        className="mt-12 text-sm text-neutral-500 hover:text-neutral-300 transition"
       >
-        Continue →
+        Continue thinking →
       </button>
 
     </div>

@@ -39,16 +39,16 @@ export default function FeedbackModal({ open, onClose }: { open: boolean; onClos
 
         {/* Header */}
         <h3 className="text-lg font-medium text-neutral-100">
-          Help us improve Nexra
-        </h3>
-        <p className="mt-1 text-sm text-neutral-400">
-          What should we build, fix, or change?
-        </p>
+  Report a bug
+</h3>
+<p className="mt-1 text-sm text-neutral-400">
+  Tell us what went wrong so we can fix it.
+</p>
 
         {status === "success" ? (
           <div className="mt-6 flex flex-col gap-4 items-start">
           <p className="mt-6 text-sm text-neutral-300">
-            Thanks. We read every message.
+            Thanks for the report. We'll look into it.
           </p>
           <button
                 type="button"
@@ -65,13 +65,13 @@ export default function FeedbackModal({ open, onClose }: { open: boolean; onClos
               required
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Your thoughts, criticism, or ideas..."
+              placeholder="Describe what happened and what you expected instead."
               className="h-32 text-neutral-200 bg-neutral-900 border-neutral-800"
             />
 
             <input
               type="email"
-              placeholder="Optional email"
+              placeholder="Optional email (if you'd like an update)"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-neutral-900 border border-neutral-800 rounded-md px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
@@ -87,7 +87,7 @@ export default function FeedbackModal({ open, onClose }: { open: boolean; onClos
               </button>
 
               <Button type="submit" variant="ghost" className="text-stone-400">
-                Send feedback →
+                Report bug →
               </Button>
             </div>
           </form>

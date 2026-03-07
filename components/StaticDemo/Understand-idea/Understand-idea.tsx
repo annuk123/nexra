@@ -5,32 +5,67 @@ export default function UnderstandIdea({
 }) {
   return (
     <div className="py-14">
-      <p className="text-sm text-neutral-500">
-        Step 2
-      </p>
+
       <span className="text-xs tracking-widest text-neutral-500">
-        HOW I UNDERSTAND YOUR IDEA
+        NEXRA · UNDERSTANDING
       </span>
 
+      <h2 className="mt-4 text-3xl sm:text-4xl font-semibold">
+        Let me think through your idea.
+      </h2>
+
       <p className="mt-4 text-neutral-400 max-w-xl">
-        Here’s my current understanding. Correct anything that feels off.
+        I'm reflecting on what you described and mapping the core dynamics of the idea.
+        If something feels off, you can clarify before we go deeper.
       </p>
 
-      {/* content */}
- <div className="mt-12 space-y-10"> 
-  {[ 
-    ["Problem", "What core issue the idea is trying to solve."], 
-    ["Target user", "Who experiences this problem most acutely."], 
-    ["Current behavior", "How the problem is handled today."], 
-    ["Proposed change", "What your idea changes about that behavior."], 
-    ["Key constraint", "The biggest limitation or risk factor."] ].map(([title, desc]) => ( <div key={title}> <h3 className="text-lg font-medium">{title}</h3> <p className="mt-2 text-neutral-400"> {desc} </p> </div> ))} 
-    </div>
+      {/* Nexra reasoning output */}
+      <div className="mt-12 space-y-6 text-neutral-300 leading-relaxed">
+
+        <p>
+          From what you described, the core of the idea seems to revolve around a
+          friction point in how people currently handle a specific problem.
+          The opportunity appears to come from simplifying or restructuring that behavior.
+        </p>
+
+        <p>
+          One thing I'm trying to clarify is whether the real leverage is in
+          the product itself or in the distribution channel used to reach users.
+        </p>
+
+        <p className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-4 py-3 rounded-md">
+          The interesting question here is whether the value comes from solving
+          a new problem — or solving an existing problem significantly better.
+        </p>
+
+        <p>
+          I'm also wondering how users currently deal with this problem today.
+          Understanding the existing behavior often reveals where the true
+          friction lives.
+        </p>
+
+      </div>
+
+      {/* Nexra probing questions */}
+      <div className="mt-12 space-y-3 text-indigo-300">
+
+        <p className="text-xs tracking-widest text-neutral-500">
+          CONTINUE EXPLORING
+        </p>
+
+        <p>• What specific moment triggers the need for this product?</p>
+        <p>• What would make someone switch from their current solution?</p>
+        <p>• Is the problem frequent enough to create real demand?</p>
+
+      </div>
+
       <button
         onClick={onNext}
         className="mt-12 text-sm text-neutral-500 hover:text-neutral-300 transition"
       >
-        Continue →
+        Continue thinking →
       </button>
+
     </div>
   );
 }

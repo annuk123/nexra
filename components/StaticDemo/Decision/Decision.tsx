@@ -6,55 +6,67 @@ export default function Decision({
   return (
     <div className="py-14">
 
-      {/* Step indicator */}
-      <p className="text-sm text-neutral-500">
-        Step 5
-      </p>
-
-      {/* Section label */}
       <span className="text-xs tracking-widest text-neutral-500">
-        DECISION
+        NEXRA · DECISION
       </span>
 
-      {/* Intro */}
+      <h2 className="mt-4 text-3xl sm:text-4xl font-semibold">
+        Here’s how this idea looks overall.
+      </h2>
+
       <p className="mt-4 text-neutral-400 max-w-xl">
-        Based on the analysis above, here’s my recommendation.
+        After walking through the problem, assumptions, and real-world dynamics,
+        this is the direction that seems most reasonable.
       </p>
 
-      <div className="mt-16 space-y-12">
+      <div className="mt-12 space-y-10 max-w-xl text-neutral-300 leading-relaxed">
 
-        {/* Decision */}
+        {/* Verdict */}
         <div>
-          <h2 className="text-2xl font-semibold">
+          <h3 className="text-xl font-semibold">
             Refine before committing
-          </h2>
-          <p className="mt-4 text-neutral-300 leading-relaxed max-w-xl">
-            This idea shows early promise, but several assumptions —
-            particularly around distribution and differentiation —
-            need validation before moving forward with confidence.
+          </h3>
+
+          <p className="mt-4">
+            The idea shows early promise, particularly in how clearly the
+            problem can be explained. However, the path to reaching users
+            and differentiating from existing solutions still needs clarity.
+          </p>
+
+          <p className="mt-4">
+            Without validating those pieces first, building the full product
+            would carry unnecessary risk.
           </p>
         </div>
 
-        {/* Next steps */}
+        {/* Highlight insight */}
+        <p className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-4 py-3 rounded-md">
+          The idea itself isn’t the biggest uncertainty — distribution is.
+          If you discover a reliable path to early users, the concept becomes
+          significantly stronger.
+        </p>
+
+        {/* Next moves */}
         <div>
-          <h3 className="text-lg font-medium mb-4">
-            Suggested next steps
-          </h3>
-          <ul className="space-y-3 text-neutral-300 list-disc list-inside leading-relaxed max-w-xl">
-            <li>Define a narrower initial user segment</li>
-            <li>Validate the core pain through direct conversations</li>
-            <li>Test whether existing alternatives truly fall short</li>
+          <h4 className="text-lg font-medium mb-4">
+            What I would test next
+          </h4>
+
+          <ul className="space-y-3 list-disc list-inside">
+            <li>Define a narrow group of early adopters</li>
+            <li>Talk directly with potential users to confirm the pain</li>
+            <li>Understand why existing tools fail for them</li>
+            <li>Explore how the first 100 users could realistically find the product</li>
           </ul>
         </div>
 
       </div>
 
-      {/* Finish */}
       <button
         onClick={onFinish}
         className="mt-16 text-sm text-neutral-500 hover:text-neutral-300 transition"
       >
-        Finish →
+        Analyze another idea →
       </button>
 
     </div>

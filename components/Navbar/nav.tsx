@@ -55,15 +55,18 @@ export default function Navbar() {
 
     {/* Desktop Nav */}
     <nav className="hidden md:flex items-center gap-6 text-xs text-neutral-400">
-      <Link href="/thinking-partner-v2" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
->Nexra Engine</Link>
+      <Link href="/thinking-engine-v2.0" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
+>Thinking Engine</Link>
+
+
+      <Link href="/changelog" className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all">Changelog</Link>
 
       <button
         onClick={() => setFeedbackOpen(true)}
         className="hover:text-white transition relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:bg-white/20 after:transition-all"
 
       >
-        Feedback
+        Report a bug
       </button>
 
       <button
@@ -87,7 +90,9 @@ export default function Navbar() {
   {mobileOpen && (
     <div className="md:hidden bg-neutral-950 border-t border-neutral-900 px-4 py-4 space-y-4 text-sm">
       
-      <Link href="/nexra-engine-v2" className="block text-neutral-400 hover:text-white">Nexra Engine</Link>
+      <Link href="/thinking-engine-v2.0" className="block text-neutral-400 hover:text-white">Thinking Engine</Link>
+
+      <Link href="/changelog" className="block text-neutral-400 hover:text-white">Changelog</Link>
 
       <button
         onClick={() => {
@@ -96,7 +101,7 @@ export default function Navbar() {
         }}
         className="block text-neutral-400 hover:text-white"
       >
-        Feedback
+        Report a bug
       </button>
 
       <button
