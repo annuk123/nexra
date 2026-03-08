@@ -123,11 +123,23 @@ export default function Hero() {
     whitespace-pre-wrap sm:whitespace-pre overflow-x-auto break-word">
 {`$ nexra think
 > "AI startup idea validator"
-    Idea: AI tool that helps indie hackers validate startup ideas
 
-Clarity Index: 0.83
-Decision Risk: High
-Strategic Direction: Narrow ICP and define evaluation framework`}
+Observation:
+The desire to validate startup ideas is common among founders.
+However, many tools already exist offering advice or idea scoring.
+
+Key Risk:
+The value may feel abstract unless Nexra provides a clear framework
+for identifying weak assumptions in startup ideas.
+
+Question:
+How exactly will Nexra stress-test ideas?
+Will it challenge market assumptions, execution difficulty,
+or founder-market fit?
+
+Suggested Experiment:
+Run 3 very different startup ideas through Nexra and compare
+how well the insights highlight meaningful risks or blind spots.`}
 <span className="animate-pulse">▍</span>
   </pre>
 
