@@ -76,14 +76,10 @@ export default function Hero() {
 </h1>
 
 
-<p className="mt-4 text-neutral-400 text-lg max-w-xl mx-auto">
- Nexra helps founders reason about product, market, and execution — so decisions are based on thinking, not instinct.
+<p className="mt-4 text-neutral-400 text-lg max-w-2xl mx-auto">
+ Nexra is an AI thinking partner that stress-tests startup ideas before you waste months building the wrong thing.
 </p>
 
-
-<p className="mt-2 text-xs text-neutral-500">
- Built for solo founders and early-stage teams.
-</p>
 
   <div className="mt-5 flex justify-center gap-4">
 
@@ -91,7 +87,7 @@ export default function Hero() {
       href="/thinking-engine-v2.0"
        className="px-6 py-3 sm:px-8 sm:py-3.5 text-sm font-medium rounded-lg border 
    bg-white text-black transition hover:bg-neutral-100">
-       Try Nexra →
+       Analyze My Idea →
         {/* <Play className="ml-2 h-4 w-4" /> */}
 
     </Link>
@@ -105,12 +101,13 @@ export default function Hero() {
         Join waitlist 
     </button>
 
-
   </div>
-
+<p className="text-sm text-neutral-400 mt-4">
+  Used by early-stage founders exploring startup ideas
+</p>
   {/* Terminal Card */}
   
-<div className="mt-8 mb-5 mx-auto max-w-2xl bg-black/60 backdrop-blur border border-neutral-800 
+<div className="mt-16 mb-5 mx-auto max-w-2xl bg-black/60 backdrop-blur border border-neutral-800 
   rounded-xl p-5 shadow-[0_0_40px_rgba(124,58,237,0.15)] text-left">
     
   <div className="flex gap-2 mb-3">
@@ -121,25 +118,24 @@ export default function Hero() {
 
   <pre className="text-xs sm:text-sm text-neutral-300 font-mono 
     whitespace-pre-wrap sm:whitespace-pre overflow-x-auto break-word">
-{`$ nexra think
-> "AI startup idea validator"
+{`$ nexra analyze
+> AI startup idea validator
 
 Observation:
-The desire to validate startup ideas is common among founders.
-However, many tools already exist offering advice or idea scoring.
+Founders want validation before building.
 
-Key Risk:
-The value may feel abstract unless Nexra provides a clear framework
-for identifying weak assumptions in startup ideas.
+Risk:
+The market already has many idea scoring tools.
 
-Question:
-How exactly will Nexra stress-test ideas?
-Will it challenge market assumptions, execution difficulty,
-or founder-market fit?
+Verdict:
+Weak differentiation.
 
-Suggested Experiment:
-Run 3 very different startup ideas through Nexra and compare
-how well the insights highlight meaningful risks or blind spots.`}
+Critical Question:
+Why would founders trust Nexra over existing tools?
+
+Suggested Test:
+Run multiple ideas through Nexra and compare
+whether the analysis exposes meaningful blind spots.`}
 <span className="animate-pulse">▍</span>
   </pre>
 
