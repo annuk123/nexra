@@ -1,10 +1,11 @@
 import { Message } from "./ChatPanel";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import remarkMark from "remark-mark"; 
 import rehypeRaw from "rehype-raw";
-
-let isExperimentList = false;
+import { useRef, useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
+/* ================= TEXT HELPERS ================= */
 
 function extractText(children: React.ReactNode): string {
   if (typeof children === "string") return children;
@@ -17,19 +18,15 @@ function extractText(children: React.ReactNode): string {
 }
 
 /* ================= THINKING HIGHLIGHTS ================= */
+
 function highlightThinking(text: string) {
   const patterns = [
-    /I’m not sure[^.?!]*[.?!]/gi,
-    /What worries me[^.?!]*[.?!]/gi,
-    /Where I get stuck[^.?!]*[.?!]/gi,
-    /I’m trying to see[^.?!]*[.?!]/gi,
-    /I might be wrong[^.?!]*[.?!]/gi,
-    /I’m not convinced[^.?!]*[.?!]/gi,
-    /This is where it feels fragile[^.?!]*[.?!]/gi,
     /Something here feels[^.?!]*[.?!]/gi,
     /The fragile part[^.?!]*[.?!]/gi,
     /The risk here[^.?!]*[.?!]/gi,
-/This raises something interesting[^.?!]*[.?!]/gi,
+    /This raises something interesting[^.?!]*[.?!]/gi,
+    /I’m not convinced[^.?!]*[.?!]/gi,
+    /I might be wrong[^.?!]*[.?!]/gi,
   ];
 
   let processed = text;
@@ -56,6 +53,12 @@ export default function ChatMessage({
 }) {
   const isUser = msg.role === "user";
 
+  const experimentListRef = useRef(false);
+
+  const highlightedContent = useMemo(() => {
+    return highlightThinking(msg.content || "");
+  }, [msg.content]);
+
   /* ================= USER MESSAGE ================= */
 
   if (isUser) {
@@ -81,7 +84,15 @@ export default function ChatMessage({
         {/* Nexra Identity */}
         <div className="flex items-center gap-2 mb-3">
           <div className="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 text-xs font-semibold">
-            N
+            
+  <Image
+    src="/nexra.png"
+    alt="Nexra"
+    width={28}
+    height={28}
+    className="h-6 w-6"
+  />
+
           </div>
 
           <p className="text-xs text-neutral-400">
@@ -119,78 +130,81 @@ export default function ChatMessage({
           "
         >
 
-<ReactMarkdown
-  remarkPlugins={[remarkGfm]}
-  rehypePlugins={[rehypeRaw]}
-  components={{
-    mark: ({ children }) => (
-      <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md">
-        {children}
-      </mark>
-    ),
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+            components={{
 
-    p: ({ children }) => {
-      const text = extractText(children);
+              mark: ({ children }) => (
+                <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md">
+                  {children}
+                </mark>
+              ),
 
-      if (text.startsWith("A small test")) {
-        isExperimentList = true;
+              p: ({ children }) => {
+                const text = extractText(children);
 
-        return (
-          <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2">
-            Small experiment
-          </p>
-        );
-      }
+                if (text.startsWith("A small test")) {
+                  experimentListRef.current = true;
 
-      if (text.startsWith("Continue exploring")) {
-        return (
-          <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2">
-            Continue exploring
-          </p>
-        );
-      }
+                  return (
+                    <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2">
+                      Small experiment
+                    </p>
+                  );
+                }
 
-      if (text.includes("?")) {
-        return (
-          <p className="text-indigo-300 font-medium">
-            {children}
-          </p>
-        );
-      }
+                if (text.startsWith("Continue exploring")) {
+                  return (
+                    <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2">
+                      Continue exploring
+                    </p>
+                  );
+                }
 
-      return <p>{children}</p>;
-    },
+                if (text.includes("?")) {
+                  return (
+                    <p className="text-indigo-300 font-medium">
+                      {children}
+                    </p>
+                  );
+                }
 
-    ul: ({ children }) => {
-      if (isExperimentList) {
-        isExperimentList = false;
+                return <p>{children}</p>;
+              },
 
-        return (
-          <div className="border border-indigo-500/20 bg-indigo-500/5 rounded-lg p-4 my-3">
-            <ul className="space-y-2 list-disc pl-5 text-neutral-200">
-              {children}
-            </ul>
-          </div>
-        );
-      }
+              ul: ({ children }) => {
+                if (experimentListRef.current) {
+                  experimentListRef.current = false;
 
-      return (
-        <ul className="space-y-2 list-disc pl-5 my-4 text-neutral-200">
-          {children}
-        </ul>
-      );
-    },
-  }}
->
-  {highlightThinking(msg.content || "")}
-</ReactMarkdown>
+                  return (
+                    <div className="border border-indigo-500/20 bg-indigo-500/5 rounded-lg p-4 my-3">
+                      <ul className="space-y-2 list-disc pl-5 text-neutral-200">
+                        {children}
+                      </ul>
+                    </div>
+                  );
+                }
+
+                return (
+                  <ul className="space-y-2 list-disc pl-5 my-4 text-neutral-200">
+                    {children}
+                  </ul>
+                );
+              },
+            }}
+          >
+            {highlightedContent}
+          </ReactMarkdown>
+
           {/* Thinking indicator */}
           {isTyping && (
-            <div className="flex items-center gap-2 text-neutral-400 text-sm mt-3">
-              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
-              Nexra is thinking
+            <div className="flex items-center gap-2 text-neutral-400 text-sm mt-4">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              Nexra is thinking through your idea…
             </div>
           )}
+
         </div>
       </div>
     </div>
