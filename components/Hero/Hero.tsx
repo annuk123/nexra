@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
-import { useQuery } from "convex/react";
 
 /* ── Conversation demo data ── */
 const DEMO = [
@@ -32,17 +31,20 @@ const DEMO = [
   },
 ];
 
+/* ── Fallback avatars shown while Convex loads ── */
+const FALLBACK_COLORS = ["#d4a574", "#a8c4a2", "#b8b0d4", "#c4b89a"];
+
 export default function Hero() {
   const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
-    const data = useQuery(api.waitlist.getWaitlistSocialProof);
+
+  // Don't block render on this — use undefined as loading state
+  const data = useQuery(api.waitlist.getWaitlistSocialProof);
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
   const [started, setStarted] = useState(false);
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => setStarted(true), 800);
@@ -72,17 +74,15 @@ export default function Hero() {
       setStatus("error");
     }
   };
-  
-  if (!data) return null;
 
-const MAX_VISIBLE = 4;
-const visible = data.avatars.slice(0, MAX_VISIBLE);
-const remaining = data.count - MAX_VISIBLE;
-
+  // Social proof — show fallback dots while loading, real data when ready
+  const MAX_VISIBLE = 4;
+  const avatars = data?.avatars?.slice(0, MAX_VISIBLE) ?? [];
+  const remaining = data ? data.count - MAX_VISIBLE : 0;
+  const showFallbackDots = !data;
 
   return (
     <>
-      {/* Google Fonts */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
         .font-serif-display { font-family: 'Instrument Serif', serif; }
@@ -100,14 +100,16 @@ const remaining = data.count - MAX_VISIBLE;
         @keyframes slide-up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         .modal-slide { animation: slide-up 0.25s ease; }
         mark.nexra-mark { background: rgba(0,0,0,0.07); color: inherit; padding: 1px 3px; border-radius: 3px; font-style: italic; }
+        @keyframes shimmer { 0%{opacity:0.4} 50%{opacity:0.7} 100%{opacity:0.4} }
+        .skeleton { animation: shimmer 1.5s infinite; background: rgba(0,0,0,0.06); border-radius: 50%; }
       `}</style>
 
-      {/* Page root */}
+      {/* Page root — renders immediately, no blocking */}
       <div
         className="font-body min-h-screen relative overflow-hidden"
         style={{ background: "#f5f2ed", color: "#0a0a0a" }}
       >
-        {/* Subtle warm gradient texture */}
+        {/* Warm gradient texture */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -116,16 +118,20 @@ const remaining = data.count - MAX_VISIBLE;
           }}
         />
 
-        {/* ── Nav ── */}
-        
-
         {/* ── Hero Grid ── */}
-        <div className="relative max-w-300 mx-auto px-12 grid grid-cols-2 gap-20 items-center min-h-screen py-20">
+        {/* 
+          Mobile:  single column, content stacked
+          Tablet:  single column, conversation panel below
+          Desktop: two columns side by side
+        */}
+        <div className="relative max-w-300 mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-0
+          grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center lg:min-h-screen">
 
-          {/* Left column */}
-          <div className="py-16">
+          {/* ── Left column ── */}
+          <div className="pt-8 lg:py-16 order-1">
+
             {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 mb-8">
+            <div className="inline-flex items-center gap-2 mb-6 sm:mb-8">
               <div className="w-6 h-px" style={{ background: "#6b6560" }} />
               <span
                 className="text-[11px] font-medium tracking-[0.12em] uppercase"
@@ -137,19 +143,22 @@ const remaining = data.count - MAX_VISIBLE;
 
             {/* Headline */}
             <h1
-              className="font-serif-display text-[clamp(42px,5vw,64px)] leading-[1.1] tracking-[-0.02em] m-0 mb-2"
-              style={{ color: "#0a0a0a" }}
+              className="font-serif-display leading-[1.1] tracking-[-0.02em] m-0 mb-2"
+              style={{
+                color: "#0a0a0a",
+                fontSize: "clamp(38px, 5vw, 64px)",
+              }}
             >
               Clarity before
               <br />
-              <em className="not-italic" style={{ color: "#6b6560", fontStyle: "italic" }}>
+              <em style={{ color: "#6b6560", fontStyle: "italic" }}>
                 commitment.
               </em>
             </h1>
 
             {/* Subheadline */}
             <p
-              className="text-[16px] leading-[1.7] max-w-100 mt-6 mb-12 font-light"
+              className="text-[15px] sm:text-[16px] leading-[1.7] mt-5 mb-10 sm:mb-12 font-light max-w-105"
               style={{ color: "#6b6560" }}
             >
               Nexra thinks with you — not at you.
@@ -161,13 +170,14 @@ const remaining = data.count - MAX_VISIBLE;
             </p>
 
             {/* CTAs */}
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex flex-wrap items-center gap-4">
               <Link
                 href="/thinking-engine-v2.0"
-                className="inline-flex items-center gap-2 text-[14px] font-medium px-7 py-3 rounded-lg no-underline transition-all duration-200 hover:-translate-y-px group border-0"
+                className="inline-flex items-center gap-2 text-[14px] font-medium px-6 sm:px-7 py-3 rounded-lg no-underline transition-all duration-200 hover:-translate-y-px group border-0"
                 style={{ background: "#0a0a0a", color: "#f5f2ed" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.15)";
+                  (e.currentTarget as HTMLElement).style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.15)";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLElement).style.boxShadow = "none";
@@ -194,17 +204,16 @@ const remaining = data.count - MAX_VISIBLE;
               <button
                 onClick={() => setWaitlistOpen(true)}
                 className="text-[13px] bg-transparent border-0 cursor-pointer py-3 px-0 tracking-[0.01em] underline underline-offset-[3px] transition-all duration-200"
-                style={{
-                  color: "#6b6560",
-                  textDecorationColor: "transparent",
-                }}
+                style={{ color: "#6b6560", textDecorationColor: "transparent" }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.color = "#0a0a0a";
-                  (e.currentTarget as HTMLElement).style.textDecorationColor = "#0a0a0a";
+                  (e.currentTarget as HTMLElement).style.textDecorationColor =
+                    "#0a0a0a";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLElement).style.color = "#6b6560";
-                  (e.currentTarget as HTMLElement).style.textDecorationColor = "transparent";
+                  (e.currentTarget as HTMLElement).style.textDecorationColor =
+                    "transparent";
                 }}
               >
                 Join waitlist →
@@ -213,46 +222,72 @@ const remaining = data.count - MAX_VISIBLE;
 
             {/* Social proof */}
             <div
-              className="mt-6 pt-4 flex items-center gap-5"
+              className="mt-8 sm:mt-10 pt-6 flex items-center gap-4"
               style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}
             >
-              <div className="flex">
-  {visible.map((user, i) => (
-    <img
-      key={i}
-      src={user.avatar}
-      className="w-6 h-6 rounded-full border-2 object-cover"
-      style={{
-        borderColor: "#f5f2ed",
-        marginLeft: i === 0 ? 0 : "-6px",
-      }}
-    />
-  ))}
+              {/* Avatar stack */}
+              <div className="flex shrink-0">
+                {showFallbackDots
+                  ? // Skeleton dots while loading
+                    FALLBACK_COLORS.map((bg, i) => (
+                      <div
+                        key={i}
+                        className="skeleton w-6 h-6 rounded-full border-2"
+                        style={{
+                          borderColor: "#f5f2ed",
+                          marginLeft: i === 0 ? 0 : "-6px",
+                          background: bg,
+                        }}
+                      />
+                    ))
+                  : // Real avatars once loaded
+                    <>
+                      {avatars.map((user, i) => (
+                        <img
+                          key={i}
+                          src={user.avatar}
+                          alt=""
+                          className="w-6 h-6 rounded-full border-2 object-cover"
+                          style={{
+                            borderColor: "#f5f2ed",
+                            marginLeft: i === 0 ? 0 : "-6px",
+                          }}
+                        />
+                      ))}
+                      {remaining > 0 && (
+                        <div
+                          className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px]"
+                          style={{
+                            borderColor: "#f5f2ed",
+                            marginLeft: "-6px",
+                            background: "#e7e2dc",
+                            color: "#6b6560",
+                          }}
+                        >
+                          +{remaining}
+                        </div>
+                      )}
+                    </>
+                }
+              </div>
 
-  {remaining > 0 && (
-    <div
-      className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px]"
-      style={{
-        borderColor: "#f5f2ed",
-        marginLeft: "-6px",
-        background: "#e7e2dc",
-      }}
-    >
-      +{remaining}
-    </div>
-  )}
-</div>
-              <p className="text-[12px] leading-normal m-0" style={{ color: "#6b6560" }}>
+              <p
+                className="text-[12px] leading-normal m-0"
+                style={{ color: "#6b6560" }}
+              >
                 Used by solo founders and indie hackers
-                <br />
-                exploring early-stage ideas
+                <br className="hidden sm:block" />
+                {" "}exploring early-stage ideas
               </p>
             </div>
           </div>
 
-          {/* Right column — conversation panel */}
+          {/* ── Right column — conversation panel ── */}
+          {/* On mobile: shown below left column, capped height */}
           <div
-            className="bg-white rounded-2xl flex flex-col overflow-hidden max-h-145"
+            className="order-2 bg-white rounded-2xl flex flex-col overflow-hidden
+              max-h-105 sm:max-h-115 lg:max-h-128
+              w-full"
             style={{
               border: "1px solid rgba(0,0,0,0.08)",
               boxShadow:
@@ -261,7 +296,7 @@ const remaining = data.count - MAX_VISIBLE;
           >
             {/* Panel header */}
             <div
-              className="flex items-center justify-between px-5 py-4"
+              className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 shrink-0"
               style={{
                 borderBottom: "1px solid rgba(0,0,0,0.06)",
                 background: "rgba(0,0,0,0.015)",
@@ -269,19 +304,20 @@ const remaining = data.count - MAX_VISIBLE;
             >
               <div className="flex items-center gap-2.5">
                 <div
-                  className="font-serif-display w-7 h-7 rounded-full flex items-center justify-center text-[13px]"
+                  className="font-serif-display w-7 h-7 rounded-full flex items-center justify-center text-[13px] shrink-0"
                   style={{ background: "#0a0a0a", color: "#f5f2ed" }}
                 >
                   N
                 </div>
                 <div>
-                  <div className="text-[13px] font-medium" style={{ color: "#0a0a0a" }}>
+                  <div
+                    className="text-[13px] font-medium"
+                    style={{ color: "#0a0a0a" }}
+                  >
                     Nexra
                   </div>
                   <div className="text-[11px]" style={{ color: "#6b6560" }}>
-                    <span
-                      className="status-pulse inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1 align-middle"
-                    />
+                    <span className="status-pulse inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1 align-middle" />
                     Thinking Partner
                   </div>
                 </div>
@@ -289,7 +325,7 @@ const remaining = data.count - MAX_VISIBLE;
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-5 sm:py-6 flex flex-col gap-3 sm:gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {DEMO.map((msg, i) => (
                 <div
                   key={i}
@@ -298,7 +334,7 @@ const remaining = data.count - MAX_VISIBLE;
                   {msg.role === "founder" ? (
                     <div className="flex justify-end">
                       <div
-                        className="max-w-[75%] px-3.5 py-2.5 rounded-[14px_14px_2px_14px] text-[13.5px] leading-[1.6]"
+                        className="max-w-[80%] sm:max-w-[75%] px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-[14px_14px_2px_14px] text-[13px] sm:text-[13.5px] leading-[1.6]"
                         style={{ background: "#0a0a0a", color: "#f5f2ed" }}
                       >
                         {msg.text}
@@ -315,10 +351,8 @@ const remaining = data.count - MAX_VISIBLE;
                         </div>
                       )}
                       <div
-                        className={`max-w-[90%] text-[13.5px] leading-[1.7] ${
-                          msg.isQuestion
-                            ? "font-serif-display text-[15px] leading-[1.6]"
-                            : ""
+                        className={`max-w-[92%] sm:max-w-[90%] text-[13px] sm:text-[13.5px] leading-[1.7] ${
+                          msg.isQuestion ? "font-serif-display text-[14px] sm:text-[15px] leading-[1.6]" : ""
                         }`}
                         style={{
                           color: msg.isQuestion ? "#3d3530" : "#2a2a2a",
@@ -368,21 +402,24 @@ const remaining = data.count - MAX_VISIBLE;
 
             {/* Input mock */}
             <div
-              className="px-4 py-3"
+              className="px-3 sm:px-4 py-2.5 sm:py-3 shrink-0"
               style={{
                 borderTop: "1px solid rgba(0,0,0,0.06)",
                 background: "rgba(0,0,0,0.015)",
               }}
             >
               <div
-                className="flex items-center gap-2.5 bg-white px-3.5 py-2.5 rounded-lg"
+                className="flex items-center gap-2.5 bg-white px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-lg"
                 style={{ border: "1px solid rgba(0,0,0,0.1)" }}
               >
-                <span className="flex-1 text-[13px]" style={{ color: "#6b6560" }}>
+                <span
+                  className="flex-1 text-[12px] sm:text-[13px]"
+                  style={{ color: "#6b6560" }}
+                >
                   What's on your mind right now…
                 </span>
                 <div
-                  className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center shrink-0"
                   style={{ background: "#0a0a0a" }}
                 >
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -405,11 +442,14 @@ const remaining = data.count - MAX_VISIBLE;
       {waitlistOpen && (
         <div
           className="modal-fade fixed inset-0 z-50 flex items-center justify-center px-4"
-          style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}
+          style={{
+            background: "rgba(0,0,0,0.4)",
+            backdropFilter: "blur(8px)",
+          }}
           onClick={() => setWaitlistOpen(false)}
         >
           <div
-            className="modal-slide relative bg-white rounded-2xl p-10 w-full max-w-105"
+            className="modal-slide relative bg-white rounded-2xl p-7 sm:p-10 w-full max-w-105"
             style={{
               border: "1px solid rgba(0,0,0,0.08)",
               boxShadow: "0 32px 80px rgba(0,0,0,0.2)",
@@ -441,12 +481,15 @@ const remaining = data.count - MAX_VISIBLE;
             ) : (
               <>
                 <h3
-                  className="font-serif-display text-[24px] m-0 mb-1.5"
+                  className="font-serif-display text-[22px] sm:text-[24px] m-0 mb-1.5"
                   style={{ color: "#0a0a0a" }}
                 >
                   Join the waitlist
                 </h3>
-                <p className="text-[14px] leading-[1.6] mt-0 mb-7" style={{ color: "#6b6560" }}>
+                <p
+                  className="text-[14px] leading-[1.6] mt-0 mb-6 sm:mb-7"
+                  style={{ color: "#6b6560" }}
+                >
                   Early access for founders. No noise, no newsletters.
                 </p>
 
@@ -485,12 +528,18 @@ const remaining = data.count - MAX_VISIBLE;
                 </form>
 
                 {status === "error" && (
-                  <p className="text-[13px] mt-2 mb-0" style={{ color: "#dc2626" }}>
+                  <p
+                    className="text-[13px] mt-2 mb-0"
+                    style={{ color: "#dc2626" }}
+                  >
                     Something went wrong. Try again.
                   </p>
                 )}
 
-                <p className="text-[11px] text-center mt-4 mb-0" style={{ color: "#6b6560" }}>
+                <p
+                  className="text-[11px] text-center mt-4 mb-0"
+                  style={{ color: "#6b6560" }}
+                >
                   No spam. Just product updates when they matter.{" "}
                   <Link
                     href="/privacy"
