@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("nexra_access_token")?.value;
 
-  // Check token in cookie (we'll also set it as a cookie in callback)
   if (!token) {
     const signInUrl = new URL("/auth", request.url);
     signInUrl.searchParams.set("redirect", request.nextUrl.pathname);
