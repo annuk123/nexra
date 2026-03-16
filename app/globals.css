@@ -86,6 +86,28 @@ html, body {
   );
 }
 
+
+:root {
+
+  /* Base */
+  --bg-main: #0c0c0d;
+  --bg-panel: #ffffff;
+  --bg-soft: #fafafa;
+
+  /* Text */
+  --text-primary: #111111;
+  --text-secondary: #6b6560;
+  --text-inverse: #f5f2ed;
+
+  /* Accent */
+  --accent-primary: #0a0a0a;
+  --accent-muted: #8b7355;
+
+  /* Borders */
+  --border-soft: rgba(0,0,0,0.08);
+  --border-light: rgba(0,0,0,0.06);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

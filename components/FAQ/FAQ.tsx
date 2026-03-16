@@ -5,45 +5,41 @@ import FeedbackModal from "../FeedbackPage/Feedback";
 const faqs = [
   {
     q: "Is Nexra just ChatGPT with a prompt?",
-    a: "No. Nexra is a structured decision system for startup ideas. It breaks ideas into assumptions, market dynamics, risks, and trade-offs before producing a decision framework. It’s built for clarity, not conversation.",
+    a: "No. ChatGPT will engage with whatever you give it and try to be helpful. Nexra is built to think with you — it follows the fragile assumption in your idea until a real tension appears, then holds that tension instead of resolving it too quickly. The goal is clarity, not a satisfying answer.",
   },
   {
     q: "Why not just use ChatGPT or Gemini?",
-    a: "General-purpose AI tools give broad advice. Nexra is purpose-built for startup thinking, with structured frameworks and decision-oriented outputs instead of generic responses.",
+    a: "General AI is agreeable by default. Ask it about your idea and it'll find something nice to say. Nexra is built to do the opposite — surface what's uncertain, push on what's assumed, and ask the question you've been avoiding. That's a different behavior, not just a different prompt.",
   },
   {
     q: "Who is Nexra for?",
-    a: "Nexra is built for solo founders, indie hackers, and early-stage builders deciding what to build before committing significant time, money, or energy.",
+    a: "Solo founders, indie hackers, and early-stage builders who are making real decisions without a co-founder or advisor to think things through with. Especially useful at 11pm when something feels off and there's nobody to call.",
   },
   {
     q: "What happens to my idea?",
-    a: "Your ideas remain private. Inputs are not shared, reused, or used to train models. Nexra exists to help you think, not to extract value from your ideas.",
+    a: "It stays yours. We don't store, share, or train on your ideas. Nexra exists to help you think — not to extract value from what you're building.",
   },
   {
     q: "Will Nexra tell me what to build?",
-    a: "No. Nexra does not make decisions for you. It surfaces blind spots, assumptions, and trade-offs so you can make informed decisions yourself.",
+    a: "No — and that's intentional. A thinking partner doesn't make decisions for you. Nexra helps you see the idea more clearly so you can decide. The goal is that you leave the session knowing something you didn't when you started.",
   },
   {
     q: "Is Nexra useful if I already have experience?",
-    a: "Yes. Nexra is designed for experienced builders who want a second layer of structured thinking and decision clarity, not surface-level advice.",
+    a: "Often more so. Experienced founders know how to find validation for whatever they already believe. Nexra is useful precisely because it won't just confirm what you want to hear. A second perspective that's willing to push back is worth more the more experience you have.",
   },
   {
     q: "When can I use Nexra?",
-    a: "We’re onboarding early users in small batches. Join the waitlist to get access as the product opens up.",
+    a: "We're opening access in small batches to make sure the experience is right before scaling. Join the waitlist — we'll reach out when there's a spot.",
   },
 ];
-
-
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
-    <section >
-      <span className="text-xs tracking-widest text-neutral-500">
-        FAQ
-      </span>
+    <section>
+      <span className="text-xs tracking-widest text-neutral-500">FAQ</span>
 
       <h2 className="mt-4 text-2xl sm:text-3xl font-semibold max-w-xl">
         Questions founders ask before building
@@ -62,7 +58,6 @@ export default function FAQ() {
                 <h3 className="text-neutral-200 font-medium group-hover:text-neutral-100 transition">
                   {item.q}
                 </h3>
-
                 <span
                   className={`ml-4 text-neutral-500 transition-transform duration-200 group-hover:text-neutral-300 ${
                     open ? "rotate-45" : ""
@@ -83,16 +78,19 @@ export default function FAQ() {
       </div>
 
       <p className="mt-8 text-xs text-neutral-500">
-        Still have questions? 
+        Still have questions?{" "}
         <button
-    onClick={() => setFeedbackOpen(true)}
-    className="underline hover:text-neutral-100 transition"
-  >
-    Send here →
-  </button>
-  
+          onClick={() => setFeedbackOpen(true)}
+          className="underline hover:text-neutral-100 transition"
+        >
+          Send here →
+        </button>
       </p>
-      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+
+      <FeedbackModal
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+      />
     </section>
   );
 }

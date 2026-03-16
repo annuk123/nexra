@@ -1,5 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { query } from "./_generated/server";
+
 
 export const addToWaitlist = mutation({
   args: {
@@ -32,5 +34,27 @@ export const addToWaitlist = mutation({
     });
 
     return { status: "added" };
+  },
+});
+
+
+
+export const getWaitlistSocialProof = query({
+  handler: async (ctx) => {
+    const users = await ctx.db
+      .query("waitlist")
+      .order("desc")
+      .take(10);
+
+    const total = await ctx.db.query("waitlist").collect();
+
+    const avatars = users.map((u) => ({
+      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${u.email}`,
+    }));
+
+    return {
+      avatars,
+      count: total.length,
+    };
   },
 });

@@ -24,8 +24,9 @@ export default function TermsPage() {
             What Nexra provides
           </h2>
           <p>
-            Nexra AI provides analytical guidance intended to help founders
-            think more clearly about startup ideas.
+            Nexra AI is a thinking partner for founders. It helps you
+examine assumptions, surface tensions, and think more clearly
+about early-stage decisions.
           </p>
           <p className="mt-4">
             Nexra does not provide legal, financial, or professional advice.
@@ -113,7 +114,7 @@ export default function TermsPage() {
       </div>
 
       <p className="mt-16 text-xs text-neutral-500">
-        Last updated: {new Date().toLocaleDateString()}
+        Last updated: March 2026
       </p>
     </Section>
   );

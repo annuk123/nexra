@@ -96,7 +96,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* 6 */}
-        <div>
+        {/* <div>
           <h2 className="text-lg font-medium mb-2">
             Contact
           </h2>
@@ -104,14 +104,14 @@ export default function PrivacyPage() {
             If you have questions about privacy, reach out at:
           </p>
           <p className="mt-2 text-neutral-400">
-            hello@nexra.ai
+            
           </p>
-        </div>
+        </div> */}
 
       </div>
 
       <p className="mt-16 text-xs text-neutral-500">
-        Last updated: {new Date().toLocaleDateString()}
+        Last updated: March 2026
       </p>
     </Section>
   );

@@ -28,6 +28,9 @@ module.exports = {
       },
       colors: {
         background: "#0a0a0a",
+        ink: '#0a0a0a',
+      paper: '#f5f2ed',
+      muted: '#6b6560',
       },
     },
   },

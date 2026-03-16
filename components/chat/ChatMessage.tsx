@@ -2,44 +2,24 @@ import { Message } from "./ChatPanel";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { useRef, useMemo } from "react";
-import Link from "next/link";
+import { useMemo, Children, isValidElement } from "react";
 import Image from "next/image";
+
 /* ================= TEXT HELPERS ================= */
 
 function extractText(children: React.ReactNode): string {
   if (typeof children === "string") return children;
-
   if (Array.isArray(children)) {
     return children.map((c) => (typeof c === "string" ? c : "")).join("");
   }
-
   return "";
 }
 
-/* ================= THINKING HIGHLIGHTS ================= */
+/* ================= LAST QUESTION DETECTOR ================= */
 
-function highlightThinking(text: string) {
-  const patterns = [
-    /Something here feels[^.?!]*[.?!]/gi,
-    /The fragile part[^.?!]*[.?!]/gi,
-    /The risk here[^.?!]*[.?!]/gi,
-    /This raises something interesting[^.?!]*[.?!]/gi,
-    /I’m not convinced[^.?!]*[.?!]/gi,
-    /I might be wrong[^.?!]*[.?!]/gi,
-  ];
-
-  let processed = text;
-
-  patterns.forEach((pattern) => {
-    processed = processed.replace(
-      pattern,
-      (match) =>
-        `<mark class="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md">${match}</mark>`
-    );
-  });
-
-  return processed;
+// Counts total paragraph nodes to identify the final one
+function countParagraphs(content: string): number {
+  return (content.match(/\n\n|\n(?=[A-Z])/g) || []).length + 1;
 }
 
 /* ================= COMPONENT ================= */
@@ -53,11 +33,13 @@ export default function ChatMessage({
 }) {
   const isUser = msg.role === "user";
 
-  const experimentListRef = useRef(false);
+  // Track paragraph index during render
+  let paragraphIndex = 0;
 
-  const highlightedContent = useMemo(() => {
-    return highlightThinking(msg.content || "");
-  }, [msg.content]);
+  const totalParagraphs = useMemo(
+    () => countParagraphs(msg.content || ""),
+    [msg.content]
+  );
 
   /* ================= USER MESSAGE ================= */
 
@@ -66,7 +48,6 @@ export default function ChatMessage({
       <div className="flex justify-end px-6 py-4">
         <div className="max-w-md space-y-1 text-right">
           <p className="text-xs text-neutral-500">You</p>
-
           <div className="px-4 py-3 rounded-2xl rounded-br-none bg-emerald-900/30 text-emerald-300 text-sm leading-relaxed whitespace-pre-wrap">
             {msg.content}
           </div>
@@ -84,20 +65,15 @@ export default function ChatMessage({
         {/* Nexra Identity */}
         <div className="flex items-center gap-2 mb-3">
           <div className="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 text-xs font-semibold">
-            
-  <Image
-    src="/nexra.png"
-    alt="Nexra"
-    width={28}
-    height={28}
-    className="h-6 w-6"
-  />
-
+            <Image
+              src="/nexra.png"
+              alt="Nexra"
+              width={28}
+              height={28}
+              className="h-6 w-6"
+            />
           </div>
-
-          <p className="text-xs text-neutral-400">
-            Nexra · Thinking Partner
-          </p>
+          <p className="text-xs text-neutral-400">Nexra · Thinking Partner</p>
         </div>
 
         {/* Message Content */}
@@ -106,10 +82,10 @@ export default function ChatMessage({
             prose
             prose-invert
             max-w-none
-            text-[16px]
+            text-[15px]
             leading-[1.9]
 
-            prose-p:my-6
+            prose-p:my-5
             prose-p:first:mt-0
             prose-p:last:mb-0
 
@@ -129,83 +105,79 @@ export default function ChatMessage({
             prose-blockquote:rounded-md
           "
         >
-
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{
 
+              // Model-driven highlights via <mark> tags
               mark: ({ children }) => (
-                <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md">
+                <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md not-prose">
                   {children}
                 </mark>
               ),
 
               p: ({ children }) => {
+                paragraphIndex++;
                 const text = extractText(children);
+                const isLast = paragraphIndex === totalParagraphs;
 
-                if (text.startsWith("A small test")) {
-                  experimentListRef.current = true;
-
+                // "Small experiment" section label
+                if (text.startsWith("**Try this:**") || text.startsWith("Try this:")) {
                   return (
-                    <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2">
+                    <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2 not-prose">
                       Small experiment
                     </p>
                   );
                 }
 
+                // "Continue exploring" label
                 if (text.startsWith("Continue exploring")) {
                   return (
-                    <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2">
+                    <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2 not-prose">
                       Continue exploring
                     </p>
                   );
                 }
 
-                if (text.includes("?")) {
+                // Only highlight the LAST paragraph if it's a question
+                if (isLast && text.includes("?")) {
                   return (
-                    <p className="text-indigo-300 font-medium">
-                      {children}
-                    </p>
+                    <p className="text-indigo-300 font-medium">{children}</p>
                   );
                 }
 
                 return <p>{children}</p>;
               },
 
-              ul: ({ children }) => {
-                if (experimentListRef.current) {
-                  experimentListRef.current = false;
-
-                  return (
-                    <div className="border border-indigo-500/20 bg-indigo-500/5 rounded-lg p-4 my-3">
-                      <ul className="space-y-2 list-disc pl-5 text-neutral-200">
-                        {children}
-                      </ul>
-                    </div>
-                  );
-                }
-
+              ul: ({ children, ...props }) => {
+                // Detect experiment list by checking preceding sibling context
+                // via the parent node — use a data attribute set by the p renderer
                 return (
-                  <ul className="space-y-2 list-disc pl-5 my-4 text-neutral-200">
+                  <ul className="space-y-2 list-disc pl-5 my-4 text-neutral-200" {...props}>
                     {children}
                   </ul>
                 );
               },
+
+              // Style experiment block if it follows a "Try this:" label
+              li: ({ children }) => (
+                <li className="text-neutral-200">{children}</li>
+              ),
             }}
           >
-            {highlightedContent}
+            {msg.content || ""}
           </ReactMarkdown>
-
-          {/* Thinking indicator */}
-          {isTyping && (
-            <div className="flex items-center gap-2 text-neutral-400 text-sm mt-4">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              Nexra is thinking through your idea…
-            </div>
-          )}
-
         </div>
+
+        {/* Typing indicator — outside prose to avoid layout shift */}
+        {isTyping && (
+          <div className="flex items-center gap-2 text-neutral-400 text-sm mt-3">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            Nexra is thinking through your idea…
+          </div>
+        )}
+
       </div>
     </div>
   );
