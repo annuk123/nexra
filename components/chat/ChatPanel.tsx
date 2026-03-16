@@ -3,7 +3,6 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import { useNexraStore } from "@/lib/nexraStore";
 import { thinkWithNexra } from "@/lib/api/chat";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
@@ -190,13 +189,12 @@ export default function ChatPanel() {
     setIsTyping(false);
   }
 
-  /* ── Send message ── */
-  async function handleSend(text: string) {
+async function handleSend(text: string) {
     if (loading) return;
 
     const userMessage: Message = { id: nanoid(), role: "user", content: text };
 
-    // Limit check
+    // Client-side limit check (fallback — server is source of truth)
     if (usage >= USAGE_LIMIT) {
       setMessages((prev) => [
         ...prev,
@@ -241,13 +239,17 @@ export default function ChatPanel() {
     await realNexraReply(text, thinkingId);
   }
 
-  /* ── API call + typing animation ── */
   async function realNexraReply(text: string, thinkingId: string) {
     try {
       const data = await thinkWithNexra([{ role: "user", content: text }]);
 
-      incrementUsage();
-      setUsage((prev) => prev + 1);
+      // Use server-side session count if available, otherwise fall back to local
+      if (data.sessions_remaining !== null && data.sessions_remaining !== undefined) {
+        setUsage(USAGE_LIMIT - data.sessions_remaining);
+      } else {
+        incrementUsage();
+        setUsage((prev) => prev + 1);
+      }
 
       const fullText = data.message ?? "I couldn't generate a response.";
       const words = fullText.split(" ");
@@ -261,7 +263,6 @@ export default function ChatPanel() {
       setIsTyping(true);
 
       typingIntervalRef.current = setInterval(() => {
-        // Smooth ramp: slow start, gradual acceleration
         index += index < 20 ? 1 : index < 60 ? 2 : 4;
 
         setMessages((prev) =>
@@ -281,12 +282,25 @@ export default function ChatPanel() {
 
         if (index >= words.length) stopTyping();
       }, 35);
-    } catch {
+
+    } catch (error: any) {
+      // Handle session limit from server (429)
+      const isLimitError =
+        error?.message?.toLowerCase().includes("session limit") ||
+        error?.message?.toLowerCase().includes("limit reached");
+
+      const message = isLimitError
+        ? "You've used all your sessions for today. Come back tomorrow — or join the waitlist for full access."
+        : "Something went wrong. Try again.";
+
+      // If limit hit server-side, sync local usage to reflect it
+      if (isLimitError) {
+        setUsage(USAGE_LIMIT);
+      }
+
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === thinkingId
-            ? { ...m, content: "Something went wrong. Try again." }
-            : m
+          m.id === thinkingId ? { ...m, content: message } : m
         )
       );
     } finally {

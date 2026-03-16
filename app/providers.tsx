@@ -12,3 +12,5 @@ if (typeof window !== "undefined") {
 export function Providers({ children }: { children: React.ReactNode }) {
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }
+
+
