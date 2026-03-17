@@ -105,3 +105,63 @@ Nexra becomes:
 - Memory-driven startup brain
 
 Founders should feel: *“I don’t make big startup decisions without Nexra.”*
+
+
+
+
+
+# Nexra — Project Context
+
+## What it is
+AI thinking partner for solo founders, indie hackers, early-stage builders.
+Thinks WITH the founder, not at them. 
+Positioning: "the co-founder you don't have at 11pm"
+
+## Stack
+- Frontend: Next.js 16 (Vercel) — nexralab.com
+- Backend: FastAPI (Digital Ocean App Platform) — api.nexralab.com
+- Database: Postgres (Docker local, DO managed in prod)
+- AI: OpenAI gpt-4.1-mini
+- Waitlist: Convex
+- Auth: Custom OAuth (Google + GitHub) → JWT
+
+## Key files
+- app/auth/router.py — OAuth routes
+- app/auth/dependencies.py — get_current_user
+- app/auth/jwt.py — token create/decode
+- app/api/chat.py — /chat/think endpoint
+- app/domain/reasoning/narrator.py — OpenAI call
+- app/domain/reasoning/personality.py — Nexra's identity
+- app/domain/reasoning/conversation.py — history builder
+- lib/api/chat.ts — frontend API calls
+- middleware.ts — route protection
+
+## Auth flow
+Google/GitHub → FastAPI OAuth → JWT → 
+/auth/callback (Next.js) → localStorage + cookie → 
+middleware checks cookie → thinking engine
+
+## Current state (v2)
+✓ Auth (Google + GitHub)
+✓ Conversation mode (multi-turn)
+✓ Session counting (5/day, server-side)
+✓ Postgres DB
+✓ annu@nexralab.com email set up
+
+## V3 planned
+- Auto token refresh
+- Persistent conversation history across sessions
+- Founder memory layer
+- Pricing / Stripe
+- Dashboard
+
+## Prompt architecture
+- personality.py — Nexra's identity, convictions, what it knows
+- narrator.py — first turn vs follow-up prompts
+- Two modes: build_narration_prompt (turn 1), build_followup_prompt (follow-ups)
+- Modes: balanced / strict / supportive
+
+## Known issues / tech debt
+- localStorage auth (should move to httpOnly cookies in v3)
+- No token refresh yet (60min expiry)
+- isLikelyIdea() frontend gate is basic

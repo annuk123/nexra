@@ -3,6 +3,7 @@ import React from "react";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import Link from "next/link";
+import { Mail } from "lucide-react";
 
 export default function Footer() {
   const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
@@ -131,6 +132,14 @@ export default function Footer() {
             >
               Terms
             </Link>
+
+            <Link
+    href="mailto:annu@nexralab.com"
+    className=" flex items-center gap-2  hover:text-neutral-400 transition"
+  >
+    <Mail size={16} />
+    Email
+  </Link>
           </div>
           <p>© {new Date().getFullYear()} Nexra AI</p>
         </div>

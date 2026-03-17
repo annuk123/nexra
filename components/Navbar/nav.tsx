@@ -83,7 +83,7 @@ export default function Navbar() {
               alt="Nexra"
               width={28}
               height={28}
-              className="h-6 w-6"
+              className="h-6 w-6 bg-black rounded-md"
             />
             <span className="tracking-tight">Nexra</span>
             <span

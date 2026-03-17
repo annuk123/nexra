@@ -1,5 +1,6 @@
 import { Section } from "@/design-system/layout/Section";
-
+import { Mail } from "lucide-react";
+import Link from "next/link";
 export default function PrivacyPage() {
   return (
     <Section size="sm">
@@ -7,7 +8,7 @@ export default function PrivacyPage() {
         PRIVACY
       </span>
 
-      <h1 className="mt-4 text-3xl sm:text-4xl font-semibold max-w-xl">
+      <h1 className="mt-4 text-3xl sm:text-4xl font-semibold max-w-xl text-neutral-300">
         Privacy Policy
       </h1>
 
@@ -96,17 +97,25 @@ export default function PrivacyPage() {
         </div>
 
         {/* 6 */}
-        {/* <div>
-          <h2 className="text-lg font-medium mb-2">
-            Contact
-          </h2>
-          <p>
-            If you have questions about privacy, reach out at:
-          </p>
-          <p className="mt-2 text-neutral-400">
-            
-          </p>
-        </div> */}
+        
+
+<div>
+  <h2 className="text-lg font-medium mb-2">
+    Contact
+  </h2>
+
+  <p>
+    If you have questions about privacy, reach out at:
+  </p>
+
+  <Link
+    href="mailto:annu@nexralab.com"
+    className="mt-2 flex items-center gap-2 text-neutral-400 hover:text-white transition-colors"
+  >
+    <Mail size={16} />
+    annu@nexralab.com
+  </Link>
+</div>
 
       </div>
 
