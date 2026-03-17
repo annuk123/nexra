@@ -28,7 +28,6 @@
 // lib/api/chat.ts
 
 // lib/api/chat.ts
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export interface ChatMessage {
@@ -41,6 +40,8 @@ export interface ChatThinkOut {
   sessions_remaining: number | null;
 }
 
+export type NexraMode = "balanced" | "strict" | "supportive";
+
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("nexra_access_token");
@@ -51,7 +52,8 @@ export function isSignedIn(): boolean {
 }
 
 export async function thinkWithNexra(
-  messages: ChatMessage[]
+  messages: ChatMessage[],         // full conversation history, not just last message
+  mode: NexraMode = "balanced",    // thinking mode
 ): Promise<ChatThinkOut> {
   const token = getAccessToken();
 
@@ -66,7 +68,7 @@ export async function thinkWithNexra(
   const res = await fetch(`${API_URL}/chat/think`, {
     method: "POST",
     headers,
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, mode }),  // send full history + mode
   });
 
   // Handle session limit
@@ -82,8 +84,6 @@ export async function thinkWithNexra(
   return res.json();
 }
 
-// Pass redirect so FastAPI carries it through the OAuth flow
-// FastAPI will append it to the callback redirect URL
 export function signInWithGoogle(redirect = "/thinking-engine-v2.0") {
   const params = new URLSearchParams({ redirect });
   window.location.href = `${API_URL}/auth/google?${params}`;
@@ -97,5 +97,6 @@ export function signInWithGitHub(redirect = "/thinking-engine-v2.0") {
 export function signOut() {
   localStorage.removeItem("nexra_access_token");
   localStorage.removeItem("nexra_refresh_token");
+  document.cookie = "nexra_access_token=; path=/; max-age=0";
   window.location.href = "/";
 }

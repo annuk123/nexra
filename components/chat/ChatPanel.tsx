@@ -239,9 +239,39 @@ async function handleSend(text: string) {
     await realNexraReply(text, thinkingId);
   }
 
-  async function realNexraReply(text: string, thinkingId: string) {
-    try {
-      const data = await thinkWithNexra([{ role: "user", content: text }]);
+//   async function realNexraReply(text: string, thinkingId: string) {
+//     try {
+//       const allMessages = messages
+//   .filter(m => m.content)
+//   .map(m => ({
+//     role: m.role === "nexra" ? "assistant" : "user" as "user" | "assistant",
+//     content: m.content!,
+//   }));
+
+// const data = await thinkWithNexra(allMessages, "balanced");
+
+async function realNexraReply(text: string, thinkingId: string) {
+  try {
+    // Build history from messages BEFORE this turn
+    // Filter out: thinking placeholder, nexra welcome, and the current user message
+    const historyMessages = messages
+      .filter(m => m.content && 
+        m.content !== "Thinking through this..." &&
+        m.content !== WELCOME_MESSAGE &&
+        m.content !== V1_BANNER
+      )
+      .map(m => ({
+        role: m.role === "nexra" ? "assistant" : "user" as "user" | "assistant",
+        content: m.content!,
+      }));
+
+    // Add current user message at the end
+    const allMessages = [
+      ...historyMessages,
+      { role: "user" as const, content: text }
+    ];
+
+    const data = await thinkWithNexra(allMessages, "balanced");
 
       // Use server-side session count if available, otherwise fall back to local
       if (data.sessions_remaining !== null && data.sessions_remaining !== undefined) {
