@@ -58,17 +58,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="fixed top-0 w-full z-50 transition-colors duration-500"
-        style={{
-          backgroundColor: useDarkNav
-            ? "rgba(10, 10, 10, 0.92)"
-            : "rgba(245, 242, 237, 0.85)",
-          borderBottom: useDarkNav
-            ? "1px solid rgba(255,255,255,0.06)"
-            : "1px solid rgba(0,0,0,0.08)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-        }}
+        className="fixed top-0 w-full z-50 transition-colors duration-500 bg-black/20 backdrop-blur-md border-b border-neutral-800"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
 
@@ -85,10 +75,9 @@ export default function Navbar() {
               height={28}
               className="h-6 w-6 bg-black rounded-md"
             />
-            <span className="tracking-tight">Nexra</span>
+            <span className="tracking-tight text-neutral-300">Nexra</span>
             <span
-              className="text-xs transition-colors duration-500"
-              style={{ color: useDarkNav ? "#525252" : "#6b6560" }}
+              className="text-xs transition-colors duration-500 text-neutral-400"
             >
               / Thinking Partner
             </span>
@@ -98,72 +87,29 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-6 text-xs">
             <Link
               href="/thinking-engine-v2.0"
-              className="transition-colors duration-500 relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:transition-all"
-              style={{ color: useDarkNav ? "#a3a3a3" : "#6b6560" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#ffffff" : "#0a0a0a")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#a3a3a3" : "#6b6560")
-              }
+              className="transition-colors duration-500 relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:transition-all text-neutral-400 hover:text-neutral-300"
             >
               Thinking Engine
             </Link>
 
             <Link
               href="/changelog"
-              className="transition-colors duration-500 relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:transition-all"
-              style={{ color: useDarkNav ? "#a3a3a3" : "#6b6560" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#ffffff" : "#0a0a0a")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#a3a3a3" : "#6b6560")
-              }
+              className="transition-colors duration-500 relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:transition-all text-neutral-400 hover:text-neutral-300"
             >
               Changelog
             </Link>
 
-            <button
+            <span
               onClick={() => setFeedbackOpen(true)}
-              className="transition-colors duration-500 bg-transparent border-0 cursor-pointer"
-              style={{ color: useDarkNav ? "#a3a3a3" : "#6b6560" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#ffffff" : "#0a0a0a")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = useDarkNav ? "#a3a3a3" : "#6b6560")
-              }
+              className="transition-colors duration-500 relative after:absolute after:-bottom-1 after:left-0 after:w-0 hover:after:w-full after:h-px after:transition-all text-neutral-400 cursor-pointer  hover:text-neutral-300 bg-transparent border-0"
+
             >
               Report a bug
-            </button>
+            </span>
 
             <button
               onClick={() => setOpen(true)}
-              className="px-3 py-1.5 rounded-md text-xs cursor-pointer transition-all duration-500"
-              style={
-                useDarkNav
-                  ? {
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "#ffffff",
-                    }
-                  : {
-                      background: "#0a0a0a",
-                      border: "1px solid #0a0a0a",
-                      color: "#f5f2ed",
-                    }
-              }
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = useDarkNav
-                  ? "rgba(255,255,255,0.1)"
-                  : "#2a2a2a";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = useDarkNav
-                  ? "rgba(255,255,255,0.05)"
-                  : "#0a0a0a";
-              }}
+              className="px-3 py-1.5 rounded-md text-xs cursor-pointer transition-all duration-500 bg-neutral-300 hover:bg-neutral-400"
             >
               Join Waitlist
             </button>
