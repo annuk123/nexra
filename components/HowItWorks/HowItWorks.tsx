@@ -50,8 +50,8 @@ function ChatMock({ messages }: { messages: { role: "founder" | "nexra"; text: s
 const STEPS = [
   {
     number: "01",
-    title: "Drop in your idea — raw is fine",
-    description: "No deck. No structure. Just type what's in your head. Nexra is built for the messy first version of a thought, not the polished one.",
+    title: "Drop in whatever's on your mind",
+    description: "No deck. No structure. An idea, a decision, a doubt at 11pm. Nexra is built for the messy version of a thought — not the polished one.",
     messages: [
       { role: "founder" as const, text: "I want to build a tool that helps freelancers manage their clients and invoices automatically." },
       { role: "nexra" as const, text: "Got it. Let's figure out what this actually is before we figure out what to build." },
@@ -59,8 +59,8 @@ const STEPS = [
   },
   {
     number: "02",
-    title: "Nexra finds the assumption holding everything up",
-    description: "Every idea rests on one belief that hasn't been tested yet. Nexra finds it — not to kill your idea, but to surface it before you've built around it.",
+    title: "It surfaces what you haven't questioned yet",
+    description: "Every idea — and every decision — rests on one belief that hasn't been tested. Nexra finds it before you've built your entire plan around it.",
     messages: [
       { role: "nexra" as const, text: "The assumption doing the most work here: freelancers want automation more than control. Most don't. They want to feel on top of things — automation can threaten that." },
       { role: "founder" as const, text: "Hm. I hadn't thought about it that way." },
@@ -68,20 +68,20 @@ const STEPS = [
   },
   {
     number: "03",
-    title: "You push back. It follows the thread.",
-    description: "This isn't a verdict machine. Nexra thinks with you — when you disagree, it goes deeper. The back-and-forth is where clarity actually happens.",
+    title: "You push back. It stays honest.",
+    description: "Nexra won't just agree with you. When you push back, it goes deeper — not to win, but because the truth is more useful than comfort.",
     messages: [
-      { role: "founder" as const, text: "But the freelancers I've talked to all said they hate chasing invoices manually." },
-      { role: "nexra" as const, label: "Reframe", text: "Hating the task isn't the same as wanting it removed. What did they say when you asked what a good week looks like?" },
+      { role: "founder" as const, text: "Everyone I've talked to says they'd pay for this." },
+      { role: "nexra" as const, label: "Honest take", text: "People saying they'd pay and people actually paying are completely different signals. How many asked you how to sign up?" },
     ],
   },
   {
     number: "04",
-    title: "You leave knowing what to do next",
-    description: "Not a score. Not a report. One clear next move — the smallest action that would tell you whether this idea is worth building.",
+    title: "You come back. It remembers.",
+    description: "Nexra isn't a one-time check. It knows what you're building, where you got stuck, and what you said you'd do. It holds you to it.",
     messages: [
-      { role: "nexra" as const, label: "Try this", text: "Find 3 freelancers who've tried an invoicing tool and stopped. Ask what made them go back to doing it manually. That's your real product brief." },
-      { role: "founder" as const, text: "That's actually really useful. On it." },
+      { role: "founder" as const, text: "Back again. Did the thing you suggested — talked to 5 users." },
+      { role: "nexra" as const, text: "Good. What was the one thing that surprised you most?" },
     ],
   },
 ];
@@ -101,12 +101,11 @@ export default function HowItWorks() {
           </div>
           <h2 className=" font-semibold text-[#e8e6e1] leading-[1.1] tracking-tight m-0 mb-4"
             style={{ fontSize: "clamp(28px, 3.5vw, 44px)" }}>
-            How Nexra helps you decide
-            <br />
-            <em className=" font-semibold italic text-zinc-500">what to build</em>
+            How Nexra thinks with you
+            
           </h2>
           <p className="text-[15px] font-light text-zinc-500 max-w-md leading-relaxed m-0">
-            Turn rough ideas into clear decisions — before you commit to building the wrong thing.
+            Not a tool you use once. A thinking partner for every decision — before you build, while you build, and when you're stuck.
           </p>
         </div>
 
