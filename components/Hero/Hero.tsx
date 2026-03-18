@@ -166,12 +166,12 @@ export default function Hero() {
 
             {/* Headline */}
             <h1
-              className="font-display font-light leading-[1.08] tracking-tight text-[#e8e6e1] m-0 mb-3"
+              className="font-semibold leading-[1.08] tracking-tight text-[#e8e6e1] m-0 mb-3"
               style={{ fontSize: "clamp(40px, 5.5vw, 68px)" }}
             >
               Clarity before
               <br />
-              <em className="font-display font-light italic text-zinc-500">commitment.</em>
+              <em className="font-semibold italic text-zinc-500">commitment.</em>
             </h1>
 
             {/* Sub */}
@@ -304,7 +304,7 @@ export default function Hero() {
                       )}
                       <div className={`max-w-[92%] sm:max-w-[90%] text-[13px] leading-[1.7] text-zinc-300
                         ${msg.isQuestion
-                          ? "font-display text-[14px] sm:text-[15px] leading-[1.6] italic text-zinc-200"
+                          ? " font-medium text-[14px] sm:text-[15px] leading-[1.6] italic text-zinc-200"
                           : ""
                         }`}>
                         {msg.label && (

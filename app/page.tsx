@@ -3,6 +3,7 @@ import FAQ from "@/components/FAQ/FAQ";
 
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/footer";
+import HowItWorks from "@/components/HowItWorks/HowItWorks";
 
 export default function Home() {
   return (
@@ -32,6 +33,11 @@ export default function Home() {
     </p>
   </div>
 </Section>
+
+<Section size="md">
+       <HowItWorks />
+      </Section>
+
 
       {/* See Nexra in Action */}
       <Section size="md">
