@@ -106,7 +106,7 @@ export default function Hero() {
         }
       `}</style>
 
-      <div className="font-sans-nx grain min-h-screen bg-[#000000] text-[#e8e6e1] relative overflow-hidden">
+      <div className="font-sans-nx grain min-h-screen bg-neutral-950  border-b border-zinc-600/20 backdrop-blur-md  text-[#e8e6e1] relative overflow-hidden">
 
         <div className="absolute top-0 right-0 w-125 h-125 rounded-full bg-zinc-700/20 blur-[120px] pointer-events-none -translate-y-1/3 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-87.5 h-87.5 rounded-full bg-zinc-800/30 blur-[100px] pointer-events-none translate-y-1/4 -translate-x-1/4" />
@@ -199,7 +199,7 @@ export default function Hero() {
           </div>
 
           {/* Right — Chat panel */}
-          <div className="order-2 bg-[#000000] rounded-2xl flex flex-col overflow-hidden
+        <div className="order-2 bg-neutral-900/40 rounded-2xl flex flex-col overflow-hidden
             max-h-105 sm:max-h-115 lg:max-h-130 w-full
             border border-white/20 backdrop-blur-2xl
             shadow-[0_2px_4px_rgba(0,0,0,0.3),0_12px_40px_rgba(0,0,0,0.4),0_40px_80px_rgba(0,0,0,0.3)]">
