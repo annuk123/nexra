@@ -31,17 +31,14 @@ const DEMO = [
   },
 ];
 
-/* ── Fallback avatars shown while Convex loads ── */
-const FALLBACK_COLORS = ["#d4a574", "#a8c4a2", "#b8b0d4", "#c4b89a"];
+const FALLBACK_COLORS = ["#3d3d3d", "#4a4a4a", "#555555", "#3a3a3a"];
 
 export default function Hero() {
   const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
-
-  // Don't block render on this — use undefined as loading state
   const data = useQuery(api.waitlist.getWaitlistSocialProof);
 
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
   const [started, setStarted] = useState(false);
@@ -55,17 +52,16 @@ export default function Hero() {
     if (!started) return;
     if (visibleCount >= DEMO.length) return;
     const delay =
-      visibleCount === 0
-        ? 0
-        : DEMO[visibleCount - 1].role === "founder"
-        ? 600
-        : 1200;
+      visibleCount === 0 ? 0
+      : DEMO[visibleCount - 1].role === "founder" ? 600
+      : 1200;
     const timer = setTimeout(() => setVisibleCount((v) => v + 1), delay);
     return () => clearTimeout(timer);
   }, [started, visibleCount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus("loading");
     try {
       await addToWaitlist({ email, source: "homepage" });
       setStatus("success");
@@ -75,7 +71,6 @@ export default function Hero() {
     }
   };
 
-  // Social proof — show fallback dots while loading, real data when ready
   const MAX_VISIBLE = 4;
   const avatars = data?.avatars?.slice(0, MAX_VISIBLE) ?? [];
   const remaining = data ? data.count - MAX_VISIBLE : 0;
@@ -84,88 +79,102 @@ export default function Hero() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
-        .font-serif-display { font-family: 'Instrument Serif', serif; }
-        .font-body { font-family: 'DM Sans', sans-serif; }
-        .msg-enter { opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; }
-        .msg-enter.visible { opacity: 1; transform: translateY(0); }
-        @keyframes blink-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .status-pulse { animation: blink-pulse 2s infinite; }
-        @keyframes bounce-dot { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-4px);opacity:1} }
-        .typing-dot { animation: bounce-dot 1.2s infinite; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes fade-in { from{opacity:0} to{opacity:1} }
-        .modal-fade { animation: fade-in 0.2s ease; }
-        @keyframes slide-up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        .modal-slide { animation: slide-up 0.25s ease; }
-        mark.nexra-mark { background: rgba(0,0,0,0.07); color: inherit; padding: 1px 3px; border-radius: 3px; font-style: italic; }
-        @keyframes shimmer { 0%{opacity:0.4} 50%{opacity:0.7} 100%{opacity:0.4} }
-        .skeleton { animation: shimmer 1.5s infinite; background: rgba(0,0,0,0.06); border-radius: 50%; }
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Geist:wght@300;400;500&display=swap');
+
+        .font-display  { font-family: 'Fraunces', serif; }
+        .font-sans-nx  { font-family: 'Geist', sans-serif; }
+
+        @keyframes msg-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .msg-visible { animation: msg-in 0.35s ease forwards; }
+        .msg-hidden  { opacity: 0; }
+
+        @keyframes blink {
+          0%,100% { opacity: 1; }
+          50%      { opacity: 0.25; }
+        }
+        .dot-blink { animation: blink 2s ease infinite; }
+
+        @keyframes bounce {
+          0%,60%,100% { transform: translateY(0);    opacity: 0.35; }
+          30%          { transform: translateY(-3px); opacity: 1; }
+        }
+        .typing-dot              { animation: bounce 1.1s ease infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.36s; }
+
+        @keyframes fade-in  { from{opacity:0} to{opacity:1} }
+        @keyframes slide-up { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        .modal-backdrop { animation: fade-in  0.2s  ease; }
+        .modal-panel    { animation: slide-up 0.25s ease; }
+
+        mark.nx {
+          background: rgba(255,255,255,0.1);
+          color: #e2e0dc;
+          padding: 1px 4px;
+          border-radius: 3px;
+          font-style: italic;
+        }
+
+        @keyframes shimmer {
+          0%,100% { opacity: 0.25; }
+          50%      { opacity: 0.5;  }
+        }
+        .skeleton { animation: shimmer 1.4s ease infinite; }
+
+        /* Subtle noise grain */
+        .grain::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+          background-size: 180px;
+          z-index: 0;
+          mix-blend-mode: overlay;
+        }
       `}</style>
 
-      {/* Page root — renders immediately, no blocking */}
-      <div
-        className="font-body min-h-screen relative overflow-hidden"
-        style={{ background: "#f5f2ed", color: "#0a0a0a" }}
-      >
-        {/* Warm gradient texture */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 50%, rgba(180,160,120,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(120,100,80,0.04) 0%, transparent 50%)",
-          }}
-        />
+      {/* ── Root ── */}
+      <div className="font-sans-nx grain min-h-screen bg-[#141414] text-[#e8e6e1] relative overflow-hidden">
+
+        {/* Ambient glow top-right */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-zinc-700/20 blur-[120px] pointer-events-none -translate-y-1/3 translate-x-1/4" />
+        {/* Ambient glow bottom-left */}
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] rounded-full bg-zinc-800/30 blur-[100px] pointer-events-none translate-y-1/4 -translate-x-1/4" />
 
         {/* ── Hero Grid ── */}
-        {/* 
-          Mobile:  single column, content stacked
-          Tablet:  single column, conversation panel below
-          Desktop: two columns side by side
-        */}
-        <div className="relative max-w-300 mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-0
-          grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center lg:min-h-screen">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16
+          grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center
+          pt-14 pb-20 lg:pb-0 lg:min-h-[calc(100vh-65px)]">
 
-          {/* ── Left column ── */}
-          <div className="pt-8 lg:py-16 order-1">
+          {/* ── Left ── */}
+          <div className="order-1 lg:py-20">
 
             {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 mb-6 sm:mb-8">
-              <div className="w-6 h-px" style={{ background: "#6b6560" }} />
-              <span
-                className="text-[11px] font-medium tracking-[0.12em] uppercase"
-                style={{ color: "#6b6560" }}
-              >
+            <div className="inline-flex items-center gap-2.5 mb-8">
+              <div className="h-px w-5 bg-zinc-600" />
+              <span className="text-[11px] font-medium tracking-[0.14em] uppercase text-zinc-500">
                 AI Thinking Partner
               </span>
             </div>
 
             {/* Headline */}
             <h1
-              className="font-serif-display leading-[1.1] tracking-[-0.02em] m-0 mb-2"
-              style={{
-                color: "#0a0a0a",
-                fontSize: "clamp(38px, 5vw, 64px)",
-              }}
+              className="font-display font-light leading-[1.08] tracking-tight text-[#e8e6e1] m-0 mb-3"
+              style={{ fontSize: "clamp(40px, 5.5vw, 68px)" }}
             >
               Clarity before
               <br />
-              <em style={{ color: "#6b6560", fontStyle: "italic" }}>
-                commitment.
-              </em>
+              <em className="font-display font-light italic text-zinc-500">commitment.</em>
             </h1>
 
-            {/* Subheadline */}
-            <p
-              className="text-[15px] sm:text-[16px] leading-[1.7] mt-5 mb-10 sm:mb-12 font-light max-w-105"
-              style={{ color: "#6b6560" }}
-            >
-              Nexra thinks with you — not at you.
-              <br />
-              <strong className="font-medium" style={{ color: "#0a0a0a" }}>
-                The co-founder you don't have yet,
-              </strong>{" "}
+            {/* Sub */}
+            <p className="text-[15px] sm:text-base leading-relaxed mt-6 mb-10 font-light text-zinc-400 max-w-sm">
+              Nexra thinks with you — not at you.{" "}
+              <span className="text-[#e8e6e1] font-normal">The co-founder you don't have yet,</span>{" "}
               available at 11pm when the hard decisions surface.
             </p>
 
@@ -173,96 +182,54 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 href="/thinking-engine-v2.0"
-                className="inline-flex items-center gap-2 text-[14px] font-medium px-6 sm:px-7 py-3 rounded-lg no-underline transition-all duration-200 hover:-translate-y-px group border-0"
-                style={{ background: "#0a0a0a", color: "#f5f2ed" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.boxShadow =
-                    "0 8px 24px rgba(0,0,0,0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                }}
+                className="inline-flex items-center gap-2 text-[14px] font-medium px-6 py-3 rounded-lg
+                  bg-[#e8e6e1] text-[#141414] hover:bg-white active:scale-[0.98]
+                  transition-all duration-150 no-underline group"
               >
                 Start thinking
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                >
-                  <path
-                    d="M3 7h8M8 4l3 3-3 3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="transition-transform duration-150 group-hover:translate-x-0.5">
+                  <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
 
               <button
                 onClick={() => setWaitlistOpen(true)}
-                className="text-[13px] bg-transparent border-0 cursor-pointer py-3 px-0 tracking-[0.01em] underline underline-offset-[3px] transition-all duration-200"
-                style={{ color: "#6b6560", textDecorationColor: "transparent" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#0a0a0a";
-                  (e.currentTarget as HTMLElement).style.textDecorationColor =
-                    "#0a0a0a";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#6b6560";
-                  (e.currentTarget as HTMLElement).style.textDecorationColor =
-                    "transparent";
-                }}
+                className="text-[13px] font-light text-zinc-500 hover:text-[#e8e6e1]
+                  underline underline-offset-4 decoration-transparent hover:decoration-zinc-600
+                  transition-all duration-150 bg-transparent border-0 cursor-pointer py-3 px-0"
               >
                 Join waitlist →
               </button>
             </div>
 
             {/* Social proof */}
-            <div
-              className="mt-8 sm:mt-10 pt-6 flex items-center gap-4"
-              style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}
-            >
-              {/* Avatar stack */}
+            <div className="mt-10 pt-6 flex items-center gap-4 border-t border-white/[0.06]">
               <div className="flex shrink-0">
                 {showFallbackDots
-                  ? // Skeleton dots while loading
-                    FALLBACK_COLORS.map((bg, i) => (
+                  ? FALLBACK_COLORS.map((bg, i) => (
                       <div
                         key={i}
-                        className="skeleton w-6 h-6 rounded-full border-2"
-                        style={{
-                          borderColor: "#f5f2ed",
-                          marginLeft: i === 0 ? 0 : "-6px",
-                          background: bg,
-                        }}
+                        className="skeleton w-6 h-6 rounded-full border-2 border-[#141414]"
+                        style={{ marginLeft: i === 0 ? 0 : "-6px", background: bg }}
                       />
                     ))
-                  : // Real avatars once loaded
-                    <>
+                  : <>
                       {avatars.map((user, i) => (
                         <img
                           key={i}
                           src={user.avatar}
                           alt=""
-                          className="w-6 h-6 rounded-full border-2 object-cover"
-                          style={{
-                            borderColor: "#f5f2ed",
-                            marginLeft: i === 0 ? 0 : "-6px",
-                          }}
+                          className="w-6 h-6 rounded-full border-2 border-[#141414] object-cover"
+                          style={{ marginLeft: i === 0 ? 0 : "-6px" }}
                         />
                       ))}
                       {remaining > 0 && (
                         <div
-                          className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px]"
-                          style={{
-                            borderColor: "#f5f2ed",
-                            marginLeft: "-6px",
-                            background: "#e7e2dc",
-                            color: "#6b6560",
-                          }}
+                          className="w-6 h-6 rounded-full border-2 border-[#141414] bg-zinc-700
+                            flex items-center justify-center text-[10px] text-zinc-400"
+                          style={{ marginLeft: "-6px" }}
                         >
                           +{remaining}
                         </div>
@@ -270,11 +237,7 @@ export default function Hero() {
                     </>
                 }
               </div>
-
-              <p
-                className="text-[12px] leading-normal m-0"
-                style={{ color: "#6b6560" }}
-              >
+              <p className="text-[12px] leading-snug text-zinc-500 font-light m-0">
                 Used by solo founders and indie hackers
                 <br className="hidden sm:block" />
                 {" "}exploring early-stage ideas
@@ -282,42 +245,24 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* ── Right column — conversation panel ── */}
-          {/* On mobile: shown below left column, capped height */}
-          <div
-            className="order-2 bg-white rounded-2xl flex flex-col overflow-hidden
-              max-h-105 sm:max-h-115 lg:max-h-128
-              w-full"
-            style={{
-              border: "1px solid rgba(0,0,0,0.08)",
-              boxShadow:
-                "0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06), 0 32px 64px rgba(0,0,0,0.04)",
-            }}
-          >
+          {/* ── Right — Chat panel ── */}
+          <div className="order-2 bg-[#1c1c1c] rounded-2xl flex flex-col overflow-hidden
+            max-h-[420px] sm:max-h-[460px] lg:max-h-[520px] w-full
+            border border-white/[0.07]
+            shadow-[0_2px_4px_rgba(0,0,0,0.3),_0_12px_40px_rgba(0,0,0,0.4),_0_40px_80px_rgba(0,0,0,0.3)]">
+
             {/* Panel header */}
-            <div
-              className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 shrink-0"
-              style={{
-                borderBottom: "1px solid rgba(0,0,0,0.06)",
-                background: "rgba(0,0,0,0.015)",
-              }}
-            >
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 shrink-0
+              border-b border-white/[0.06] bg-white/[0.02]">
               <div className="flex items-center gap-2.5">
-                <div
-                  className="font-serif-display w-7 h-7 rounded-full flex items-center justify-center text-[13px] shrink-0"
-                  style={{ background: "#0a0a0a", color: "#f5f2ed" }}
-                >
+                <div className="font-display w-7 h-7 rounded-full bg-[#e8e6e1] text-[#141414]
+                  flex items-center justify-center text-[13px] shrink-0">
                   N
                 </div>
                 <div>
-                  <div
-                    className="text-[13px] font-medium"
-                    style={{ color: "#0a0a0a" }}
-                  >
-                    Nexra
-                  </div>
-                  <div className="text-[11px]" style={{ color: "#6b6560" }}>
-                    <span className="status-pulse inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1 align-middle" />
+                  <div className="text-[13px] font-medium text-[#e8e6e1]">Nexra</div>
+                  <div className="text-[11px] text-zinc-500 flex items-center gap-1">
+                    <span className="dot-blink inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Thinking Partner
                   </div>
                 </div>
@@ -325,111 +270,69 @@ export default function Hero() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-5 sm:py-6 flex flex-col gap-3 sm:gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-5 sm:py-6
+              flex flex-col gap-3 sm:gap-4
+              [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
               {DEMO.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`msg-enter ${i < visibleCount ? "visible" : ""}`}
-                >
+                <div key={i} className={i < visibleCount ? "msg-visible" : "msg-hidden"}>
                   {msg.role === "founder" ? (
                     <div className="flex justify-end">
-                      <div
-                        className="max-w-[80%] sm:max-w-[75%] px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-[14px_14px_2px_14px] text-[13px] sm:text-[13.5px] leading-[1.6]"
-                        style={{ background: "#0a0a0a", color: "#f5f2ed" }}
-                      >
+                      <div className="max-w-[80%] sm:max-w-[75%] px-3.5 py-2.5
+                        rounded-[14px_14px_2px_14px] text-[13px] leading-relaxed
+                        bg-[#e8e6e1] text-[#141414]">
                         {msg.text}
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-1">
                       {i === 1 && (
-                        <div
-                          className="text-[10px] font-medium tracking-[0.08em] uppercase pl-0.5"
-                          style={{ color: "#6b6560" }}
-                        >
+                        <div className="text-[10px] font-medium tracking-[0.09em] uppercase text-zinc-600 pl-0.5">
                           Nexra
                         </div>
                       )}
-                      <div
-                        className={`max-w-[92%] sm:max-w-[90%] text-[13px] sm:text-[13.5px] leading-[1.7] ${
-                          msg.isQuestion ? "font-serif-display text-[14px] sm:text-[15px] leading-[1.6]" : ""
-                        }`}
-                        style={{
-                          color: msg.isQuestion ? "#3d3530" : "#2a2a2a",
-                          fontStyle: msg.isQuestion ? "italic" : "normal",
-                        }}
-                      >
+                      <div className={`max-w-[92%] sm:max-w-[90%] text-[13px] leading-[1.7] text-zinc-300
+                        ${msg.isQuestion
+                          ? "font-display text-[14px] sm:text-[15px] leading-[1.6] italic text-zinc-200"
+                          : ""
+                        }`}>
                         {msg.label && (
-                          <span
-                            className="text-[10px] font-medium tracking-widest uppercase mr-1"
-                            style={{ color: "#8b7355" }}
-                          >
+                          <span className="text-[10px] font-medium tracking-widest uppercase text-amber-500/80 mr-1">
                             {msg.label} —{" "}
                           </span>
                         )}
                         {msg.highlight ? (
                           <>
                             {msg.text.split(msg.highlight)[0]}
-                            <mark className="nexra-mark">{msg.highlight}</mark>
+                            <mark className="nx">{msg.highlight}</mark>
                             {msg.text.split(msg.highlight)[1]}
                           </>
-                        ) : (
-                          msg.text
-                        )}
+                        ) : msg.text}
                       </div>
                     </div>
                   )}
                 </div>
               ))}
 
-              {/* Typing indicator */}
-              <div
-                className={`flex items-center gap-1 py-2 transition-opacity duration-300 ${
-                  visibleCount > 0 && visibleCount < DEMO.length
-                    ? "opacity-100"
-                    : "opacity-0"
-                }`}
-              >
+              {/* Typing dots */}
+              <div className={`flex items-center gap-1 py-2 transition-opacity duration-300
+                ${visibleCount > 0 && visibleCount < DEMO.length ? "opacity-100" : "opacity-0"}`}>
                 {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="typing-dot w-1.5 h-1.5 rounded-full"
-                    style={{ background: "#6b6560" }}
-                  />
+                  <div key={i} className="typing-dot w-1.5 h-1.5 rounded-full bg-zinc-600" />
                 ))}
               </div>
             </div>
 
             {/* Input mock */}
-            <div
-              className="px-3 sm:px-4 py-2.5 sm:py-3 shrink-0"
-              style={{
-                borderTop: "1px solid rgba(0,0,0,0.06)",
-                background: "rgba(0,0,0,0.015)",
-              }}
-            >
-              <div
-                className="flex items-center gap-2.5 bg-white px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-lg"
-                style={{ border: "1px solid rgba(0,0,0,0.1)" }}
-              >
-                <span
-                  className="flex-1 text-[12px] sm:text-[13px]"
-                  style={{ color: "#6b6560" }}
-                >
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 shrink-0 border-t border-white/[0.06] bg-white/[0.02]">
+              <div className="flex items-center gap-2.5 bg-white/[0.04] px-3.5 py-2.5 rounded-lg border border-white/[0.08]">
+                <span className="flex-1 text-[12px] sm:text-[13px] text-zinc-600">
                   What's on your mind right now…
                 </span>
-                <div
-                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center shrink-0"
-                  style={{ background: "#0a0a0a" }}
-                >
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-[#e8e6e1] flex items-center justify-center shrink-0">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="M2 6h8M7 3l3 3-3 3"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                    <path d="M2 6h8M7 3l3 3-3 3" stroke="#141414" strokeWidth="1.5"
+                      strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               </div>
@@ -441,55 +344,39 @@ export default function Hero() {
       {/* ── Waitlist Modal ── */}
       {waitlistOpen && (
         <div
-          className="modal-fade fixed inset-0 z-50 flex items-center justify-center px-4"
-          style={{
-            background: "rgba(0,0,0,0.4)",
-            backdropFilter: "blur(8px)",
-          }}
+          className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center px-4
+            bg-black/60 backdrop-blur-md"
           onClick={() => setWaitlistOpen(false)}
         >
           <div
-            className="modal-slide relative bg-white rounded-2xl p-7 sm:p-10 w-full max-w-105"
-            style={{
-              border: "1px solid rgba(0,0,0,0.08)",
-              boxShadow: "0 32px 80px rgba(0,0,0,0.2)",
-            }}
+            className="modal-panel relative bg-[#1c1c1c] rounded-2xl p-7 sm:p-10 w-full max-w-md
+              border border-white/[0.08]
+              shadow-[0_32px_80px_rgba(0,0,0,0.6)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setWaitlistOpen(false)}
-              className="absolute top-4 right-4 bg-transparent border-0 cursor-pointer text-base leading-none p-1 transition-colors duration-200"
-              style={{ color: "#6b6560" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#0a0a0a")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#6b6560")}
+              className="absolute top-4 right-4 bg-transparent border-0 cursor-pointer
+                text-base text-zinc-600 hover:text-[#e8e6e1] transition-colors duration-150 p-1"
             >
               ✕
             </button>
 
             {status === "success" ? (
               <div className="text-center py-4">
-                <h4
-                  className="font-serif-display text-[22px] m-0 mb-2"
-                  style={{ color: "#0a0a0a" }}
-                >
+                <h4 className="font-display text-[22px] font-light text-[#e8e6e1] m-0 mb-2">
                   You're on the list.
                 </h4>
-                <p className="text-[14px] m-0" style={{ color: "#6b6560" }}>
+                <p className="text-[14px] text-zinc-500 font-light m-0">
                   We'll reach out when there's something worth your time.
                 </p>
               </div>
             ) : (
               <>
-                <h3
-                  className="font-serif-display text-[22px] sm:text-[24px] m-0 mb-1.5"
-                  style={{ color: "#0a0a0a" }}
-                >
+                <h3 className="font-display text-[22px] sm:text-2xl font-light text-[#e8e6e1] m-0 mb-1.5">
                   Join the waitlist
                 </h3>
-                <p
-                  className="text-[14px] leading-[1.6] mt-0 mb-6 sm:mb-7"
-                  style={{ color: "#6b6560" }}
-                >
+                <p className="text-[14px] leading-relaxed text-zinc-500 font-light mt-0 mb-6 sm:mb-7">
                   Early access for founders. No noise, no newsletters.
                 </p>
 
@@ -500,51 +387,31 @@ export default function Hero() {
                     placeholder="you@startup.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg px-4 py-3 text-[14px] outline-none transition-colors duration-200 box-border"
-                    style={{
-                      background: "#fafafa",
-                      border: "1px solid rgba(0,0,0,0.12)",
-                      color: "#0a0a0a",
-                      fontFamily: "inherit",
-                    }}
-                    onFocus={(e) =>
-                      (e.currentTarget.style.borderColor = "#0a0a0a")
-                    }
-                    onBlur={(e) =>
-                      (e.currentTarget.style.borderColor = "rgba(0,0,0,0.12)")
-                    }
+                    className="w-full rounded-lg px-4 py-3 text-[14px]
+                      bg-white/[0.05] border border-white/[0.1] text-[#e8e6e1]
+                      placeholder:text-zinc-600
+                      outline-none focus:border-white/30
+                      transition-colors duration-150 font-light"
                   />
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-lg text-[14px] font-medium cursor-pointer transition-opacity duration-200 hover:opacity-85 border-0"
-                    style={{
-                      background: "#0a0a0a",
-                      color: "#f5f2ed",
-                      fontFamily: "inherit",
-                    }}
+                    className="w-full py-3.5 rounded-lg text-[14px] font-medium
+                      bg-[#e8e6e1] text-[#141414] hover:bg-white active:scale-[0.99]
+                      transition-all duration-150 border-0 cursor-pointer"
                   >
-                    Join →
+                    {status === "loading" ? "Joining…" : "Join →"}
                   </button>
                 </form>
 
                 {status === "error" && (
-                  <p
-                    className="text-[13px] mt-2 mb-0"
-                    style={{ color: "#dc2626" }}
-                  >
+                  <p className="text-[13px] text-red-400 mt-2 mb-0">
                     Something went wrong. Try again.
                   </p>
                 )}
 
-                <p
-                  className="text-[11px] text-center mt-4 mb-0"
-                  style={{ color: "#6b6560" }}
-                >
+                <p className="text-[11px] text-center text-zinc-600 font-light mt-4 mb-0">
                   No spam. Just product updates when they matter.{" "}
-                  <Link
-                    href="/privacy"
-                    style={{ color: "inherit", textDecoration: "underline" }}
-                  >
+                  <Link href="/privacy" className="text-zinc-600 underline hover:text-zinc-400 transition-colors">
                     Privacy Policy
                   </Link>
                 </p>
