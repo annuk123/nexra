@@ -7,9 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/Navbar/nav";
 import { Providers } from "./providers";
 
-
 const geist = Geist({ subsets: ["latin"] });
-
 
 export const metadata: Metadata = {
   title: "Nexra AI - Clarity before commitment",
@@ -24,9 +22,8 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Nexra AI - Clarity before commitment",
-    description:
-      "A thoughtful way to evaluate startup ideas before you commit.",
-    url: "https://nexra.pixelui.studio/", // change after deploy
+    description: "A thoughtful way to evaluate startup ideas before you commit.",
+    url: "https://nexra.pixelui.studio/",
     siteName: "Nexra AI",
     images: [
       {
@@ -42,8 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Nexra AI - Clarity before commitment",
-    description:
-      "Evaluate startup ideas with structured thinking, not hype.",
+    description: "Evaluate startup ideas with structured thinking, not hype.",
     images: ["/og.png"],
   },
 };
@@ -55,15 +51,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${geist.className} bg-black antialiased h-dvh flex flex-col`}
-      >
+      <body className={`${geist.className} bg-black antialiased min-h-screen`}>
         <Providers>
           <ConvexAppProvider>
             <Navbar />
-            <div className="flex-1 min-h-0 flex flex-col">
-              {children}
-            </div>
+            {children}
             <Analytics />
             <SpeedInsights />
           </ConvexAppProvider>

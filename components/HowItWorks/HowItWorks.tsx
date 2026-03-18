@@ -88,7 +88,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="">
+    <section >
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}

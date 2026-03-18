@@ -38,7 +38,7 @@ export default function FAQ() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
-    <section>
+    <section >
       <span className="text-xs tracking-widest text-neutral-500">FAQ</span>
 
       <h2 className="mt-4 text-2xl sm:text-3xl font-semibold max-w-xl">

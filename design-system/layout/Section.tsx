@@ -17,9 +17,9 @@ export function Section({
     <section
       className={`
         ${sizes[size]}
-        mx-auto 
+        mx-auto
         px-4 sm:px-6
-        ${hero ? "min-h-screen pt-24 sm:pt-28 lg:pt-32" : "py-20 sm:py-28"}
+        ${hero ? "min-h-screen pt-24 sm:pt-28 lg:pt-32" : "py-12 sm:py-16"}
       `}
     >
       {children}
