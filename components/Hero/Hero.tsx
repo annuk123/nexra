@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
+import Image from "next/image";
 
 /* ── Conversation demo data ── */
 const DEMO = [
@@ -141,9 +142,11 @@ export default function Hero() {
       <div className="font-sans-nx grain min-h-screen bg-[#141414] text-[#e8e6e1] relative overflow-hidden">
 
         {/* Ambient glow top-right */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-zinc-700/20 blur-[120px] pointer-events-none -translate-y-1/3 translate-x-1/4" />
+        <div className="absolute top-0 right-0 w-125 h-125 rounded-full bg-zinc-700/20 blur-[120px] pointer-events-none -translate-y-1/3 translate-x-1/4" />
         {/* Ambient glow bottom-left */}
-        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] rounded-full bg-zinc-800/30 blur-[100px] pointer-events-none translate-y-1/4 -translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-87.5 h-87.5 rounded-full bg-zinc-800/30 blur-[100px] pointer-events-none translate-y-1/4 -translate-x-1/4" />
+
+
 
         {/* ── Hero Grid ── */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16
@@ -205,7 +208,7 @@ export default function Hero() {
             </div>
 
             {/* Social proof */}
-            <div className="mt-10 pt-6 flex items-center gap-4 border-t border-white/[0.06]">
+            <div className="mt-10 pt-6 flex items-center gap-4 border-t border-white/6">
               <div className="flex shrink-0">
                 {showFallbackDots
                   ? FALLBACK_COLORS.map((bg, i) => (
@@ -247,17 +250,25 @@ export default function Hero() {
 
           {/* ── Right — Chat panel ── */}
           <div className="order-2 bg-[#1c1c1c] rounded-2xl flex flex-col overflow-hidden
-            max-h-[420px] sm:max-h-[460px] lg:max-h-[520px] w-full
+            max-h-105 sm:max-h-115 lg:max-h-130 w-full
             border border-white/[0.07]
-            shadow-[0_2px_4px_rgba(0,0,0,0.3),_0_12px_40px_rgba(0,0,0,0.4),_0_40px_80px_rgba(0,0,0,0.3)]">
+            shadow-[0_2px_4px_rgba(0,0,0,0.3),0_12px_40px_rgba(0,0,0,0.4),0_40px_80px_rgba(0,0,0,0.3)]">
 
             {/* Panel header */}
             <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 shrink-0
-              border-b border-white/[0.06] bg-white/[0.02]">
+              border-b border-white/6 bg-white/2">
               <div className="flex items-center gap-2.5">
-                <div className="font-display w-7 h-7 rounded-full bg-[#e8e6e1] text-[#141414]
+                <div className="font-display w-7 h-7 rounded-full bg-black 
                   flex items-center justify-center text-[13px] shrink-0">
-                  N
+                  
+                  <Image
+                                src="/nexra.png"
+                                alt="Nexra"
+                                width={28}
+                                height={28}
+                                className="h-6 w-6 "
+                              />
+
                 </div>
                 <div>
                   <div className="text-[13px] font-medium text-[#e8e6e1]">Nexra</div>
@@ -324,8 +335,8 @@ export default function Hero() {
             </div>
 
             {/* Input mock */}
-            <div className="px-3 sm:px-4 py-2.5 sm:py-3 shrink-0 border-t border-white/[0.06] bg-white/[0.02]">
-              <div className="flex items-center gap-2.5 bg-white/[0.04] px-3.5 py-2.5 rounded-lg border border-white/[0.08]">
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 shrink-0 border-t border-white/6 bg-white/2">
+              <div className="flex items-center gap-2.5 bg-white/4 px-3.5 py-2.5 rounded-lg border border-white/8">
                 <span className="flex-1 text-[12px] sm:text-[13px] text-zinc-600">
                   What's on your mind right now…
                 </span>
@@ -350,7 +361,7 @@ export default function Hero() {
         >
           <div
             className="modal-panel relative bg-[#1c1c1c] rounded-2xl p-7 sm:p-10 w-full max-w-md
-              border border-white/[0.08]
+              border border-white/8
               shadow-[0_32px_80px_rgba(0,0,0,0.6)]"
             onClick={(e) => e.stopPropagation()}
           >
@@ -388,7 +399,7 @@ export default function Hero() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-lg px-4 py-3 text-[14px]
-                      bg-white/[0.05] border border-white/[0.1] text-[#e8e6e1]
+                      bg-white/5 border border-white/10 text-[#e8e6e1]
                       placeholder:text-zinc-600
                       outline-none focus:border-white/30
                       transition-colors duration-150 font-light"
