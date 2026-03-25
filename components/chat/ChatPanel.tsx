@@ -3,7 +3,7 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import { thinkWithNexra } from "@/lib/api/chat";
+import { thinkWithNexraStream } from "@/lib/api/chat";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { nanoid } from "nanoid";
@@ -15,9 +15,7 @@ export type Message = {
   content?: string;
 };
 
-/* ── Constants (outside component — stable across renders) ── */
-const USAGE_LIMIT = 5;
-const STORAGE_KEY = "nexra_chat_usage";
+/* ── Constants ── */
 const CHAT_HISTORY_KEY = "nexra_chat_history";
 
 const SAMPLE_IDEAS = [
@@ -34,37 +32,6 @@ const V1_BANNER =
   "You're in early access. Sessions are limited while we refine the experience. Join the waitlist to get notified when full access opens.";
 
 /* ── Helpers ── */
-function todayKey() {
-  return new Date().toISOString().split("T")[0];
-}
-
-function getUsage(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return 0;
-    const parsed = JSON.parse(raw);
-    if (parsed.date !== todayKey()) return 0;
-    return parsed.count ?? 0;
-  } catch {
-    return 0;
-  }
-}
-
-function incrementUsage() {
-  try {
-    const count = getUsage();
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ count: count + 1, date: todayKey() })
-    );
-  } catch {
-    // localStorage unavailable — fail silently
-  }
-}
-
-// Only gate the very first message as an idea check
-// Follow-up messages in an ongoing conversation are always allowed
 function isLikelyIdea(text: string, isFirstMessage: boolean): boolean {
   if (!isFirstMessage) return true;
 
@@ -84,7 +51,7 @@ export default function ChatPanel() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [usage, setUsage] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
+  const [limit, setLimit] = useState(10);
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
   const [open, setOpen] = useState(false);
@@ -94,11 +61,8 @@ export default function ChatPanel() {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const sendTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const typingFullTextRef = useRef<string>("");
-  const typingMessageIdRef = useRef<string | null>(null);
 
-  /* ── Load chat history + usage on mount ── */
+  /* ── Load chat history on mount ── */
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -110,15 +74,12 @@ export default function ChatPanel() {
         const parsed: Message[] = JSON.parse(saved);
         setMessages(parsed.map((m) => ({ ...m, id: m.id ?? nanoid() })));
       } catch {
-        // Corrupted storage — start fresh
         localStorage.removeItem(CHAT_HISTORY_KEY);
         initMessages(bannerShown);
       }
     } else {
       initMessages(bannerShown);
     }
-
-    setUsage(getUsage());
   }, []);
 
   function initMessages(bannerShown: string | null) {
@@ -153,7 +114,6 @@ export default function ChatPanel() {
   useEffect(() => {
     return () => {
       if (sendTimeoutRef.current) clearTimeout(sendTimeoutRef.current);
-      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
     };
   }, []);
 
@@ -169,47 +129,12 @@ export default function ChatPanel() {
     }
   };
 
-  /* ── Stop typing animation ── */
-  function stopTyping() {
-    if (typingIntervalRef.current) {
-      clearInterval(typingIntervalRef.current);
-      typingIntervalRef.current = null;
-    }
-
-    if (typingMessageIdRef.current && typingFullTextRef.current) {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === typingMessageIdRef.current
-            ? { ...m, content: typingFullTextRef.current }
-            : m
-        )
-      );
-    }
-
-    setIsTyping(false);
-  }
-
-async function handleSend(text: string) {
+  /* ── Send handler ── */
+  async function handleSend(text: string) {
     if (loading) return;
 
     const userMessage: Message = { id: nanoid(), role: "user", content: text };
 
-    // Client-side limit check (fallback — server is source of truth)
-    if (usage >= USAGE_LIMIT) {
-      setMessages((prev) => [
-        ...prev,
-        userMessage,
-        {
-          id: nanoid(),
-          role: "nexra",
-          content:
-            "You've used all your sessions for today. Come back tomorrow — or join the waitlist for full access.",
-        },
-      ]);
-      return;
-    }
-
-    // Idea detection — only on first user message
     const isFirstMessage =
       messages.filter((m) => m.role === "user").length === 0;
 
@@ -239,94 +164,83 @@ async function handleSend(text: string) {
     await realNexraReply(text, thinkingId);
   }
 
-//   async function realNexraReply(text: string, thinkingId: string) {
-//     try {
-//       const allMessages = messages
-//   .filter(m => m.content)
-//   .map(m => ({
-//     role: m.role === "nexra" ? "assistant" : "user" as "user" | "assistant",
-//     content: m.content!,
-//   }));
+  /* ── Streaming reply ── */
+  async function realNexraReply(text: string, thinkingId: string) {
+    try {
+      const historyMessages = messages
+        .filter(
+          (m) =>
+            m.content &&
+            m.content !== "Thinking through this..." &&
+            m.content !== WELCOME_MESSAGE &&
+            m.content !== V1_BANNER
+        )
+        .map((m) => ({
+          role: m.role === "nexra" ? "assistant" : ("user" as "user" | "assistant"),
+          content: m.content!,
+        }));
 
-// const data = await thinkWithNexra(allMessages, "balanced");
+      const allMessages = [
+        ...historyMessages,
+        { role: "user" as const, content: text },
+      ];
 
-async function realNexraReply(text: string, thinkingId: string) {
-  try {
-    // Build history from messages BEFORE this turn
-    // Filter out: thinking placeholder, nexra welcome, and the current user message
-    const historyMessages = messages
-      .filter(m => m.content && 
-        m.content !== "Thinking through this..." &&
-        m.content !== WELCOME_MESSAGE &&
-        m.content !== V1_BANNER
-      )
-      .map(m => ({
-        role: m.role === "nexra" ? "assistant" : "user" as "user" | "assistant",
-        content: m.content!,
-      }));
+      // Clear thinking placeholder to start streaming into
+      setMessages((prev) =>
+        prev.map((m) => (m.id === thinkingId ? { ...m, content: "" } : m))
+      );
 
-    // Add current user message at the end
-    const allMessages = [
-      ...historyMessages,
-      { role: "user" as const, content: text }
-    ];
+      await thinkWithNexraStream(allMessages, "balanced", {
+        onChunk: (chunk) => {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === thinkingId
+                ? { ...m, content: (m.content ?? "") + chunk }
+                : m
+            )
+          );
 
-    const data = await thinkWithNexra(allMessages, "balanced");
+          if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+              top: chatContainerRef.current.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        },
 
-      // Use server-side session count if available, otherwise fall back to local
-      if (data.sessions_remaining !== null && data.sessions_remaining !== undefined) {
-        setUsage(USAGE_LIMIT - data.sessions_remaining);
-      } else {
-        incrementUsage();
-        setUsage((prev) => prev + 1);
-      }
+        onDone: ({ sessions_remaining, limit: serverLimit }) => {
+          if (sessions_remaining !== null && sessions_remaining !== undefined) {
+            const l = serverLimit ?? 10;
+            setLimit(l);
+            setUsage(l - sessions_remaining);
+          }
+        },
 
-      const fullText = data.message ?? "I couldn't generate a response.";
-      const words = fullText.split(" ");
-      let index = 0;
+        onError: (message) => {
+          const isLimitError =
+            message.toLowerCase().includes("limit") ||
+            message.toLowerCase().includes("tomorrow");
 
-      typingFullTextRef.current = fullText;
-      typingMessageIdRef.current = thinkingId;
+          if (isLimitError) setUsage(limit);
 
-      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
-
-      setIsTyping(true);
-
-      typingIntervalRef.current = setInterval(() => {
-        index += index < 20 ? 1 : index < 60 ? 2 : 4;
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === thinkingId
-              ? { ...m, content: words.slice(0, index).join(" ") }
-              : m
-          )
-        );
-
-        if (chatContainerRef.current) {
-          chatContainerRef.current.scrollTo({
-            top: chatContainerRef.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }
-
-        if (index >= words.length) stopTyping();
-      }, 35);
-
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === thinkingId ? { ...m, content: message } : m
+            )
+          );
+        },
+      });
     } catch (error: any) {
-      // Handle session limit from server (429)
       const isLimitError =
         error?.message?.toLowerCase().includes("session limit") ||
-        error?.message?.toLowerCase().includes("limit reached");
+        error?.message?.toLowerCase().includes("limit reached") ||
+        error?.message?.toLowerCase().includes("today's limit");
 
       const message = isLimitError
         ? "You've used all your sessions for today. Come back tomorrow — or join the waitlist for full access."
         : "Something went wrong. Try again.";
 
-      // If limit hit server-side, sync local usage to reflect it
-      if (isLimitError) {
-        setUsage(USAGE_LIMIT);
-      }
+      if (isLimitError) setUsage(limit);
 
       setMessages((prev) =>
         prev.map((m) =>
@@ -350,7 +264,6 @@ async function realNexraReply(text: string, thinkingId: string) {
           ref={chatContainerRef}
           className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6 scrollbar-none"
         >
-          {/* Sample ideas — only before first user message */}
           {userMessageCount === 0 && (
             <div className="space-y-3 mb-6 py-10">
               <p className="text-sm text-neutral-500">
@@ -374,7 +287,6 @@ async function realNexraReply(text: string, thinkingId: string) {
             <ChatMessage
               key={msg.id}
               msg={msg}
-              isTyping={isTyping && msg.id === typingMessageIdRef.current}
             />
           ))}
 
@@ -384,17 +296,15 @@ async function realNexraReply(text: string, thinkingId: string) {
         {/* Footer */}
         <div className="shrink-0 px-6 py-3 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-md">
 
-          {/* Session counter — only after first use */}
-          {usage > 0 && usage < USAGE_LIMIT && (
+          {usage > 0 && usage < limit && (
             <div className="mb-3 text-xs text-neutral-500 italic">
               Nexra: You have{" "}
-              <span className="text-neutral-300">{USAGE_LIMIT - usage}</span>{" "}
-              strategic session{USAGE_LIMIT - usage !== 1 ? "s" : ""} remaining
-              today.
+              <span className="text-neutral-300">{limit - usage}</span>{" "}
+              message{limit - usage !== 1 ? "s" : ""} remaining today.
             </div>
           )}
 
-          {usage >= USAGE_LIMIT && (
+          {usage >= limit && (
             <div className="mb-3 text-xs text-neutral-500 italic">
               Nexra: You've reached today's limit.{" "}
               <button
@@ -408,9 +318,7 @@ async function realNexraReply(text: string, thinkingId: string) {
 
           <ChatInput
             onSend={handleSend}
-            isTyping={isTyping}
-            onStop={stopTyping}
-            disabled={(loading && !isTyping) || usage >= USAGE_LIMIT}
+            disabled={loading || usage >= limit}
           />
         </div>
       </div>

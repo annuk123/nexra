@@ -1,18 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Square } from "lucide-react";
+import { Send } from "lucide-react";
 
 export default function ChatInput({
   onSend,
   disabled,
-  isTyping,
-  onStop,
 }: {
   onSend: (text: string) => void;
   disabled?: boolean;
-  isTyping?: boolean;
-  onStop?: () => void;
 }) {
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -38,21 +34,20 @@ export default function ChatInput({
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
-          // Enter sends, Shift+Enter adds new line
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            if (!disabled || isTyping) return;
+            if (disabled) return;
             send();
           }
-          // Cmd/Ctrl+Enter also sends (power user habit)
           if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
             e.preventDefault();
+            if (disabled) return;
             send();
           }
         }}
         placeholder="What are you building — or thinking about building?"
         rows={1}
-        disabled={disabled && !isTyping}
+        disabled={disabled}
         className="
           w-full
           resize-none
@@ -74,10 +69,8 @@ export default function ChatInput({
       />
 
       <button
-        onClick={isTyping ? onStop : send}
-        // Stop button always enabled while typing
-        // Send button respects disabled prop
-        disabled={isTyping ? false : disabled || !text.trim()}
+        onClick={send}
+        disabled={disabled || !text.trim()}
         className="
           absolute
           right-3
@@ -92,7 +85,7 @@ export default function ChatInput({
           disabled:cursor-not-allowed
         "
       >
-        {isTyping ? <Square size={16} /> : <Send size={16} />}
+        <Send size={16} />
       </button>
     </div>
   );
