@@ -92,6 +92,7 @@ export interface StreamCallbacks {
   onDone: (meta: {                         // called when stream completes
     sessions_remaining: number | null;
     limit: number | null;
+    conversation_id: string | null;
   }) => void;
   onError: (message: string) => void;      // called on error
 }
@@ -100,6 +101,7 @@ export async function thinkWithNexraStream(
   messages: ChatMessage[],
   mode: NexraMode = "balanced",
   callbacks: StreamCallbacks,
+  conversation_id: string | null = null,
 ): Promise<void> {
   const token = getAccessToken();
 
@@ -117,7 +119,7 @@ export async function thinkWithNexraStream(
     res = await fetch(`${API_URL}/chat/think/stream`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ messages, mode }),
+      body: JSON.stringify({ messages, mode, conversation_id }),
     });
   } catch {
     callbacks.onError("Connection failed. Try again.");
@@ -169,6 +171,7 @@ export async function thinkWithNexraStream(
           callbacks.onDone({
             sessions_remaining: data.sessions_remaining,
             limit: data.limit,
+            conversation_id: data.conversation_id ?? null,
           });
         } else if (data.type === "error") {
           callbacks.onError(data.content);

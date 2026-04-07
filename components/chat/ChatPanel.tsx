@@ -53,6 +53,7 @@ export default function ChatPanel() {
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(10);
   const [email, setEmail] = React.useState("");
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
   const [open, setOpen] = useState(false);
 
@@ -165,7 +166,7 @@ export default function ChatPanel() {
   }
 
   /* ── Streaming reply ── */
-  async function realNexraReply(text: string, thinkingId: string) {
+async function realNexraReply(text: string, thinkingId: string) {
     try {
       const historyMessages = messages
         .filter(
@@ -185,51 +186,58 @@ export default function ChatPanel() {
         { role: "user" as const, content: text },
       ];
 
-      // Clear thinking placeholder to start streaming into
       setMessages((prev) =>
         prev.map((m) => (m.id === thinkingId ? { ...m, content: "" } : m))
       );
 
-      await thinkWithNexraStream(allMessages, "balanced", {
-        onChunk: (chunk) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === thinkingId
-                ? { ...m, content: (m.content ?? "") + chunk }
-                : m
-            )
-          );
+      await thinkWithNexraStream(
+        allMessages,
+        "balanced",
+        {
+          onChunk: (chunk) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === thinkingId
+                  ? { ...m, content: (m.content ?? "") + chunk }
+                  : m
+              )
+            );
 
-          if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTo({
-              top: chatContainerRef.current.scrollHeight,
-              behavior: "smooth",
-            });
-          }
+            if (chatContainerRef.current) {
+              chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: "smooth",
+              });
+            }
+          },
+
+          onDone: ({ sessions_remaining, limit: serverLimit, conversation_id }) => {
+            if (sessions_remaining !== null && sessions_remaining !== undefined) {
+              const l = serverLimit ?? 10;
+              setLimit(l);
+              setUsage(l - sessions_remaining);
+            }
+            if (conversation_id) {
+              setConversationId(conversation_id);
+            }
+          },
+
+          onError: (message) => {
+            const isLimitError =
+              message.toLowerCase().includes("limit") ||
+              message.toLowerCase().includes("tomorrow");
+
+            if (isLimitError) setUsage(limit);
+
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === thinkingId ? { ...m, content: message } : m
+              )
+            );
+          },
         },
-
-        onDone: ({ sessions_remaining, limit: serverLimit }) => {
-          if (sessions_remaining !== null && sessions_remaining !== undefined) {
-            const l = serverLimit ?? 10;
-            setLimit(l);
-            setUsage(l - sessions_remaining);
-          }
-        },
-
-        onError: (message) => {
-          const isLimitError =
-            message.toLowerCase().includes("limit") ||
-            message.toLowerCase().includes("tomorrow");
-
-          if (isLimitError) setUsage(limit);
-
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === thinkingId ? { ...m, content: message } : m
-            )
-          );
-        },
-      });
+        conversationId, // pass stored id
+      );
     } catch (error: any) {
       const isLimitError =
         error?.message?.toLowerCase().includes("session limit") ||
