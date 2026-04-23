@@ -81,6 +81,9 @@ export default function ChatPanel() {
     } else {
       initMessages(bannerShown);
     }
+
+     const savedId = localStorage.getItem("nexra_conversation_id");
+  if (savedId) setConversationId(savedId);
   }, []);
 
   function initMessages(bannerShown: string | null) {
@@ -117,6 +120,29 @@ export default function ChatPanel() {
       if (sendTimeoutRef.current) clearTimeout(sendTimeoutRef.current);
     };
   }, []);
+
+  /* ── Fetch session status on mount ── */
+useEffect(() => {
+  const fetchStatus = async () => {
+    const token = localStorage.getItem("nexra_access_token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/session-status`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      setLimit(data.limit);
+      setUsage(data.used);
+    } catch {
+      // silently fail
+    }
+  };
+
+  fetchStatus();
+}, []);
 
   /* ── Waitlist submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -219,6 +245,7 @@ async function realNexraReply(text: string, thinkingId: string) {
             }
             if (conversation_id) {
               setConversationId(conversation_id);
+              localStorage.setItem("nexra_conversation_id", conversation_id);
             }
           },
 

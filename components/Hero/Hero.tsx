@@ -156,14 +156,6 @@ export default function Hero() {
                 </svg>
               </Link>
 
-              <button
-                onClick={() => setWaitlistOpen(true)}
-                className="text-[13px] font-light text-zinc-500 hover:text-[#e8e6e1]
-                  underline underline-offset-4 decoration-transparent hover:decoration-zinc-600
-                  transition-all duration-150 bg-transparent border-0 cursor-pointer py-3 px-0"
-              >
-                Join waitlist →
-              </button>
             </div>
 
             {/* Social proof */}
@@ -285,63 +277,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Waitlist Modal */}
-      {waitlistOpen && (
-        <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-md"
-          onClick={() => setWaitlistOpen(false)}>
-          <div className="modal-panel relative bg-[#1c1c1c] rounded-2xl p-7 sm:p-10 w-full max-w-md
-            border border-white/8 shadow-[0_32px_80px_rgba(0,0,0,0.6)]"
-            onClick={(e) => e.stopPropagation()}>
-
-            <button onClick={() => setWaitlistOpen(false)}
-              className="absolute top-4 right-4 bg-transparent border-0 cursor-pointer
-                text-base text-zinc-600 hover:text-[#e8e6e1] transition-colors duration-150 p-1">
-              ✕
-            </button>
-
-            {status === "success" ? (
-              <div className="text-center py-4">
-                <h4 className="text-[22px] font-semibold text-[#e8e6e1] m-0 mb-2">You're on the list.</h4>
-                <p className="text-[14px] text-zinc-500 font-light m-0">
-                  We'll reach out when there's something worth your time.
-                </p>
-              </div>
-            ) : (
-              <>
-                <h3 className="text-[22px] sm:text-2xl font-semibold text-[#e8e6e1] m-0 mb-1.5">
-                  Join the waitlist
-                </h3>
-                <p className="text-[14px] leading-relaxed text-zinc-500 font-light mt-0 mb-6 sm:mb-7">
-                  Early access for founders. No noise, no newsletters.
-                </p>
-                <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-                  <input type="email" required placeholder="you@startup.com"
-                    value={email} onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg px-4 py-3 text-[14px]
-                      bg-white/5 border border-white/10 text-[#e8e6e1]
-                      placeholder:text-zinc-600 outline-none focus:border-white/30
-                      transition-colors duration-150 font-light" />
-                  <button type="submit"
-                    className="w-full py-3.5 rounded-lg text-[14px] font-medium
-                      bg-[#e8e6e1] text-[#141414] hover:bg-white active:scale-[0.99]
-                      transition-all duration-150 border-0 cursor-pointer">
-                    {status === "loading" ? "Joining…" : "Join →"}
-                  </button>
-                </form>
-                {status === "error" && (
-                  <p className="text-[13px] text-red-400 mt-2 mb-0">Something went wrong. Try again.</p>
-                )}
-                <p className="text-[11px] text-center text-zinc-600 font-light mt-4 mb-0">
-                  No spam. Just product updates when they matter.{" "}
-                  <Link href="/privacy" className="text-zinc-600 underline hover:text-zinc-400 transition-colors">
-                    Privacy Policy
-                  </Link>
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      
     </>
   );
 }
