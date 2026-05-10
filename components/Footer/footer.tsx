@@ -1,13 +1,15 @@
 "use client";
 import React from "react";
+import { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import FeedbackModal from "../FeedbackPage/Feedback";
 
 export default function Footer() {
   const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
-
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
 
@@ -134,6 +136,25 @@ export default function Footer() {
             </Link>
 
             <Link
+                          href="/changelog"
+                          className="block transition-colors duration-200"
+                          
+                        >
+                          Changelog
+                        </Link>
+
+                        {/* <button
+              onClick={() => {
+                setFeedbackOpen(true);
+                setMobileOpen(false);
+              }}
+              className="block bg-transparent border-0 cursor-pointer transition-colors duration-200"
+              
+            >
+              Report a bug
+            </button> */}
+
+            <Link
     href="mailto:annu@nexralab.com"
     className=" flex items-center gap-2  hover:text-neutral-400 transition"
   >
@@ -145,6 +166,10 @@ export default function Footer() {
         </div>
 
       </div>
+            <FeedbackModal
+              open={feedbackOpen}
+              onClose={() => setFeedbackOpen(false)}
+            />
     </footer>
   );
 }
