@@ -70,12 +70,13 @@
 
 "use client";
 
+import { Suspense } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { signInWithGoogle, signInWithGitHub } from "@/lib/api/chat";
 import Link from "next/link";
 
-export default function NexraAuthPage() {
+function NexraAuthContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/thinking-engine-v2.0";
 
@@ -284,5 +285,19 @@ export default function NexraAuthPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NexraAuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#09090B] text-white">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40" />
+        </div>
+      }
+    >
+      <NexraAuthContent />
+    </Suspense>
   );
 }
