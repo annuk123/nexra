@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { isSignedIn } from "@/lib/api/chat";
 import ChatPanel from "@/components/chat/ChatPanel";
+import Navbar from "@/components/Navbar/nav";
 
 export default function ThinkingPartnerPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function ThinkingPartnerPage() {
 
   return (
     <main className="h-dvh bg-neutral-950 text-neutral-100">
+      <Navbar />
       <ChatPanel />
     </main>
   );

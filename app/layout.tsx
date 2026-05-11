@@ -54,7 +54,7 @@ export default function RootLayout({
       <body className={`${geist.className} bg-black antialiased min-h-screen`}>
         <Providers>
           <ConvexAppProvider>
-            <Navbar />
+           
             {children}
             <Analytics />
             <SpeedInsights />
