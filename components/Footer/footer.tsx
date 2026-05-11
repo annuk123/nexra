@@ -1,175 +1,113 @@
 "use client";
-import React from "react";
+
 import { useState } from "react";
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import FeedbackModal from "../FeedbackPage/Feedback";
 
-export default function Footer() {
-  const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
+const footerLinks = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Changelog", href: "/changelog" },
+  { label: "Feedback", href: "/feedback" },
+];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await addToWaitlist({ email, source: "homepage" });
-      setStatus("success");
-      setEmail("");
-    } catch {
-      setStatus("error");
-    }
-  };
+const socialLinks = [
+  { label: "X (Twitter)", href: "https://x.com/Nexra_Ai" },
+  { label: "Email", href: "mailto:annu@nexralab.com" },
+];
+
+export default function Footer() {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
-    <footer className="border-t border-neutral-900 bg-neutral-950">
-      <div className="max-w-6xl mx-auto px-6 py-20">
+    <footer className="border-t border-white/[0.05] bg-[#050505]">
+      <div className="mx-auto max-w-6xl px-6 py-20">
 
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Top: Brand + tagline + links */}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_auto]">
 
-          {/* LEFT */}
+          {/* Left: Brand */}
           <div>
-            <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-neutral-100">
-              For the decision
-              <br />
-              you're sitting with
-              <br />
-              <span className="text-neutral-500">right now.</span>
-            </h2>
+            <div className="flex items-center gap-2">
+              {/* Logo mark — reuse whatever you have in navbar */}
+              <span className="text-[15px] font-semibold tracking-[-0.03em] text-white">
+                Nexra
+              </span>
+              <span className="text-white/20">/</span>
+              <span className="text-[13px] tracking-[-0.02em] text-white/35">
+                Thinking Partner
+              </span>
+            </div>
 
-            <p className="mt-6 text-neutral-400 max-w-md leading-relaxed">
-              Nexra thinks with you — not at you.
-              Start a session anytime. No agenda, no judgment.
-              Just clearer thinking on the other side.
+            <p className="mt-4 max-w-[340px] text-[13px] leading-[1.8] tracking-[-0.01em] text-white/30">
+              The thinking partner solo founders never had. Challenge your
+              assumptions, surface blind spots, and make decisions with
+              clarity — not panic.
             </p>
+
+            {/* Social */}
+            <div className="mt-6 flex items-center gap-4">
+              {socialLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="group flex items-center gap-1 text-[12px] tracking-[-0.01em] text-white/30 transition-colors duration-200 hover:text-white/60"
+                >
+                  {link.label}
+                  <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* RIGHT: Waitlist */}
-          <div className="max-w-md w-full flex flex-col justify-center">
-
-            {status === "idle" && (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-xs text-neutral-400">
-                    Your email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="you@startup.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-2 w-full rounded-md bg-neutral-900 border border-neutral-800 px-4 py-3 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-600 transition"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-md border border-neutral-700 px-4 py-3 text-sm text-neutral-300 hover:border-neutral-500 hover:text-neutral-100 transition"
-                >
-                  Join waitlist →
-                </button>
-                <p className="text-xs text-neutral-600">
-                  Early access for founders. No spam. No newsletters.
-                </p>
-              </form>
-            )}
-
-            {status === "success" && (
-              <div className="space-y-2">
-                <p className="text-neutral-100 font-medium">
-                  You're on the list.
-                </p>
-                <p className="text-sm text-neutral-500 leading-relaxed">
-                  We'll reach out when there's something worth your time.
-                  Until then — keep building.
-                </p>
-              </div>
-            )}
-
-            {status === "error" && (
-              <div className="space-y-4">
-                <p className="text-sm text-neutral-500">
-                  Something went wrong. Try again.
-                </p>
-                <button
-                  onClick={() => setStatus("idle")}
-                  className="text-xs text-neutral-400 underline underline-offset-2 hover:text-neutral-200 transition"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-
+          {/* Right: CTA block */}
+          <div className="flex flex-col justify-between gap-8 md:items-end">
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-6 py-5 md:text-right">
+              <p className="text-[13px] font-medium tracking-[-0.02em] text-white/70">
+                Early access — first 10 spots at $9/mo
+              </p>
+              <p className="mt-1 text-[12px] tracking-[-0.01em] text-white/25">
+                Price increases as spots fill. No refills after launch.
+              </p>
+              <Link
+                href="/login"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-[13px] font-semibold tracking-[-0.02em] text-black transition-all duration-200 hover:bg-zinc-100"
+              >
+                Start thinking
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
+
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-neutral-600">
-          <div className="flex items-center gap-6">
-            <Link
-              href="https://x.com/Nexra_Ai"
-              className="hover:text-neutral-400 transition"
-            >
-              X
-            </Link>
-            <Link
-              href="/feedback"
-              className="hover:text-neutral-400 transition"
-            >
-              Feedback
-            </Link>
-            <Link
-              href="/privacy"
-              className="hover:text-neutral-400 transition"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-neutral-400 transition"
-            >
-              Terms
-            </Link>
+        {/* Divider */}
+        <div className="mt-16 h-px bg-white/[0.04]" />
 
-            <Link
-                          href="/changelog"
-                          className="block transition-colors duration-200"
-                          
-                        >
-                          Changelog
-                        </Link>
+        {/* Bottom bar */}
+        <div className="mt-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 
-                        {/* <button
-              onClick={() => {
-                setFeedbackOpen(true);
-                setMobileOpen(false);
-              }}
-              className="block bg-transparent border-0 cursor-pointer transition-colors duration-200"
-              
-            >
-              Report a bug
-            </button> */}
-
-            <Link
-    href="mailto:annu@nexralab.com"
-    className=" flex items-center gap-2  hover:text-neutral-400 transition"
-  >
-    <Mail size={16} />
-    Email
-  </Link>
+          <div className="flex flex-wrap items-center gap-5">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-[12px] tracking-[-0.01em] text-white/25 transition-colors duration-200 hover:text-white/50"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
-          <p>© {new Date().getFullYear()} Nexra AI</p>
-        </div>
 
+          <p className="text-[12px] tracking-[-0.01em] text-white/20">
+            © {new Date().getFullYear()} Nexra AI. All rights reserved.
+          </p>
+
+        </div>
       </div>
-            <FeedbackModal
-              open={feedbackOpen}
-              onClose={() => setFeedbackOpen(false)}
-            />
+
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </footer>
   );
 }
