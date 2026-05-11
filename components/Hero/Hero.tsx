@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const HERO_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -120,26 +121,27 @@ export default function HeroSection() {
           </motion.p>
 
           {/* CTA */}
-          <motion.div
-            {...fadeUp(0.65)}
-            className="mt-10 flex flex-wrap items-center justify-center gap-3"
-          >
-            <Button
-              size="lg"
-              className="group h-12 rounded-xl bg-white px-7 text-[14px] font-semibold tracking-[-0.03em] text-black shadow-[0_0_24px_rgba(255,255,255,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-zinc-100 hover:shadow-[0_0_32px_rgba(255,255,255,0.22)]"
-            >
-              Start thinking
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Button>
+<motion.div
+  {...fadeUp(0.65)}
+  className="mt-10 flex flex-wrap items-center justify-center gap-3"
+>
+  <Link
+    href="/thinking-engine-v2.0"
+    className="group inline-flex h-12 items-center justify-center rounded-xl bg-white px-7 text-[14px] font-semibold tracking-[-0.03em] text-black shadow-[0_0_24px_rgba(255,255,255,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-zinc-100 hover:shadow-[0_0_32px_rgba(255,255,255,0.22)]"
+  >
+    Start thinking
+    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+  </Link>
 
-            <Button
-              variant="ghost"
-              size="lg"
-              className="h-12 rounded-xl border border-white/[0.08] bg-white/[0.015] px-7 text-[14px] tracking-[-0.03em] text-white/50 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.03] hover:text-white"
-            >
-              Watch Nexra think
-            </Button>
-          </motion.div>
+  <Button
+    asChild
+    variant="ghost"
+    size="lg"
+    className="h-12 rounded-xl border border-white/[0.08] bg-white/[0.015] px-7 text-[14px] tracking-[-0.03em] text-white/50 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.03] hover:text-white"
+  >
+    <a href="#demo">Watch Nexra think</a>
+  </Button>
+</motion.div>
 
           {/* Emotional line — moved up, right after headline */}
           <motion.p
