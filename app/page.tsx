@@ -7,6 +7,7 @@ import HowItWorks from "@/components/HowItWorks/HowItWorks";
 import DemoSection from "@/components/demoSection/demo";
 import FounderNote from "@/components/FounderNote/FounderNote";
 import Navbar from "@/components/Navbar/nav";
+import PricingSection from "@/components/Pricingsection/Pricingsection";
 
 export default function Home() {
   return (
@@ -17,9 +18,7 @@ export default function Home() {
       
       <Hero  />
 
-      <Section size="md">
-        <FounderNote />
-</Section>
+
 
 <Section size="md">
 <DemoSection />
@@ -34,6 +33,13 @@ export default function Home() {
       <Section size="md">
         <FAQ />
       </Section>
+
+            <Section size="md">
+        <PricingSection />
+      </Section>
+            <Section size="md">
+        <FounderNote />
+</Section>
  <Footer />
     </main>
   );

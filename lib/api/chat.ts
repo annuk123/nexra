@@ -25,7 +25,7 @@
 // }
 
 
-// lib/api/chat.ts
+
 // lib/api/chat.ts
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
