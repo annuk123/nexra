@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Minus, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getAccessToken, isSignedIn } from "@/lib/api/chat";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -33,20 +33,48 @@ export default function PricingSection() {
   const [mounted, setMounted]   = useState(false);
   const [userPlan, setUserPlan] = useState<string>("free");
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
 
-  useEffect(() => {
-    setMounted(true);
-    if (isSignedIn()) {
-      fetch(`${API_URL}/api/payments/status`, {
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-        },
+useEffect(() => {
+  setMounted(true);
+  const token = getAccessToken();
+  if (token) {
+    fetch(`${API_URL}/api/payments/status`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        if (!res.ok) return { plan: "free" };
+        return res.json();
       })
-        .then(res => res.json())
-        .then(data => setUserPlan(data.plan ?? "free"))
-        .catch(() => {});
+      .then(data => setUserPlan(data.plan ?? "free"))
+      .catch(() => setUserPlan("free"));
+  }
+}, []);
+
+useEffect(() => {
+  const token = localStorage.getItem("nexra_access_token");
+  if (!token) {
+    setIsLoggedIn(false);
+    return;
+  }
+  // Check if token is expired
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const isExpired = payload.exp * 1000 < Date.now();
+    if (isExpired) {
+      localStorage.removeItem("nexra_access_token");
+      localStorage.removeItem("nexra_refresh_token");
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
     }
-  }, []);
+  } catch {
+    setIsLoggedIn(false);
+  }
+}, [pathname]);
 
   const loggedIn = mounted && isSignedIn();
   const isPro = mounted && userPlan === "pro";
@@ -299,9 +327,9 @@ export default function PricingSection() {
             <button
   onClick={handleGetPro}
   disabled={loading || isPro}
-  className={`w-full py-3 rounded-xl text-[14px] font-medium transition-all duration-200 flex items-center justify-center gap-2
+  className={`w-full py-3 rounded-xl text-[14px] font-medium transition-all duration-200 flex items-center cursor-pointer  justify-center gap-2
     ${isPro
-      ? "bg-[#2a2a2a] text-[#c8a96e] cursor-default border border-[#c8a96e44]"
+      ? "bg-[#2a2a2a] text-[#c8a96e]  border border-[#c8a96e44] "
       : "bg-[#c8a96e] text-[#1a1500] hover:bg-[#d9ba82] disabled:opacity-60 disabled:cursor-not-allowed"
     }`}
 >

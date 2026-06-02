@@ -20,10 +20,30 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
 
-useEffect(() => {
+  useEffect(() => {
   const token = localStorage.getItem("nexra_access_token");
-  setIsLoggedIn(!!token);
+  if (!token) {
+    setIsLoggedIn(false);
+    return;
+  }
+  // Check if token is expired
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const isExpired = payload.exp * 1000 < Date.now();
+    if (isExpired) {
+      localStorage.removeItem("nexra_access_token");
+      localStorage.removeItem("nexra_refresh_token");
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+    }
+  } catch {
+    setIsLoggedIn(false);
+  }
 }, [pathname]);
+
+
+
  const handleSignOut = () => {
   localStorage.removeItem("nexra_access_token");
   localStorage.removeItem("nexra_refresh_token");
