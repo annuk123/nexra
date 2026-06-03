@@ -2,7 +2,7 @@ import { Message } from "./ChatPanel";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import Image from "next/image";
 
 /* ================= TEXT HELPERS ================= */
@@ -15,11 +15,59 @@ function extractText(children: React.ReactNode): string {
   return "";
 }
 
-/* ================= LAST QUESTION DETECTOR ================= */
+/* ================= PARAGRAPH COUNT via remark ================= */
 
-// Counts total paragraph nodes to identify the final one
-function countParagraphs(content: string): number {
-  return (content.match(/\n\n|\n(?=[A-Z])/g) || []).length + 1;
+// Counts actual paragraph AST nodes — immune to code blocks, lists, headings
+function countParagraphNodes(content: string): number {
+  // Fast heuristic: count blank-line-separated blocks that aren't
+  // headings, fences, or list markers. Good enough without a full AST parse.
+  const lines = content.split("\n");
+  let count = 0;
+  let inParagraph = false;
+  let inFence = false;
+
+  for (const line of lines) {
+    if (line.startsWith("```")) { inFence = !inFence; inParagraph = false; continue; }
+    if (inFence) continue;
+    const trimmed = line.trim();
+    const isBlank = trimmed === "";
+    const isStructural = /^(#{1,6}\s|[-*+]\s|\d+\.\s|>|`{3})/.test(trimmed);
+
+    if (!isBlank && !isStructural) {
+      if (!inParagraph) { count++; inParagraph = true; }
+    } else {
+      inParagraph = false;
+    }
+  }
+  return Math.max(count, 1);
+}
+
+/* ================= STREAMING CURSOR ================= */
+
+function StreamingCursor() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-block w-[2px] h-[1em] bg-emerald-400 ml-0.5 align-middle animate-pulse"
+      style={{ animationDuration: "0.8s" }}
+    />
+  );
+}
+
+/* ================= EMPTY STATE (first streaming tick) ================= */
+
+function ThinkingDots() {
+  return (
+    <div className="flex items-center gap-1.5 py-1">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-bounce"
+          style={{ animationDelay: `${i * 150}ms`, animationDuration: "1s" }}
+        />
+      ))}
+    </div>
+  );
 }
 
 /* ================= COMPONENT ================= */
@@ -32,14 +80,21 @@ export default function ChatMessage({
   isTyping?: boolean;
 }) {
   const isUser = msg.role === "user";
+  const content = msg.content || "";
+  const isEmpty = content.trim() === "";
 
-  // Track paragraph index during render
-  let paragraphIndex = 0;
+  // paragraphIndex must survive across the render pass of ReactMarkdown's
+  // component callbacks — useRef gives a stable mutable counter that doesn't
+  // trigger re-renders and doesn't reset between callback invocations.
+  const paragraphIndexRef = useRef(0);
 
   const totalParagraphs = useMemo(
-    () => countParagraphs(msg.content || ""),
-    [msg.content]
+    () => countParagraphNodes(content),
+    [content]
   );
+
+  // Reset counter before each render so it counts fresh
+  paragraphIndexRef.current = 0;
 
   /* ================= USER MESSAGE ================= */
 
@@ -49,7 +104,7 @@ export default function ChatMessage({
         <div className="max-w-md space-y-1 text-right">
           <p className="text-xs text-neutral-500">You</p>
           <div className="px-4 py-3 rounded-2xl rounded-br-none bg-emerald-900/30 text-emerald-300 text-sm leading-relaxed whitespace-pre-wrap">
-            {msg.content}
+            {content}
           </div>
         </div>
       </div>
@@ -64,13 +119,14 @@ export default function ChatMessage({
 
         {/* Nexra Identity */}
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 text-xs font-semibold">
+          {/* overflow-hidden ensures rounded-full actually clips the image */}
+          <div className="w-7 h-7 rounded-full overflow-hidden bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
             <Image
               src="/nexra.png"
               alt="Nexra"
               width={28}
               height={28}
-              className="h-6 w-6"
+              className="h-7 w-7 object-cover"
             />
           </div>
           <p className="text-xs text-neutral-400">Nexra · Thinking Partner</p>
@@ -84,10 +140,6 @@ export default function ChatMessage({
             max-w-none
             text-[15px]
             leading-[1.9]
-
-            prose-p:my-5
-            prose-p:first:mt-0
-            prose-p:last:mb-0
 
             prose-strong:text-white
             prose-strong:font-semibold
@@ -105,78 +157,82 @@ export default function ChatMessage({
             prose-blockquote:rounded-md
           "
         >
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={{
+          {/* Empty state during first streaming tick */}
+          {isEmpty && isTyping ? (
+            <ThinkingDots />
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={{
 
-              // Model-driven highlights via <mark> tags
-              mark: ({ children }) => (
-                <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md not-prose">
-                  {children}
-                </mark>
-              ),
+                // Model-driven highlights via <mark> tags
+                mark: ({ children }) => (
+                  <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md not-prose">
+                    {children}
+                  </mark>
+                ),
 
-              p: ({ children }) => {
-                paragraphIndex++;
-                const text = extractText(children);
-                const isLast = paragraphIndex === totalParagraphs;
+                p: ({ children }) => {
+                  // Increment BEFORE using — first paragraph is index 1
+                  paragraphIndexRef.current += 1;
+                  const currentIndex = paragraphIndexRef.current;
+                  const text = extractText(children);
+                  const isLast = currentIndex === totalParagraphs;
 
-                // "Small experiment" section label
-                if (text.startsWith("**Try this:**") || text.startsWith("Try this:")) {
+                  // ReactMarkdown strips bold markers before passing children,
+                  // so check for the plain text form only
+                  if (text.startsWith("Try this:")) {
+                    return (
+                      <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2 not-prose">
+                        Small experiment
+                      </p>
+                    );
+                  }
+
+                  if (text.startsWith("Continue exploring")) {
+                    return (
+                      <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2 not-prose">
+                        Continue exploring
+                      </p>
+                    );
+                  }
+
+                  // Highlight the last paragraph only if it contains a question
+                  if (isLast && text.includes("?")) {
+                    return (
+                      <p className="text-indigo-300 font-medium">
+                        {children}
+                        {/* Streaming cursor sits inline with the last character */}
+                        {isTyping && <StreamingCursor />}
+                      </p>
+                    );
+                  }
+
                   return (
-                    <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2 not-prose">
-                      Small experiment
+                    <p>
+                      {children}
+                      {/* Cursor on last paragraph even if not a question */}
+                      {isLast && isTyping && <StreamingCursor />}
                     </p>
                   );
-                }
+                },
 
-                // "Continue exploring" label
-                if (text.startsWith("Continue exploring")) {
-                  return (
-                    <p className="text-xs uppercase tracking-wide text-neutral-500 mt-6 mb-2 not-prose">
-                      Continue exploring
-                    </p>
-                  );
-                }
-
-                // Only highlight the LAST paragraph if it's a question
-                if (isLast && text.includes("?")) {
-                  return (
-                    <p className="text-indigo-300 font-medium">{children}</p>
-                  );
-                }
-
-                return <p>{children}</p>;
-              },
-
-              ul: ({ children, ...props }) => {
-                // Detect experiment list by checking preceding sibling context
-                // via the parent node — use a data attribute set by the p renderer
-                return (
+                ul: ({ children, ...props }) => (
                   <ul className="space-y-2 list-disc pl-5 my-4 text-neutral-200" {...props}>
                     {children}
                   </ul>
-                );
-              },
+                ),
 
-              // Style experiment block if it follows a "Try this:" label
-              li: ({ children }) => (
-                <li className="text-neutral-200">{children}</li>
-              ),
-            }}
-          >
-            {msg.content || ""}
-          </ReactMarkdown>
+                li: ({ children }) => (
+                  <li className="text-neutral-200">{children}</li>
+                ),
+              }}
+            >
+              {content}
+            </ReactMarkdown>
+          )}
         </div>
-
-        {/* Typing indicator — outside prose to avoid layout shift */}
-        {isTyping && (
-          <div className="flex items-center gap-2 text-neutral-400 text-sm mt-3">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            Nexra is thinking through your idea…
-          </div>
-        )}
 
       </div>
     </div>
