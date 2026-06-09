@@ -123,7 +123,7 @@ useEffect(() => {
   };
 
   return (
-    <section className="bg-[#141414] text-[#f0ece4] py-24 px-6">
+    <section className="text-[#f0ece4] py-24 px-6">
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
@@ -134,7 +134,7 @@ useEffect(() => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <p className="text-[11px] tracking-[0.18em] uppercase text-[#c8a96e] font-medium mb-4">
+          <p className="text-[11px] tracking-[0.18em] uppercase text-teal-400 font-medium mb-4">
             Pricing
           </p>
           <h2 className="text-4xl font-semibold text-[#f0ece4] leading-tight mb-3">
@@ -166,7 +166,7 @@ useEffect(() => {
             onClick={() => setIsAnnual(!isAnnual)}
             className={`relative w-10 h-[22px] rounded-full border transition-all duration-200 ${
               isAnnual
-                ? "bg-[#c8a96e22] border-[#c8a96e55]"
+                ? "bg-teal-950/20 border-teal-500/50"
                 : "bg-[#2a2a2a] border-[#333]"
             }`}
             aria-label="Toggle billing period"
@@ -175,7 +175,7 @@ useEffect(() => {
               animate={{ left: isAnnual ? "20px" : "2px" }}
               transition={{ type: "spring", stiffness: 500, damping: 35 }}
               className={`absolute top-[2px] w-4 h-4 rounded-full transition-colors duration-200 ${
-                isAnnual ? "bg-[#c8a96e]" : "bg-[#888]"
+                isAnnual ? "bg-teal-400" : "bg-[#888]"
               }`}
             />
           </button>
@@ -187,7 +187,7 @@ useEffect(() => {
             onClick={() => setIsAnnual(true)}
           >
             Annual
-            <span className="text-[10px] bg-[#c8a96e15] text-[#c8a96e] border border-[#c8a96e33] px-2 py-[2px] rounded-full font-medium">
+            <span className="text-[10px] bg-[#c8a96e15] text-teal-400 border border-teal-500/50 px-2 py-[2px] rounded-full font-medium">
               2 months free
             </span>
           </span>
@@ -227,7 +227,7 @@ useEffect(() => {
                   <span
                     className={`mt-[1px] w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
                       f.included
-                        ? "bg-[#c8a96e22] text-[#c8a96e]"
+                        ? "bg-[#c8a96e22] text-teal-400"
                         : "bg-[#222] text-[#444]"
                     }`}
                   >
@@ -253,15 +253,17 @@ useEffect(() => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="relative bg-[#1e1c18] border border-[#c8a96e44] rounded-2xl p-8"
+            className="relative border border-teal-500/20 bg-teal-950/20 rounded-2xl p-8"
           >
+             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400 to-transparent" />
+
             <div className="absolute -top-[11px] left-1/2 -translate-x-1/2">
-              <span className="bg-[#c8a96e] text-[#1a1500] text-[10px] font-semibold tracking-widest uppercase px-3 py-[3px] rounded-full whitespace-nowrap">
+              <span className="bg-teal-500 text-[#1a1500] text-[10px] font-semibold tracking-widest uppercase px-3 py-[3px] rounded-full whitespace-nowrap">
                 Most popular
               </span>
             </div>
 
-            <p className="text-[13px] font-medium tracking-widest uppercase text-[#c8a96e] mb-5">
+            <p className="text-[13px] font-medium tracking-widest uppercase text-teal-300 mb-5">
               Pro
             </p>
 
@@ -312,7 +314,7 @@ useEffect(() => {
             <ul className="space-y-3 mb-8">
               {PRO_FEATURES.map((f, i) => (
                 <li key={i} className="flex items-start gap-3 text-[13px] text-[#c8c8c0]">
-                  <span className="mt-[1px] w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 bg-[#c8a96e22] text-[#c8a96e]">
+                  <span className="mt-[1px] w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 bg-[#c8a96e22] text-teal-400">
                     <Check size={9} strokeWidth={3} />
                   </span>
                   {f.text}
@@ -329,8 +331,8 @@ useEffect(() => {
   disabled={loading || isPro}
   className={`w-full py-3 rounded-xl text-[14px] font-medium transition-all duration-200 flex items-center cursor-pointer  justify-center gap-2
     ${isPro
-      ? "bg-[#2a2a2a] text-[#c8a96e]  border border-[#c8a96e44] "
-      : "bg-[#c8a96e] text-[#1a1500] hover:bg-[#d9ba82] disabled:opacity-60 disabled:cursor-not-allowed"
+      ? "bg-[#2a2a2a] text-teal-400  border border-teal-500/50 cursor-pointer"
+      : "bg-teal-500 text-[#1a1500] hover:bg-teal-600 disabled:opacity-60 disabled:cursor-not-allowed"
     }`}
 >
   {isPro ? "Current plan ✓" : loading ? (

@@ -18,9 +18,6 @@ export default function Home() {
       
       <Hero  />
 
-
-
-
 <Section size="md">
       <WhyNotChatGPTSection />
       </Section>
