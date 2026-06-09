@@ -45,7 +45,7 @@ const pillars = [
  
 export default function HeroSection() {
   return (
-    <>
+
     <section className="relative overflow-hidden bg-[#0C0C0E] text-zinc-100">
  
       {/* ── Background ── */}
@@ -157,8 +157,9 @@ export default function HeroSection() {
       </div>
  
       {/* ── Feature strip ── */}
-  <div className="border-t border-zinc-800/70">
-    <div className="mx-auto grid max-w-7xl md:grid-cols-3 md:divide-x md:divide-zinc-800/70">
+      
+      <div className="relative border-t border-zinc-800/70">
+        <div className="mx-auto grid max-w-7xl md:grid-cols-3 md:divide-x md:divide-zinc-800/70">
           {pillars.map((item) => {
             const Icon = item.icon;
             return (
@@ -177,11 +178,10 @@ export default function HeroSection() {
           })}
         </div>
       </div>
-      
 
 
     </section>
-</>
+
 
 
   );

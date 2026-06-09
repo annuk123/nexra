@@ -4,7 +4,6 @@ import FAQ from "@/components/FAQ/FAQ";
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/footer";
 import HowItWorks from "@/components/HowItWorks/HowItWorks";
-import DemoSection from "@/components/demoSection/demo";
 import FounderNote from "@/components/FounderNote/FounderNote";
 import Navbar from "@/components/Navbar/nav";
 import PricingSection from "@/components/Pricingsection/Pricingsection";
