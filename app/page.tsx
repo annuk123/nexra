@@ -8,21 +8,23 @@ import DemoSection from "@/components/demoSection/demo";
 import FounderNote from "@/components/FounderNote/FounderNote";
 import Navbar from "@/components/Navbar/nav";
 import PricingSection from "@/components/Pricingsection/Pricingsection";
+import { WhyNotChatGPTSection } from "@/components/WhyNotChatGPTSection/WhyNotChatGPT";
+
 
 export default function Home() {
   return (
     <main className="  bg-black text-neutral-100">
 
       <Navbar />
-      {/* Hero */}
       
       <Hero  />
 
 
 
+
 <Section size="md">
-<DemoSection />
-</Section>
+      <WhyNotChatGPTSection />
+      </Section>
 
 <Section size="md">
        <HowItWorks />

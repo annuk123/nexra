@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import MenuIcon from "../menu/menuicon";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -43,6 +44,13 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
 }, [pathname]);
 
 
+  const linkBase =
+    "rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200";
+  const secondaryLink =
+    "text-zinc-400 hover:text-zinc-100";
+  const primaryLink =
+    "inline-flex items-center justify-center rounded-md bg-teal-500 px-4 py-2 text-sm font-semibold text-zinc-950 transition-all duration-200 hover:bg-teal-400 active:scale-[0.98]";
+
 
  const handleSignOut = () => {
   localStorage.removeItem("nexra_access_token");
@@ -74,131 +82,161 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
   }, [isHomePage, pathname]);
 
 
-  return (
-    <>
-      <header
-        className="fixed top-0 w-full z-50 transition-colors duration-500 bg-black/20 backdrop-blur-md border-b border-neutral-800"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+ return (
+     <header className="fixed top-0 z-50 w-full border-b border-zinc-800 bg-[#0C0C0E]/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 text-sm font-medium text-zinc-100"
+          onClick={() => setMobileOpen(false)}
+        >
+          <Image
+            src="/nexra.png"
+            alt="Nexra"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-md"
+          />
+          <span className="tracking-tight">Nexra</span>
+          <span className="hidden text-xs text-zinc-500 sm:inline">
+            / Thinking Partner
+          </span>
+        </Link>
 
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm font-medium transition-colors duration-500"
-            style={{ color: useDarkNav ? "#ffffff" : "#0a0a0a" }}
-          >
+        {/* Desktop Nav */}
+        <nav className="hidden items-center gap-2 md:flex">
+          {!isLoggedIn ? (
+            <>
+              <Link
+                href="/thinking-engine-v2.0"
+                className={`${linkBase} ${secondaryLink}`}
+              >
+                Login
+              </Link>
+
+              <Link href="/thinking-engine-v2.0" className={primaryLink}>
+                Start thinking
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/thinking-engine-v2.0" className={primaryLink}>
+                Continue thinking
+              </Link>
+
+              <button
+                onClick={handleSignOut}
+                className={`${linkBase} ${secondaryLink}`}
+              >
+                Sign out
+              </button>
+            </>
+          )}
+        </nav>
+
+        {/* Mobile Button */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-zinc-50 md:hidden"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Dropdown */}
+<AnimatePresence>
+  {mobileOpen && (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setMobileOpen(false)}
+        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+      />
+
+      {/* Drawer */}
+      <motion.div
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{
+          duration: 0.3,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="
+          fixed left-0 top-0 z-50
+          h-screen w-[85%] max-w-xs
+          border-r border-zinc-800
+          bg-[#0C0C0E]
+        "
+      >
+        <div className="flex h-16 items-center justify-between border-b border-zinc-800 px-5">
+          <div className="flex items-center gap-2">
             <Image
               src="/nexra.png"
               alt="Nexra"
               width={28}
               height={28}
-              className="h-6 w-6 bg-black rounded-md"
+              className="rounded-md"
             />
-            <span className="tracking-tight text-neutral-300">Nexra</span>
-            <span
-              className="text-xs transition-colors duration-500 text-neutral-400"
-            >
-              / Thinking Partner
+            <span className="font-medium text-zinc-100">
+              Nexra
             </span>
-          </Link>
+          </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-3 text-xs">
-  {!isLoggedIn ? (
-    <>
-      <Link
-        href="/thinking-engine-v2.0"
-        className="px-3 py-1.5 rounded-md text-neutral-400 hover:text-white transition"
-      >
-        Login
-      </Link>
-
-      <Link
-        href="/thinking-engine-v2.0"
-        className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-md
-        bg-[#e8e6e1] text-[#141414] hover:bg-white active:scale-[0.98]
-        transition-all duration-150 no-underline"
-      >
-        Start thinking
-      </Link>
-    </>
-  ) : (
-    <>
-      <Link
-        href="/thinking-engine-v2.0"
-        className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-md
-        bg-[#e8e6e1] text-[#141414] hover:bg-white active:scale-[0.98]
-        transition-all duration-150 no-underline"
-      >
-        Continue thinking
-      </Link>
-
-      <button
-        onClick={handleSignOut}
-        className="px-3 py-1.5 rounded-md text-neutral-400 hover:text-white transition cursor-pointer"
-      >
-        Sign out
-      </button>
-    </>
-  )}
-</nav>
-
-          {/* Mobile Button */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden transition-colors duration-500"
-            style={{ color: useDarkNav ? "#a3a3a3" : "#6b6560" }}
+            onClick={() => setMobileOpen(false)}
+            className="text-zinc-400 hover:text-white"
           >
-            {mobileOpen ? <X size={20} /> : <MenuIcon />}
+            <X size={18} />
           </button>
         </div>
 
-        {/* Mobile Dropdown */}
-        {mobileOpen && (
-<div className="flex flex-col gap-4">
-  {!isLoggedIn ? (
-    <>
-      <Link
-        href="/thinking-engine-v2.0"
-        onClick={() => setMobileOpen(false)}
-        className="text-neutral-400 hover:text-white transition"
-      >
-        Login
-      </Link>
+        <div className="flex flex-col p-4">
+          {!isLoggedIn ? (
+            <>
+              <Link
+                href="/thinking-engine-v2.0"
+                className="rounded-lg px-4 py-3 text-zinc-400 hover:bg-zinc-900 hover:text-white"
+              >
+                Login
+              </Link>
 
-      <Link
-        href="/thinking-engine-v2.0"
-        onClick={() => setMobileOpen(false)}
-        className="text-neutral-300 hover:text-white transition"
-      >
-        Start thinking
-      </Link>
-    </>
-  ) : (
-    <>
-      <Link
-        href="/thinking-engine-v2.0"
-        onClick={() => setMobileOpen(false)}
-        className="text-neutral-300 hover:text-white transition"
-      >
-        Continue thinking
-      </Link>
+              <Link
+                href="/thinking-engine-v2.0"
+                className="mt-2 rounded-lg bg-teal-400 px-4 py-3 font-medium text-zinc-950"
+              >
+                Start thinking
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/thinking-engine-v2.0"
+                className="rounded-lg bg-teal-400 px-4 py-3 font-medium text-zinc-950"
+              >
+                Continue thinking
+              </Link>
 
-      <button
-        onClick={() => {
-          handleSignOut();
-          setMobileOpen(false);
-        }}
-        className="text-left text-neutral-400 hover:text-white transition"
-      >
-        Sign out
-      </button>
+              <button
+                onClick={handleSignOut}
+                className="mt-2 rounded-lg px-4 py-3 text-left text-zinc-400 hover:bg-zinc-900 hover:text-white"
+              >
+                Sign out
+              </button>
+            </>
+          )}
+        </div>
+      </motion.div>
     </>
   )}
-</div>
-        )}
-      </header>
-
-    </>
+</AnimatePresence>
+    </header>
   );
 }
