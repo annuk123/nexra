@@ -46,7 +46,7 @@ const pillars = [
 export default function HeroSection() {
   return (
 
-    <section className="relative overflow-hidden bg-[#0C0C0E] text-zinc-100 py-12 px-6 md:px-10 lg:px-12">
+    <section className="relative overflow-hidden bg-[#0C0C0E] text-zinc-100 py-12">
  
       {/* ── Background ── */}
       <div className="pointer-events-none absolute inset-0">
