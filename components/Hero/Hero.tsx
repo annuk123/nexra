@@ -113,22 +113,22 @@ export default function HeroSection() {
     </Button>
   </motion.div>
 
-  <motion.div
-    {...fadeUp(0.44)}
-    className="mt-8 flex flex-wrap items-center gap-3 text-sm text-zinc-500"
-  >
-    {["See blind spots early", "Get clearer next steps", "Built for real founders"].map(
-      (label) => (
-        <span
-          key={label}
-          className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1"
-        >
-          <CheckCircle2 className="h-4 w-4 text-teal-400" />
-          {label}
-        </span>
-      )
-    )}
-  </motion.div>
+            <motion.div
+              {...fadeUp(0.44)}
+              className="mt-8 flex flex-wrap items-center gap-3 text-sm text-zinc-500"
+            >
+              {["See blind spots early", "Get clearer next steps", "Built for real founders"].map(
+                (label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-1.5 text-xs text-zinc-500"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5 text-teal-500" />
+                    {label}
+                  </span>
+                )
+              )}
+            </motion.div>
 </div>
  
           {/* Right – live product video */}
@@ -140,7 +140,7 @@ export default function HeroSection() {
                 <div className="h-3 w-3 rounded-full bg-yellow-500/50" />
                 <div className="h-3 w-3 rounded-full bg-green-500/50" />
                 <span className="ml-3 font-mono text-xs text-neutral-600">
-                  nexralab.com — live session
+                  nexralab.com
                 </span>
               </div>
               {/* Video */}

@@ -62,7 +62,7 @@ function StatusIcon({ active }: { active: boolean }) {
 
 export function WhyNotChatGPTSection() {
   return (
-    <section className="border-t border-zinc-800/50 px-6 py-24">
+    <section className="border-t border-zinc-800/50 py-24">
       <div className="mx-auto max-w-3xl">
 
         {/* Eyebrow */}
