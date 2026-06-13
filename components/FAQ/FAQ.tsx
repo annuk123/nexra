@@ -26,11 +26,7 @@ const faqs = [
   {
     q: "Is Nexra useful if I already have experience?",
     a: "Often more so. Experienced founders know how to find validation for whatever they already believe. Nexra is useful precisely because it won't just confirm what you want to hear. A second perspective that's willing to push back is worth more the more experience you have.",
-  },
-  {
-    q: "When can I use Nexra?",
-    a: "We're opening access in small batches to make sure the experience is right before scaling. Join the waitlist — we'll reach out when there's a spot.",
-  },
+  }
 ];
 
 export default function FAQ() {
@@ -39,9 +35,10 @@ export default function FAQ() {
 
   return (
     <section >
-      <span className="text-xs tracking-widest text-neutral-500">FAQ</span>
+      <span className="text-xs tracking-widest text-teal-400">FAQ</span>
 
-      <h2 className="mt-4 text-2xl sm:text-3xl font-semibold max-w-xl">
+      <h2 className="font-semibold text-[#e8e6e1] leading-[1.1] tracking-tight mb-2 mt-4"
+            style={{ fontSize: "clamp(26px, 3.5vw, 42px)" }}>
         Questions founders ask before building
       </h2>
 
@@ -55,11 +52,11 @@ export default function FAQ() {
                 onClick={() => setOpenIndex(open ? null : i)}
                 className="w-full flex items-center justify-between text-left focus:outline-none group"
               >
-                <h3 className="text-neutral-200 font-medium group-hover:text-neutral-100 transition">
+                <h3 className="text-neutral-200 font-medium group-hover:text-neutral-100 transition hover:text-teal-400">
                   {item.q}
                 </h3>
                 <span
-                  className={`ml-4 text-neutral-500 transition-transform duration-200 group-hover:text-neutral-300 ${
+                  className={`ml-4 text-neutral-500 transition-transform duration-200 group-hover:text-teal-400 ${
                     open ? "rotate-45" : ""
                   }`}
                 >

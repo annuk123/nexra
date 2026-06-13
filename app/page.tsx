@@ -28,12 +28,14 @@ export default function Home() {
 
 
       {/* See Nexra in Action */}
-      <Section size="md">
-        <FAQ />
-      </Section>
+
 
             <Section size="md">
         <PricingSection />
+      </Section>
+
+            <Section size="md">
+        <FAQ />
       </Section>
             <Section size="md">
         <FounderNote />
