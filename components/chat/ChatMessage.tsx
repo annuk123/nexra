@@ -15,12 +15,9 @@ function extractText(children: React.ReactNode): string {
   return "";
 }
 
-/* ================= PARAGRAPH COUNT via remark ================= */
+/* ================= PARAGRAPH COUNT ================= */
 
-// Counts actual paragraph AST nodes — immune to code blocks, lists, headings
 function countParagraphNodes(content: string): number {
-  // Fast heuristic: count blank-line-separated blocks that aren't
-  // headings, fences, or list markers. Good enough without a full AST parse.
   const lines = content.split("\n");
   let count = 0;
   let inParagraph = false;
@@ -48,24 +45,27 @@ function StreamingCursor() {
   return (
     <span
       aria-hidden="true"
-      className="inline-block w-[2px] h-[1em] bg-emerald-400 ml-0.5 align-middle animate-pulse"
+      className="inline-block w-[2px] h-[1em] bg-indigo-400 ml-0.5 align-middle animate-pulse"
       style={{ animationDuration: "0.8s" }}
     />
   );
 }
 
-/* ================= EMPTY STATE (first streaming tick) ================= */
+/* ================= THINKING ANIMATION ================= */
 
-function ThinkingDots() {
+function ThinkingIndicator() {
   return (
-    <div className="flex items-center gap-1.5 py-1">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-bounce"
-          style={{ animationDelay: `${i * 150}ms`, animationDuration: "1s" }}
-        />
-      ))}
+    <div className="flex items-center gap-2 py-1">
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-neutral-600 animate-bounce"
+            style={{ animationDelay: `${i * 150}ms`, animationDuration: "1s" }}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-neutral-600 italic">thinking...</span>
     </div>
   );
 }
@@ -76,24 +76,15 @@ export default function ChatMessage({
   msg,
   isTyping,
 }: {
-  msg: Message;
+  msg: Message & { isThinking?: boolean };
   isTyping?: boolean;
 }) {
   const isUser = msg.role === "user";
   const content = msg.content || "";
   const isEmpty = content.trim() === "";
 
-  // paragraphIndex must survive across the render pass of ReactMarkdown's
-  // component callbacks — useRef gives a stable mutable counter that doesn't
-  // trigger re-renders and doesn't reset between callback invocations.
   const paragraphIndexRef = useRef(0);
-
-  const totalParagraphs = useMemo(
-    () => countParagraphNodes(content),
-    [content]
-  );
-
-  // Reset counter before each render so it counts fresh
+  const totalParagraphs = useMemo(() => countParagraphNodes(content), [content]);
   paragraphIndexRef.current = 0;
 
   /* ================= USER MESSAGE ================= */
@@ -103,7 +94,8 @@ export default function ChatMessage({
       <div className="flex justify-end px-6 py-4">
         <div className="max-w-md space-y-1 text-right">
           <p className="text-xs text-neutral-500">You</p>
-          <div className="px-4 py-3 rounded-2xl rounded-br-none bg-emerald-900/30 text-emerald-300 text-sm leading-relaxed whitespace-pre-wrap">
+          {/* FIX: changed from emerald to zinc so it doesn't clash with Nexra's mark color */}
+          <div className="px-4 py-3 rounded-2xl rounded-br-none bg-neutral-800 text-neutral-100 text-sm leading-relaxed whitespace-pre-wrap">
             {content}
           </div>
         </div>
@@ -119,7 +111,6 @@ export default function ChatMessage({
 
         {/* Nexra Identity */}
         <div className="flex items-center gap-2 mb-3">
-          {/* overflow-hidden ensures rounded-full actually clips the image */}
           <div className="w-7 h-7 rounded-full overflow-hidden bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
             <Image
               src="/nexra.png"
@@ -132,56 +123,53 @@ export default function ChatMessage({
           <p className="text-xs text-neutral-400">Nexra · Thinking Partner</p>
         </div>
 
-        {/* Message Content */}
-        <div
-          className="
-            prose
-            prose-invert
-            max-w-none
-            text-[15px]
-            leading-[1.9]
+        {/* Thinking state */}
+        {msg.isThinking || (isEmpty && isTyping) ? (
+          <ThinkingIndicator />
+        ) : (
+          /* Message Content */
+          <div
+            className="
+              prose
+              prose-invert
+              max-w-none
+              text-[15px]
+              leading-[1.9]
 
-            prose-strong:text-white
-            prose-strong:font-semibold
-            prose-strong:bg-emerald-500/10
-            prose-strong:px-1
-            prose-strong:rounded
+              prose-strong:text-white
+              prose-strong:font-semibold
+              prose-strong:bg-emerald-500/10
+              prose-strong:px-1
+              prose-strong:rounded
 
-            prose-ul:my-6
-            prose-li:my-3
+              prose-ul:my-6
+              prose-li:my-3
 
-            prose-blockquote:border-l-emerald-500
-            prose-blockquote:bg-emerald-500/5
-            prose-blockquote:px-4
-            prose-blockquote:py-2
-            prose-blockquote:rounded-md
-          "
-        >
-          {/* Empty state during first streaming tick */}
-          {isEmpty && isTyping ? (
-            <ThinkingDots />
-          ) : (
+              prose-blockquote:border-l-emerald-500
+              prose-blockquote:bg-emerald-500/5
+              prose-blockquote:px-4
+              prose-blockquote:py-2
+              prose-blockquote:rounded-md
+            "
+          >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
               components={{
 
-                // Model-driven highlights via <mark> tags
+                // <mark> — emerald tint, distinct from user bubble
                 mark: ({ children }) => (
-                  <mark className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded-md not-prose">
+                  <mark className="bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded-md not-prose font-medium">
                     {children}
                   </mark>
                 ),
 
                 p: ({ children }) => {
-                  // Increment BEFORE using — first paragraph is index 1
                   paragraphIndexRef.current += 1;
                   const currentIndex = paragraphIndexRef.current;
                   const text = extractText(children);
                   const isLast = currentIndex === totalParagraphs;
 
-                  // ReactMarkdown strips bold markers before passing children,
-                  // so check for the plain text form only
                   if (text.startsWith("Try this:")) {
                     return (
                       <p className="text-xs uppercase tracking-wide text-indigo-400 mt-6 mb-2 not-prose">
@@ -198,12 +186,10 @@ export default function ChatMessage({
                     );
                   }
 
-                  // Highlight the last paragraph only if it contains a question
                   if (isLast && text.includes("?")) {
                     return (
                       <p className="text-indigo-300 font-medium">
                         {children}
-                        {/* Streaming cursor sits inline with the last character */}
                         {isTyping && <StreamingCursor />}
                       </p>
                     );
@@ -212,7 +198,6 @@ export default function ChatMessage({
                   return (
                     <p>
                       {children}
-                      {/* Cursor on last paragraph even if not a question */}
                       {isLast && isTyping && <StreamingCursor />}
                     </p>
                   );
@@ -231,8 +216,8 @@ export default function ChatMessage({
             >
               {content}
             </ReactMarkdown>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
     </div>
