@@ -1,5 +1,6 @@
 ## Nexra — Founder Strategy Document (Serious Founder Version)
 
+
 ### 1) Vision
 Nexra is an AI co-founder assistant that helps founders make clear decisions about startup ideas, strategy, and execution. It is not a chatbot, idea generator, or novelty tool. Nexra’s north star is **decision clarity and founder-level thinking**.
 
